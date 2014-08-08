@@ -21,11 +21,20 @@ public class Teleport {
         this(dim, x, y, z, 0, 0);
     }
 
-    public void teleport(EntityPlayer pl) {
+    //Used when a player is riding an entity. eg pig, horse
+    public void teleport(EntityPlayer pl, boolean canRide){
         if (pl.dimension != dim)
-            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP)pl, dim);
+            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) pl, dim);
+        if(pl.isRiding() && pl.ridingEntity != null  && pl.ridingEntity.isEntityAlive() && canRide) {
+            pl.ridingEntity.setPosition(x, y, z);
+            pl.ridingEntity.setPositionAndRotation(x, y, z, yaw, pitch);
+        }
         pl.setPositionAndUpdate(x, y, z);
         pl.setPositionAndRotation(x, y, z, yaw, pitch);
+    }
+
+    public void teleport(EntityPlayer pl) {
+        teleport(pl, false);
     }
 
     public Teleport setDim(int dim) {
