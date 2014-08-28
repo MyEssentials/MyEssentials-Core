@@ -1,4 +1,4 @@
-package mytown.core.utils.command;
+package mytown.core.utils.x_command;
 
 import java.util.List;
 
