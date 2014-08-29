@@ -6,14 +6,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Command annotation, does NOT have a parent and is registered
+ * Created by AfterWind on 8/28/2014.
+ * CommandNode annotation, has parent
  */
+
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Command {
+public @interface CommandNode {
     String name();
 
     String permission();
+
+    String parentName();
 
     String syntax() default "";
 
