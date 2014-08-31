@@ -3,6 +3,7 @@ package mytown.core.utils.command;
 import mytown.core.MyTownCore;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
 import scala.actors.threadpool.Arrays;
 
 import java.lang.reflect.InvocationTargetException;
@@ -58,6 +59,7 @@ public class CommandManager {
             }
         } catch (InvocationTargetException e) {
             // Forced, since the functions are only gonna throw that... I think
+            // TODO: Maybe have a list of all types of exceptions that could be thrown?
             throw (RuntimeException) e.getTargetException();
         } catch (Exception e2) {
             e2.printStackTrace();
