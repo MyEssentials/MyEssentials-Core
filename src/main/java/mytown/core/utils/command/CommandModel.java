@@ -1,9 +1,12 @@
 package mytown.core.utils.command;
 
+import mytown.core.MyTownCore;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import scala.actors.threadpool.Arrays;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommandModel extends CmdBase {
@@ -55,12 +58,12 @@ public class CommandModel extends CmdBase {
         return "/" + cmd.name() + " " + cmd.syntax();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
-        try {
-            method.invoke(null, sender, Arrays.asList(args));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        CommandManager.commandCall(getPermissionNode(), sender, Arrays.asList(args));
+
+        // Not doing it directly
+        //method.invoke(null, sender, Arrays.asList(args));
     }
 }
