@@ -8,6 +8,7 @@ import scala.actors.threadpool.Arrays;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +18,21 @@ public class CommandManager {
     public static Map<String, Method> commandList = new HashMap<String, Method>();
     public static Map<String, String> commandNames = new HashMap<String, String>();
     public static Map<String, String> commandParents = new HashMap<String, String>();
+    public static Map<String, Method> firstPermissionBreaches = new HashMap<String, Method>();
 
     public static void registerCommands(Class clazz) {
+        registerCommands(clazz, null);
+    }
+
+    public static void registerCommands(Object obj) {
+        registerCommands(obj.getClass(), null);
+    }
+
+    public static void registerCommands(Object commandObj, Method firstPermissionBreach) {
+        registerCommands(commandObj.getClass(), firstPermissionBreach);
+    }
+
+    public static void registerCommands(Class clazz, Method firstPermissionBreach) {
         for (final Method m : clazz.getDeclaredMethods()) {
 
             if (m.isAnnotationPresent(Command.class)) {
@@ -27,6 +41,10 @@ public class CommandManager {
 
                 commandList.put(cmd.permission(), m);
                 commandNames.put(cmd.permission(), cmd.name());
+                if(checkPermissionBreachMethod(firstPermissionBreach)) {
+                    MyTownCore.Instance.log.info("Found permission breach method... adding");
+                    firstPermissionBreaches.put(cmd.permission(), firstPermissionBreach);
+                }
 
             } else if(m.isAnnotationPresent(CommandNode.class)) {
                 final CommandNode cmd = m.getAnnotation(CommandNode.class);
@@ -34,13 +52,14 @@ public class CommandManager {
                 commandList.put(cmd.permission(), m);
                 commandNames.put(cmd.permission(), cmd.name());
                 commandParents.put(cmd.permission(), cmd.parentName());
+                if(checkPermissionBreachMethod(firstPermissionBreach)) {
+                    MyTownCore.Instance.log.info("Found permission breach method... adding");
+                    firstPermissionBreaches.put(cmd.permission(), firstPermissionBreach);
+                }
             }
         }
     }
 
-    public static void registerCommands(Object commandObj) {
-        registerCommands(commandObj.getClass());
-    }
 
 
     public static void commandCall(String permission, ICommandSender sender, List<String> args) {
@@ -49,6 +68,24 @@ public class CommandManager {
             MyTownCore.Instance.log.error("Command with permission node " + permission + " does not exist. Aborting call.");
             return;
         }
+
+        // Check if the player has access to the command using the firstpermissionbreach method first
+        Method permMethod = firstPermissionBreaches.get(permission);
+        if(permMethod != null) {
+            MyTownCore.Instance.log.info("Found permission breach method... calling");
+            try {
+                // Everything is okay, don't worry lol
+                Boolean result = (Boolean)permMethod.invoke(null, permission, sender);
+                if(!result) {
+                    // If the first permission breach did not allow the method to be called then call is aborted
+
+                    return;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         // Try it twice like a gangsta
         try {
             try {
@@ -83,16 +120,6 @@ public class CommandManager {
         }
 
         return subCommands;
-
-        /*
-        if(m.isAnnotationPresent(Command.class)) {
-            return Arrays.asList(m.getAnnotation(Command.class).subCommands());
-        } else if(m.isAnnotationPresent(CommandNode.class)) {
-            return Arrays.asList(m.getAnnotation(CommandNode.class).subCommands());
-        } else {
-            return null;
-        }
-        */
     }
 
     /**
@@ -108,6 +135,17 @@ public class CommandManager {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Checks if the permission method sent is actually valid
+     *
+     * @param method
+     * @return
+     */
+    private static boolean checkPermissionBreachMethod(Method method) {
+        MyTownCore.Instance.log.info("Checking method...");
+        return method != null && Modifier.isStatic(method.getModifiers());// && method.getReturnType() == Boolean.class && method.getParameterTypes()[0] == String.class && method.getParameterTypes()[0] == ICommandSender.class;
     }
 
 
