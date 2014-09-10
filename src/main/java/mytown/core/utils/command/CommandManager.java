@@ -98,16 +98,16 @@ public class CommandManager {
         // Check if the player has access to the command using the firstpermissionbreach method first
         Method permMethod = firstPermissionBreaches.get(permission);
         if(permMethod != null) {
+            Boolean result = true;
             try {
                 // Everything is okay, don't worry lol
-                Boolean result = (Boolean)permMethod.invoke(null, permission, sender);
-                if(!result) {
-                    // If the first permission breach did not allow the method to be called then call is aborted
-
-                    return;
-                }
+                result = (Boolean)permMethod.invoke(null, permission, sender);
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+            if(!result) {
+                // If the first permission breach did not allow the method to be called then call is aborted
+                throw new CommandException("commands.generic.permission");
             }
         }
 
