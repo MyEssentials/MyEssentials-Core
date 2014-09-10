@@ -66,4 +66,10 @@ public class CommandModel extends CmdBase {
         // Not doing it directly
         //method.invoke(null, sender, Arrays.asList(args));
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List addTabCompletionOptions(ICommandSender sender, String[] args) {
+        return CommandManager.getTabCompletionList(sender, Arrays.asList(args), cmd.permission());
+    }
 }
