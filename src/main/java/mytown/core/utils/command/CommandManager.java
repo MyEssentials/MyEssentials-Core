@@ -256,7 +256,6 @@ public class CommandManager {
      * @return
      */
     private static boolean checkPermissionBreachMethod(Method method) {
-        MyTownCore.Instance.log.info("Checking method...");
         return method != null && Modifier.isStatic(method.getModifiers());// && method.getReturnType() == Boolean.class && method.getParameterTypes()[0] == String.class && method.getParameterTypes()[0] == ICommandSender.class;
     }
 

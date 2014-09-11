@@ -1,12 +1,9 @@
 package mytown.core.utils.command;
 
-import mytown.core.MyTownCore;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import scala.actors.threadpool.Arrays;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CommandModel extends CmdBase {
