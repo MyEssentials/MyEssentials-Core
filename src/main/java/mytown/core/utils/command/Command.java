@@ -21,6 +21,8 @@ public @interface Command {
 
     String[] alias() default {};
 
+    boolean opsOnlyAccess() default false;
+
     boolean console() default false;
 
     boolean rcon() default false;

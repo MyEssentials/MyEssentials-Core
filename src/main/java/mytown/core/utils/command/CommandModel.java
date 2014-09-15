@@ -1,6 +1,9 @@
 package mytown.core.utils.command;
 
+import mytown.core.utils.Assert;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -68,5 +71,17 @@ public class CommandModel extends CmdBase {
     @Override
     public List addTabCompletionOptions(ICommandSender sender, String[] args) {
         return CommandManager.getTabCompletionList(sender, Arrays.asList(args), cmd.permission());
+    }
+
+    @Override
+    public boolean canCommandSenderUseCommand(ICommandSender sender) {
+        Assert.Perm(sender, getPermissionNode(), canConsoleUseCommand(), canRConUseCommand(), canCommandBlockUseCommand());
+
+        EntityPlayer player = (EntityPlayer) sender;
+        if(player != null && cmd.opsOnlyAccess() && !MinecraftServer.getServer().getConfigurationManager().func_152607_e(player.getGameProfile()))
+            return false;
+
+        return true;
+        //return canUseWithoutPermission() || super.canCommandSenderUseCommand(sender);
     }
 }
