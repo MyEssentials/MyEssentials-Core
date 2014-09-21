@@ -30,4 +30,6 @@ public @interface CommandNode {
     boolean rcon() default false;
 
     boolean commandblocks() default false;
+
+    String[] completionKeys() default {""};
 }

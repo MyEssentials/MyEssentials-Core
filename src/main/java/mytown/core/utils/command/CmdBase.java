@@ -17,9 +17,5 @@ public abstract class CmdBase extends CommandBase {
         return false;
     }
 
-    @Override
-    public boolean canCommandSenderUseCommand(ICommandSender sender) {
-        Assert.Perm(sender, getPermissionNode(), canConsoleUseCommand(), canRConUseCommand(), canCommandBlockUseCommand());
-        return canUseWithoutPermission() || super.canCommandSenderUseCommand(sender);
-    }
+
 }
