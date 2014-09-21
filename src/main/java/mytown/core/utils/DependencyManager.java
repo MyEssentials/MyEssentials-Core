@@ -100,4 +100,6 @@ public class DependencyManager {
             t.printStackTrace();
         }
     }
+
+    private DependencyManager() {}
 }
