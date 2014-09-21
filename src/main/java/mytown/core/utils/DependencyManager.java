@@ -44,6 +44,7 @@ public class DependencyManager {
      */
     public static void downloadDependency(final String filename, final String downloadURL) {
         File f = new File(filename);
+        f.getParentFile().mkdirs();
         if (!f.exists() || !f.isFile()) {
             try {
                 download(filename, downloadURL);
