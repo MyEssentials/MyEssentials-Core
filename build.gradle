@@ -31,7 +31,7 @@ archivesBaseName = config.archivesBaseName
 
 dependencies {
     testCompile "junit:junit:4.11"
-    compile "com.esotericsoftware.reflectasm:reflectasm:1.09"
+    compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
 }
 
 minecraft {
@@ -41,11 +41,25 @@ minecraft {
 }
 
 processResources {
+    inputs.property "mod_version", project.version
+    inputs.property "minecraft_version", project.minecraft.version
+    inputs.property "reflectasm_version", config.reflectasm_version
+    
     from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-        expand 'mod_version':project.version, 'minecraft_version':project.minecraft.version
+        include '*.info'
+        expand 'mod_version': project.version, 'minecraft_version': project.minecraft.version, 'reflectasm_version': config.reflectasm_version
     }
     from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+        exclude '*.info'
+    }
+}
+
+jar {
+    classifier = 'universal'
+    manifest {
+        attributes (
+            'FMLCorePlugin': 'mytown.core.DepLoader',
+            'FMLCorePluginContainsFMLMod': 'true'
+        )
     }
 }
