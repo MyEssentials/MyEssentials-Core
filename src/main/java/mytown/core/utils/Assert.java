@@ -6,8 +6,6 @@ import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.rcon.RConConsoleSource;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntityCommandBlock;
-import forgeperms.api.ForgePermsAPI;
 
 // TODO Move to ForgePerms API after the rewrite
 
@@ -47,8 +45,9 @@ public class Assert {
         if (node == null)
             return;
         EntityPlayer player = (EntityPlayer) sender;
-        if (ForgePermsAPI.permManager.canAccess(player.getCommandSenderName(), player.worldObj.provider.getDimensionName(), node)) // TODO Make ForgePerms use UUIDs (Will need to re-write everything)
-            return;
-        throw new CommandException("commands.generic.permission");
+        // For now not using fpapi since it's not ported yet
+        //if (ForgePermsAPI.permManager.canAccess(player.getCommandSenderName(), player.worldObj.provider.getDimensionName(), node)) // TODO Make ForgePerms use UUIDs (Will need to re-write everything)
+        return;
+        //throw new CommandException("commands.generic.permission");
     }
 }
