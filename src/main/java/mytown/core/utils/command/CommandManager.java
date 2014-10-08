@@ -249,6 +249,29 @@ public class CommandManager {
         return true;
     }
 
+    public static String getSubCommandNode(String subCommand, String node) {
+        for(String s : getSubCommandsList(node)) {
+            if (commandNames.get(s).equals(subCommand))
+                return s;
+        }
+        return null;
+    }
+
+    /**
+     * Checks if the command with name subCommand exists as a child command of the node
+     *
+     * @param subCommand
+     * @param node
+     * @return
+     */
+    public static boolean hasSubCommand(String subCommand, String node) {
+        for(String s : getSubCommandsList(node)) {
+            if(commandNames.get(s).equals(subCommand))
+                return true;
+        }
+        return false;
+    }
+
     /**
      * Checks if the permission method sent is actually valid
      *
