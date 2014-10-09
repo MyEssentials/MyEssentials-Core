@@ -31,5 +31,7 @@ public @interface CommandNode {
 
     boolean commandblocks() default false;
 
+    boolean players() default true;
+
     String[] completionKeys() default {""};
 }

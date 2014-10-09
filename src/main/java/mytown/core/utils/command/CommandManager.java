@@ -176,7 +176,7 @@ public class CommandManager {
                 subCommands.add(CommandManager.commandNames.get(p));
             }
             List<String> completion = new ArrayList<String>();
-            MyTownCore.Instance.log.info("Searching completion for : " + args.get(args.size() - 1));
+            //MyTownCore.Instance.log.info("Searching completion for : " + args.get(args.size() - 1));
             for(String p : subCommands) {
                 if(p.toLowerCase().startsWith(args.get(args.size() - 1).toLowerCase())) {
                     completion.add(p);
@@ -187,10 +187,10 @@ public class CommandManager {
             int argNumber = 0;
             for(int i = args.size() - 1; i >= 0; i--) {
                 if(!isArgumentCommand(args, i, permission)) {
-                    MyTownCore.Instance.log.info("Argument " + args.get(i) + " is not a command.");
+                    //MyTownCore.Instance.log.info("Argument " + args.get(i) + " is not a command.");
                     argNumber++;
                 } else {
-                    MyTownCore.Instance.log.info("Argument " + args.get(i) + " is a command... breaking");
+                    //MyTownCore.Instance.log.info("Argument " + args.get(i) + " is a command... breaking");
                     break;
                 }
             }
@@ -199,10 +199,10 @@ public class CommandManager {
             // Check if people try to tab on something that doesn't have any more arguments
             if(commandCompletionKeys.get(perm).length <= argNumber)
                 return null;
-            MyTownCore.Instance.log.info("Found key: " + commandCompletionKeys.get(perm)[argNumber]);
+            //MyTownCore.Instance.log.info("Found key: " + commandCompletionKeys.get(perm)[argNumber]);
 
             List<String> completion = new ArrayList<String>();
-            MyTownCore.Instance.log.info("Searching completion for : " + args.get(args.size() - 1));
+            //MyTownCore.Instance.log.info("Searching completion for : " + args.get(args.size() - 1));
             for(String p : CommandCompletion.completionMap.get(commandCompletionKeys.get(perm)[argNumber])) {
                 if(p.toLowerCase().startsWith(args.get(args.size() - 1).toLowerCase())) {
                     completion.add(p);
