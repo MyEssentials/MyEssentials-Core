@@ -1,5 +1,6 @@
 package mytown.core.utils.command;
 
+import mytown.core.MyTownCore;
 import mytown.core.utils.Assert;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,6 +71,8 @@ public class CommandModel extends CmdBase {
     @SuppressWarnings("unchecked")
     @Override
     public List addTabCompletionOptions(ICommandSender sender, String[] args) {
+        for(String s : args)
+            MyTownCore.Instance.log.info(s);
         return CommandManager.getTabCompletionList(sender, Arrays.asList(args), cmd.permission());
     }
 

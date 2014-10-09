@@ -3,8 +3,6 @@ package mytown.core.utils.command;
 import mytown.core.MyTownCore;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
-import scala.actors.threadpool.Arrays;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -173,18 +171,18 @@ public class CommandManager {
     public static List<String> getTabCompletionList(ICommandSender sender, List<String> args, String permission) {
         String perm = getPermissionNodeFromArgs(args.subList(0, args.size() - 1), permission);
         if(commandCompletionKeys.get(perm)[0].equals("")) {
-            List<String> completion = new ArrayList<String>();
+            List<String> subCommands = new ArrayList<String>();
             for(String p : CommandManager.getSubCommandsList(perm)) {
-                completion.add(CommandManager.commandNames.get(p));
+                subCommands.add(CommandManager.commandNames.get(p));
             }
-            List<String> completion2 = new ArrayList<String>();
+            List<String> completion = new ArrayList<String>();
             MyTownCore.Instance.log.info("Searching completion for : " + args.get(args.size() - 1));
-            for(String p : completion) {
-                if(p.startsWith(args.get(args.size() - 1))) {
-                    completion2.add(p);
+            for(String p : subCommands) {
+                if(p.toLowerCase().startsWith(args.get(args.size() - 1).toLowerCase())) {
+                    completion.add(p);
                 }
             }
-            return completion2;
+            return completion;
         } else {
             int argNumber = 0;
             for(int i = args.size() - 1; i >= 0; i--) {
@@ -202,7 +200,15 @@ public class CommandManager {
             if(commandCompletionKeys.get(perm).length <= argNumber)
                 return null;
             MyTownCore.Instance.log.info("Found key: " + commandCompletionKeys.get(perm)[argNumber]);
-            return CommandCompletion.completionMap.get(commandCompletionKeys.get(perm)[argNumber]);
+
+            List<String> completion = new ArrayList<String>();
+            MyTownCore.Instance.log.info("Searching completion for : " + args.get(args.size() - 1));
+            for(String p : CommandCompletion.completionMap.get(commandCompletionKeys.get(perm)[argNumber])) {
+                if(p.toLowerCase().startsWith(args.get(args.size() - 1).toLowerCase())) {
+                    completion.add(p);
+                }
+            }
+            return completion;
         }
     }
 
@@ -249,6 +255,13 @@ public class CommandManager {
         return true;
     }
 
+    /**
+     * Gets the node of a subcommand of the command to which the parent node points to.
+     *
+     * @param subCommand
+     * @param node
+     * @return
+     */
     public static String getSubCommandNode(String subCommand, String node) {
         for(String s : getSubCommandsList(node)) {
             if (commandNames.get(s).equals(subCommand))
