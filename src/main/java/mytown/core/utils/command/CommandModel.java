@@ -71,8 +71,6 @@ public class CommandModel extends CmdBase {
     @SuppressWarnings("unchecked")
     @Override
     public List addTabCompletionOptions(ICommandSender sender, String[] args) {
-        for(String s : args)
-            MyTownCore.Instance.log.info(s);
         return CommandManager.getTabCompletionList(sender, Arrays.asList(args), cmd.permission());
     }
 

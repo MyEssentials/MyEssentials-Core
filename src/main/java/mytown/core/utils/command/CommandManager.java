@@ -67,14 +67,14 @@ public class CommandManager {
 
             } else if(m.isAnnotationPresent(CommandNode.class)) {
                 final CommandNode cmd = m.getAnnotation(CommandNode.class);
-
                 commandList.put(cmd.permission(), m);
                 commandNames.put(cmd.permission(), cmd.name());
                 commandParents.put(cmd.permission(), cmd.parentName());
                 commandCompletionKeys.put(cmd.permission(), cmd.completionKeys());
-                if(checkPermissionBreachMethod(firstPermissionBreach)) {
+                if (checkPermissionBreachMethod(firstPermissionBreach)) {
                     firstPermissionBreaches.put(cmd.permission(), firstPermissionBreach);
                 }
+
             }
         }
     }
