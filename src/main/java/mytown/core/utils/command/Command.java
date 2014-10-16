@@ -23,11 +23,11 @@ public @interface Command {
 
     boolean opsOnlyAccess() default false;
 
-    boolean console() default false;
+    boolean console() default true;
 
-    boolean rcon() default false;
+    boolean rcon() default true;
 
-    boolean commandblocks() default false;
+    boolean commandblocks() default true;
 
     String[] completionKeys() default {""};
 }

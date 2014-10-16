@@ -15,7 +15,6 @@ public class Assert {
 	 * 
 	 * @param sender
 	 * @param node
-	 * @throws NoAccessException
 	 * @throws CommandException
 	 */
 	public static void Perm(ICommandSender sender, String node) throws CommandException {
@@ -28,7 +27,6 @@ public class Assert {
 	 * @param sender
 	 * @param node
 	 * @param allowConsole
-	 * @throws NoAccessException
 	 * @throws CommandException
 	 */
 	public static void Perm(ICommandSender sender, String node, boolean allowConsole) throws CommandException {

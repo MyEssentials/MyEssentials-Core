@@ -3,6 +3,10 @@ package mytown.core.utils.command;
 import mytown.core.MyTownCore;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.server.CommandBlockLogic;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.rcon.RConConsoleSource;
+import net.minecraft.server.MinecraftServer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -74,7 +78,6 @@ public class CommandManager {
                 if (checkPermissionBreachMethod(firstPermissionBreach)) {
                     firstPermissionBreaches.put(cmd.permission(), firstPermissionBreach);
                 }
-
             }
         }
     }
@@ -91,6 +94,17 @@ public class CommandManager {
         if(m == null) {
             MyTownCore.Instance.log.error("Command with permission node " + permission + " does not exist. Aborting call.");
             return;
+        }
+
+        // Check if sender is allowed to use this command
+        CommandNode cmdAnnot = commandList.get(permission).getAnnotation(CommandNode.class);
+        if(cmdAnnot != null) {
+            if(!cmdAnnot.players() && sender instanceof EntityPlayer ||
+                    (!cmdAnnot.nonPlayers() && sender instanceof MinecraftServer) ||
+                    (!cmdAnnot.nonPlayers() && sender instanceof RConConsoleSource) ||
+                    (!cmdAnnot.nonPlayers() && sender instanceof CommandBlockLogic)) {
+                throw new CommandException("commands.generic.permission");
+            }
         }
 
         // Check if the player has access to the command using the firstpermissionbreach method first

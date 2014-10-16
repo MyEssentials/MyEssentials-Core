@@ -6,6 +6,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 
+import javax.swing.text.html.parser.Entity;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -78,8 +79,7 @@ public class CommandModel extends CmdBase {
     public boolean canCommandSenderUseCommand(ICommandSender sender) {
         Assert.Perm(sender, getPermissionNode(), canConsoleUseCommand(), canRConUseCommand(), canCommandBlockUseCommand());
 
-        EntityPlayer player = (EntityPlayer) sender;
-        if(player != null && cmd.opsOnlyAccess() && !MinecraftServer.getServer().getConfigurationManager().func_152607_e(player.getGameProfile()))
+        if(sender instanceof EntityPlayer && cmd.opsOnlyAccess() && !MinecraftServer.getServer().getConfigurationManager().func_152607_e(((EntityPlayer) sender).getGameProfile()))
             return false;
 
         return true;

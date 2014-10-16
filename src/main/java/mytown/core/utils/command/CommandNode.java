@@ -25,11 +25,7 @@ public @interface CommandNode {
 
     String[] alias() default {};
 
-    boolean console() default false;
-
-    boolean rcon() default false;
-
-    boolean commandblocks() default false;
+    boolean nonPlayers() default false;
 
     boolean players() default true;
 
