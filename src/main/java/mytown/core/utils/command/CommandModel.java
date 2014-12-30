@@ -1,12 +1,12 @@
 package mytown.core.utils.command;
 
-import mytown.core.MyTownCore;
+import mytown.core.Utils;
 import mytown.core.utils.Assert;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 
-import javax.swing.text.html.parser.Entity;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -63,6 +63,10 @@ public class CommandModel extends CmdBase {
     @SuppressWarnings("unchecked")
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
+        // Return if player is not allowed to use this command
+        if(sender instanceof EntityPlayer && cmd.opsOnlyAccess() && !Utils.isOp((EntityPlayer)sender))
+            throw new CommandException("commands.generic.permission");
+
         CommandManager.commandCall(getPermissionNode(), sender, Arrays.asList(args));
 
         // Not doing it directly
