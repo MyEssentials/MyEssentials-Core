@@ -1,6 +1,7 @@
 package mytown.core.utils.command;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
+import mytown.core.MyTownCore;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.server.MinecraftServer;
@@ -13,8 +14,12 @@ public class CommandUtils {
 
     private static void init() {
         if (isInit) return;
-
-        CommandUtils.commandHandler = (CommandHandler) MinecraftServer.getServer().getCommandManager();
+        try {
+            CommandUtils.commandHandler = (CommandHandler) MinecraftServer.getServer().getCommandManager();
+        } catch (Exception ex) {
+            MyTownCore.Instance.log.info("WTF it errored!");
+            ex.printStackTrace();
+        }
         CommandUtils.access = MethodAccess.get(CommandHandler.class);
         try {
             CommandUtils.method = CommandUtils.access.getIndex("registerCommand", ICommand.class, String.class);
