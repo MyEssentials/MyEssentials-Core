@@ -22,6 +22,9 @@ public class Utils {
      * @return
      */
     public static boolean isOp(EntityPlayer player) {
+		if(player == null) // TODO: It appears fakeplayers can be null?
+            return false;
+        
         if(player.getGameProfile() == null)
             return false; // TODO: Could be for fake players. Still not sure if I should allow it.
 
