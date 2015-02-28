@@ -11,14 +11,18 @@ import net.minecraft.util.ChatComponentText;
 public class ChatUtils {
 	/**
 	 * Sends msg to sender.<br />
-     * This method will split the message at newline chars (/n) and send each line as a separate message.
+     * This method will split the message at newline chars (\n) and send each line as a separate message.
 	 * 
 	 * @param sender
 	 * @param msg
 	 * @param args
 	 */
 	public static void sendChat(ICommandSender sender, String msg, Object... args) {
-        String[] lines = String.format(msg, args).split("\n");
+        String[] lines;
+        if(args == null)
+            lines = msg.split("\\\\n");
+        else
+            lines = String.format(msg, args).split("\\\\n");
         for (String line : lines) {
             sender.addChatMessage(new ChatComponentText(line));
         }
