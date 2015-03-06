@@ -60,7 +60,7 @@ public class CommandManager {
 
             if (m.isAnnotationPresent(Command.class)) {
                 final Command cmd = m.getAnnotation(Command.class);
-                CommandUtils.registerCommand(new CommandModel(cmd, m)); // TODO Sub-command system
+                CommandUtils.registerCommand(new CommandModel(cmd, m));
 
                 commandList.put(cmd.permission(), m);
                 commandNames.put(cmd.permission(), cmd.name());
@@ -71,6 +71,9 @@ public class CommandManager {
 
             } else if(m.isAnnotationPresent(CommandNode.class)) {
                 final CommandNode cmd = m.getAnnotation(CommandNode.class);
+                if(hasSubCommand(cmd.name(), cmd.parentName()))
+                    throw new RuntimeException("Sub-command with name " + cmd.name() + " and parent " + cmd.parentName() + " is registered twice!");
+
                 commandList.put(cmd.permission(), m);
                 commandNames.put(cmd.permission(), cmd.name());
                 commandParents.put(cmd.permission(), cmd.parentName());
