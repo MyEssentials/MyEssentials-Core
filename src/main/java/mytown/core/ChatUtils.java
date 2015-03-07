@@ -52,7 +52,7 @@ public class ChatUtils {
 	// TODO Change name/change location?
 	public static boolean equalsOn(String arg, boolean caseSensitive) {
 		if (!caseSensitive) arg = arg.toLowerCase();
-		return arg == "on" || arg == "enable" || arg == "true" || arg == "t";
+		return arg.equals("on") || arg.equals("enable") || arg.equals("true") || arg.equals("t");
 	}
 	
 	/**
