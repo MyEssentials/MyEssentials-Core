@@ -1,23 +1,35 @@
 package mytown.core.utils.command;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
-import mytown.core.MyTownCore;
+import mytown.core.MyEssentialsCore;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.server.MinecraftServer;
 
 public class CommandUtils {
     private static boolean isInit = false;
+
+    /**
+     * CommandHandler of Minecraft
+     */
     private static CommandHandler commandHandler;
+    /**
+     * MethodAccess to the CommandHandler for calling private methods
+     */
     private static MethodAccess access;
+    /**
+     * Method index since the call occurs using indexes instead of names.
+     */
     private static int method = -1;
 
+    /**
+     * Initializing the fields
+     */
     private static void init() {
-        if (isInit) return;
         try {
             CommandUtils.commandHandler = (CommandHandler) MinecraftServer.getServer().getCommandManager();
         } catch (Exception ex) {
-            MyTownCore.Instance.log.info("WTF it errored!");
+            MyEssentialsCore.Instance.log.info("CommandHandler could not be found.");
             ex.printStackTrace();
         }
         CommandUtils.access = MethodAccess.get(CommandHandler.class);
@@ -30,8 +42,12 @@ public class CommandUtils {
         isInit = true;
     }
 
+    /**
+     * Register a command using its permission node.
+     */
     public static void registerCommand(ICommand command, String permNode, boolean enabled) {
-        init();
+        if(!isInit)
+            init();
 
         if (!enabled || command == null)
             return;
@@ -46,6 +62,9 @@ public class CommandUtils {
         }
     }
 
+    /**
+     * Registers a command.
+     */
     public static void registerCommand(ICommand command, boolean enabled) {
         if (command == null) return;
         String permNode;
@@ -57,6 +76,9 @@ public class CommandUtils {
         registerCommand(command, permNode, enabled);
     }
 
+    /**
+     * Registers a command.
+     */
     public static void registerCommand(ICommand command) {
         registerCommand(command, true);
     }

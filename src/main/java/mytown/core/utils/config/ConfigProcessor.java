@@ -3,7 +3,7 @@ package mytown.core.utils.config;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import mytown.core.MyTownCore;
+import mytown.core.MyEssentialsCore;
 import mytown.core.utils.Log;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -183,7 +183,7 @@ public class ConfigProcessor {
 
 	private static Log getLog() {
 		if (ConfigProcessor.log == null) {
-			ConfigProcessor.log = MyTownCore.Instance.log.createChild("ConfigProcessor");
+			ConfigProcessor.log = MyEssentialsCore.Instance.log.createChild("ConfigProcessor");
 		}
 		return ConfigProcessor.log;
 	}

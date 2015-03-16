@@ -1,10 +1,19 @@
 package mytown.core.utils.command;
 
-import mytown.core.utils.Assert;
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
 
+
+/**
+ * The basic command layout for all commands.
+ *
+ */
 public abstract class CmdBase extends CommandBase {
+
+    /**
+     * Gets the unique identifier which doubles as a permission node.
+     *
+     * @return
+     */
     public abstract String getPermissionNode();
 
     public abstract boolean canConsoleUseCommand();
@@ -13,6 +22,11 @@ public abstract class CmdBase extends CommandBase {
 
     public abstract boolean canCommandBlockUseCommand();
 
+    /**
+     * If the command can be used without any permission checks.
+     *
+     * @return
+     */
     public boolean canUseWithoutPermission() {
         return false;
     }

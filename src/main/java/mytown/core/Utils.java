@@ -5,9 +5,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.UserList;
 import net.minecraft.server.management.UserListOps;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * Created by AfterWind on 12/30/2014.
@@ -21,6 +19,7 @@ public class Utils {
      * @param player
      * @return
      */
+    @SuppressWarnings("unchecked")
     public static boolean isOp(EntityPlayer player) {
 		if(player == null) // TODO: It appears fakeplayers can be null?
             return false;
@@ -36,7 +35,7 @@ public class Utils {
             return (Boolean)method.invoke(ops, player.getGameProfile());
         } catch (Exception e) {
             for(Method mt : UserList.class.getMethods()) {
-                MyTownCore.Instance.log.info(mt.getName());
+                MyEssentialsCore.Instance.log.info(mt.getName());
             }
             e.printStackTrace();
         }

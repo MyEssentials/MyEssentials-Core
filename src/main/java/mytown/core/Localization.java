@@ -88,11 +88,11 @@ public class Localization {
 	 * @return
 	 */
 	public String getLocalization(String key, Object... args) {
-		if (args.length > 0)
-			return String.format(getLocalizationFromKey(key), args);
+		if (args.length > 0) {
+            return String.format(getLocalizationFromKey(key), args);
+        }
 		else
 			return getLocalizationFromKey(key);
-
 	}
 
     public Map<String, String> getLocalizationMap() {

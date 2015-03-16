@@ -1,6 +1,6 @@
 package mytown.core.utils.command;
 
-import mytown.core.MyTownCore;
+import mytown.core.MyEssentialsCore;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.server.CommandBlockLogic;
@@ -14,11 +14,30 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class CommandManager {
+    /**
+     * Map with the permission node as key and method as value.
+     */
     public static Map<String, Method> commandList = new HashMap<String, Method>();
+    /**
+     * Map with the permission node as key and name as value
+     */
     public static Map<String, String> commandNames = new HashMap<String, String>();
+    /**
+     * Map with the permission node as key and permission node of parent as value
+     */
     public static Map<String, String> commandParents = new HashMap<String, String>();
+    /**
+     * Map with the permission node as key and an array, that represents an ordered list of completion keys that will be used, as value
+     */
     public static Map<String, String[]> commandCompletionKeys = new HashMap<String, String[]>();
+    /**
+     * Map with the permission node as key and first check method as value
+     */
     public static Map<String, Method> firstPermissionBreaches = new HashMap<String, Method>();
+    /**
+     * Map with the completion as key and a list of available completions as value
+     */
+    public static Map<String, List<String>> completionMap = new HashMap<String, List<String>>();
 
     /**
      * Registers all commands that are static and have the @Command or @CommandNode annotation on it.
@@ -95,7 +114,7 @@ public class CommandManager {
     public static void commandCall(String permission, ICommandSender sender, List<String> args) {
         Method m = commandList.get(permission);
         if(m == null) {
-            MyTownCore.Instance.log.error("Command with permission node " + permission + " does not exist. Aborting call.");
+            MyEssentialsCore.Instance.log.error("Command with permission node " + permission + " does not exist. Aborting call.");
             return;
         }
 
@@ -220,7 +239,7 @@ public class CommandManager {
 
             List<String> completion = new ArrayList<String>();
             //MyTownCore.Instance.log.info("Searching completion for : " + args.get(args.size() - 1));
-            for(String p : CommandCompletion.completionMap.get(commandCompletionKeys.get(perm)[argNumber])) {
+            for(String p : completionMap.get(commandCompletionKeys.get(perm)[argNumber])) {
                 if(p.toLowerCase().startsWith(args.get(args.size() - 1).toLowerCase())) {
                     completion.add(p);
                 }
@@ -273,7 +292,7 @@ public class CommandManager {
     }
 
     /**
-     * Gets the node of a subcommand of the command to which the parent node points to.
+     * Gets the node of a with name subCommand and parent's node.
      *
      * @param subCommand
      * @param node

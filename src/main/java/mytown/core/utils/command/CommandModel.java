@@ -11,60 +11,75 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Command model which instantiates all base commands that need to be registered to Minecraft
+ */
 public class CommandModel extends CmdBase {
-    private final Command cmd;
+    /**
+     * The Command annotation which holds information about the node's position.
+     */
+    private final Command commandAnnot;
+    /**
+     * The method to which this command is linked.
+     */
     private final Method method;
 
+    /**
+     * List which retains all aliases for ease of use
+     */
     private List commandAliasCache = null;
 
     public CommandModel(Command cmd, Method method) {
-        this.cmd = cmd;
+        this.commandAnnot = cmd;
         this.method = method;
     }
 
     @Override
     public List getCommandAliases() {
         if (commandAliasCache == null) {
-            commandAliasCache = Arrays.asList(cmd.alias());
+            commandAliasCache = Arrays.asList(commandAnnot.alias());
         }
         return commandAliasCache;
     }
 
     @Override
     public String getPermissionNode() {
-        return cmd.permission();
+        return commandAnnot.permission();
     }
 
     @Override
     public boolean canConsoleUseCommand() {
-        return cmd.console();
+        return commandAnnot.console();
     }
 
     @Override
     public boolean canRConUseCommand() {
-        return cmd.rcon();
+        return commandAnnot.rcon();
     }
 
     @Override
     public boolean canCommandBlockUseCommand() {
-        return cmd.commandblocks();
+        return commandAnnot.commandblocks();
     }
 
     @Override
     public String getCommandName() {
-        return cmd.name();
+        return commandAnnot.name();
     }
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "/" + cmd.name() + " " + cmd.syntax();
+        return "/" + commandAnnot.name() + " " + commandAnnot.syntax();
     }
 
+    /**
+     * Processes the command by calling the method that was linked to it.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
         // Return if player is not allowed to use this command
-        if(sender instanceof EntityPlayer && cmd.opsOnlyAccess() && !Utils.isOp((EntityPlayer)sender))
+        if(sender instanceof EntityPlayer && commandAnnot.opsOnlyAccess() && !Utils.isOp((EntityPlayer)sender))
             throw new CommandException("commands.generic.permission");
 
         CommandManager.commandCall(getPermissionNode(), sender, Arrays.asList(args));
@@ -76,14 +91,14 @@ public class CommandModel extends CmdBase {
     @SuppressWarnings("unchecked")
     @Override
     public List addTabCompletionOptions(ICommandSender sender, String[] args) {
-        return CommandManager.getTabCompletionList(sender, Arrays.asList(args), cmd.permission());
+        return CommandManager.getTabCompletionList(sender, Arrays.asList(args), commandAnnot.permission());
     }
 
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender sender) {
         Assert.Perm(sender, getPermissionNode(), canConsoleUseCommand(), canRConUseCommand(), canCommandBlockUseCommand());
 
-        if(sender instanceof EntityPlayer && cmd.opsOnlyAccess() && !MinecraftServer.getServer().getConfigurationManager().func_152607_e(((EntityPlayer) sender).getGameProfile()))
+        if(sender instanceof EntityPlayer && commandAnnot.opsOnlyAccess() && !MinecraftServer.getServer().getConfigurationManager().func_152607_e(((EntityPlayer) sender).getGameProfile()))
             return false;
 
         return true;
