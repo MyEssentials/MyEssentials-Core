@@ -1,5 +1,8 @@
 package mytown.core;
 
+import net.minecraft.util.EnumChatFormatting;
+import org.lwjgl.Sys;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,7 +22,8 @@ public class Localization {
 	 * The localization map
 	 */
 	Map<String, String> localizations;
-	Reader reader = null;
+    public Map<Character, String> colorMap;
+    Reader reader = null;
 
 	/**
 	 * Specifies the {@link Reader} to use when reading the localization
@@ -29,6 +33,23 @@ public class Localization {
 	public Localization(Reader r) {
 		reader = r;
 		localizations = new HashMap<String, String>();
+        colorMap = new HashMap<Character, String>();
+        colorMap.put('0', "BLACK");
+        colorMap.put('1', "DARK_BLUE");
+        colorMap.put('2', "DARK_GREEN");
+        colorMap.put('3', "DARK_AQUA");
+        colorMap.put('4', "DARK_RED");
+        colorMap.put('5', "DARK_PURPLE");
+        colorMap.put('6', "GOLD");
+        colorMap.put('7', "GRAY");
+        colorMap.put('8', "DARK_GRAY");
+        colorMap.put('9', "BLUE");
+        colorMap.put('a', "GREEN");
+        colorMap.put('b', "AQUA");
+        colorMap.put('c', "RED");
+        colorMap.put('d', "LIGHT_PURPLE");
+        colorMap.put('e', "YELLOW");
+        colorMap.put('f', "WHITE");
 	}
 
 	/**
@@ -77,6 +98,24 @@ public class Localization {
 
 	private String getLocalizationFromKey(String key) {
 		String localized = localizations.get(key);
+
+        if(localized != null) {
+            for(int i = 0; i < localized.length(); i++) {
+                if(localized.charAt(i) == '&') {
+                    MyEssentialsCore.Instance.log.info("Found char at " + i + " with value " + localized.charAt(i+1));
+                    if(EnumChatFormatting.valueOf(colorMap.get(localized.charAt(i+1))) != null) {
+                        MyEssentialsCore.Instance.log.info("Loaded " + colorMap.get(localized.charAt(i+1)));
+                        localized = localized.substring(0, i) + EnumChatFormatting.valueOf(colorMap.get(localized.charAt(i + 1))) + localized.substring(i + 2);
+
+                    } else {
+                        MyEssentialsCore.Instance.log.info("Not loaded");
+                        localized = localized.substring(0, i) + localized.substring(i+2);
+                    }
+                }
+            }
+            System.out.print(localized);
+        }
+
 		return localized == null ? key : localized;
 	}
 
