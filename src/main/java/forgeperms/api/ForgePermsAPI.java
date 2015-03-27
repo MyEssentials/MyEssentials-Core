@@ -48,7 +48,7 @@ public class ForgePermsAPI {
 		if (node == null)
 			return;
 		EntityPlayer p = (EntityPlayer) cs;
-		if (ForgePermsAPI.permManager.canAccess(p.getDisplayName(), p.worldObj.provider.getDimensionName(), node)) // TODO Change to use UUID instead
+		if (ForgePermsAPI.permManager.canAccess(p.getDisplayNameString(), p.worldObj.provider.getDimensionName(), node)) // TODO Change to use UUID instead
 			return;
 		throw new CommandException("commands.generic.permission");
 	}

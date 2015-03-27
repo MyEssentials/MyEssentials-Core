@@ -6,6 +6,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.BlockPos;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -80,7 +81,11 @@ public class CommandModel extends CmdBase {
     public void processCommand(ICommandSender sender, String[] args) {
         // Return if player is not allowed to use this command
         if(sender instanceof EntityPlayer && commandAnnot.opsOnlyAccess() && !Utils.isOp((EntityPlayer)sender))
-            throw new CommandException("commands.generic.permission");
+            try {
+                throw new CommandException("commands.generic.permission");
+            } catch (CommandException e) {
+                e.printStackTrace();
+            }
 
         CommandManager.commandCall(getPermissionNode(), sender, Arrays.asList(args));
 
@@ -90,15 +95,19 @@ public class CommandModel extends CmdBase {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] args) {
+    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
         return CommandManager.getTabCompletionList(sender, Arrays.asList(args), commandAnnot.permission());
     }
 
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender sender) {
-        Assert.Perm(sender, getPermissionNode(), canConsoleUseCommand(), canRConUseCommand(), canCommandBlockUseCommand());
+        try {
+            Assert.Perm(sender, getPermissionNode(), canConsoleUseCommand(), canRConUseCommand(), canCommandBlockUseCommand());
+        } catch (CommandException e) {
+            e.printStackTrace();
+        }
 
-        if(sender instanceof EntityPlayer && commandAnnot.opsOnlyAccess() && !MinecraftServer.getServer().getConfigurationManager().func_152607_e(((EntityPlayer) sender).getGameProfile()))
+        if(sender instanceof EntityPlayer && commandAnnot.opsOnlyAccess() && !MinecraftServer.getServer().getConfigurationManager().canSendCommands(((EntityPlayer) sender).getGameProfile()))
             return false;
 
         return true;

@@ -125,7 +125,11 @@ public class CommandManager {
                     (!cmdAnnot.nonPlayers() && sender instanceof MinecraftServer) ||
                     (!cmdAnnot.nonPlayers() && sender instanceof RConConsoleSource) ||
                     (!cmdAnnot.nonPlayers() && sender instanceof CommandBlockLogic)) {
-                throw new CommandException("commands.generic.permission");
+                try {
+                    throw new CommandException("commands.generic.permission");
+                } catch (CommandException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -141,7 +145,11 @@ public class CommandManager {
             }
             if(!result) {
                 // If the first permission breach did not allow the method to be called then call is aborted
-                throw new CommandException("commands.generic.permission");
+                try {
+                    throw new CommandException("commands.generic.permission");
+                } catch (CommandException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

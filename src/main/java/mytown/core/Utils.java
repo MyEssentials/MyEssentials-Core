@@ -27,7 +27,7 @@ public class Utils {
         if(player.getGameProfile() == null)
             return false; // TODO: Could be for fake players. Still not sure if I should allow it.
 
-        UserListOps ops = MinecraftServer.getServer().getConfigurationManager().func_152603_m();
+        UserListOps ops = MinecraftServer.getServer().getConfigurationManager().getOppedPlayers();
         try {
             Class clazz = Class.forName("net.minecraft.server.management.UserList");
             Method method = clazz.getDeclaredMethod("func_152692_d", Object.class);

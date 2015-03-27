@@ -2,16 +2,16 @@ package mytown.core;
 
 import java.io.File;
 
-import cpw.mods.fml.relauncher.Side;
 import mytown.core.utils.Log;
 import mytown.core.utils.config.ConfigProcessor;
 import net.minecraftforge.common.config.Configuration;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = "MyEssentials-Core", name = "MyEssentials-Core", version = "2.0", dependencies = "required-after:Forge", acceptableRemoteVersions = "*")
 public class MyEssentialsCore {
@@ -22,7 +22,7 @@ public class MyEssentialsCore {
 	public Log log;
 	public Configuration config;
 
-	@EventHandler
+	@Mod.EventHandler
 	public void preinit(FMLPreInitializationEvent ev) {
 		log = new Log(ev.getModLog());
 
@@ -35,10 +35,4 @@ public class MyEssentialsCore {
 		FMLCommonHandler.instance().bus().register(new PlayerTracker());
 	}
 
-	@EventHandler
-	public void serverAboutToStart(FMLServerAboutToStartEvent ev) {
-        //Used to decide side to prevent this from erroring out if someone decides to use this on a client (eg development testing)
-        if(ev.getSide() == Side.SERVER)
-		    MyEssentialsCore.IS_MCPC = ev.getServer().getServerModName().contains("mcpc");
-	}
 }
