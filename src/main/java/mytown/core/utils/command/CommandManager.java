@@ -235,10 +235,8 @@ public class CommandManager {
             // Check if people try to tab on something that doesn't have any more arguments
             if(commandCompletionKeys.get(perm).length <= argNumber)
                 return null;
-            //MyTownCore.Instance.log.info("Found key: " + commandCompletionKeys.get(perm)[argNumber]);
 
             List<String> completion = new ArrayList<String>();
-            //MyTownCore.Instance.log.info("Searching completion for : " + args.get(args.size() - 1));
             for(String p : completionMap.get(commandCompletionKeys.get(perm)[argNumber])) {
                 if(p.toLowerCase().startsWith(args.get(args.size() - 1).toLowerCase())) {
                     completion.add(p);

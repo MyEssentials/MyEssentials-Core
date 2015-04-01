@@ -102,7 +102,7 @@ public class Localization {
         if(localized != null) {
             for(int i = 0; i < localized.length(); i++) {
                 if(localized.charAt(i) == '&') {
-                    if(EnumChatFormatting.valueOf(colorMap.get(localized.charAt(i+1))) != null) {
+                    if(colorMap.get(localized.charAt(i+1)) != null && EnumChatFormatting.valueOf(colorMap.get(localized.charAt(i+1))) != null) {
                         localized = localized.substring(0, i) + EnumChatFormatting.valueOf(colorMap.get(localized.charAt(i + 1))) + localized.substring(i + 2);
                     } else {
                         localized = localized.substring(0, i) + localized.substring(i+2);

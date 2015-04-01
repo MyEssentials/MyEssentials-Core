@@ -1,9 +1,15 @@
 package mytown.core;
 
+import mytown.core.utils.teleport.EssentialsTeleporter;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.UserList;
 import net.minecraft.server.management.UserListOps;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 
 import java.lang.reflect.Method;
 
@@ -40,5 +46,23 @@ public class Utils {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * Teleports player to the dimension without creating any nether portals of sorts.
+     * Most of it is code from Delpi (from minecraftforge forums). Thank you!
+     */
+    public static void teleport(Entity entity, int dim, double x, double y, double z) {
+        World world = DimensionManager.getWorld(dim);
+        EntityPlayerMP playerMP = (EntityPlayerMP) entity;
+        // Offset locations for accuracy
+        x = x + 0.5d;
+        y = y + 1.0d;
+        z = z + 0.5d;
+        entity.setPosition(x, y, z);
+        entity.motionX = entity.motionY = entity.motionZ = 0.0D;
+        if (entity.worldObj.provider.dimensionId != dim) {
+            playerMP.mcServer.getConfigurationManager().transferPlayerToDimension(playerMP, dim, new EssentialsTeleporter((WorldServer)world));
+        }
     }
 }
