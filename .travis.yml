@@ -1,0 +1,11 @@
+language: java
+notifications:
+  email: false
+  irc:
+    channels:
+      - "irc.esper.net#MyTown"
+    template:
+      - "%{repository_name} (%{branch}): %{commit_message} - %{author}"
+      - "Result: %{result}"
+      - "Change view: %{compare_url}"
+      - "Build details: %{build_url}"
