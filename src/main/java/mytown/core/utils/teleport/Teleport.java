@@ -2,7 +2,11 @@ package mytown.core.utils.teleport;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 
 /**
  * @author Joe Goett
@@ -23,8 +27,9 @@ public class Teleport {
 
     //Used when a player is riding an entity. eg pig, horse
     public void teleport(EntityPlayer pl, boolean canRide){
-        if (pl.dimension != dim)
-            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) pl, dim);
+        if (pl.dimension != dim) {
+            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP)pl, dim, new EssentialsTeleporter(DimensionManager.getWorld(dim)));
+        }
         if(pl.isRiding() && pl.ridingEntity != null  && pl.ridingEntity.isEntityAlive() && canRide) {
             pl.ridingEntity.setPosition(x, y, z);
             pl.ridingEntity.setPositionAndRotation(x, y, z, yaw, pitch);
