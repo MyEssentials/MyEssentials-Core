@@ -14,7 +14,7 @@ public class ConfigProcessor {
 	/**
 	 * Maps classes to the appropriate Property.Type
 	 */
-	private static Map<Class<?>, Property.Type> CONFIG_TYPES = ImmutableMap.<Class<?>, Property.Type> builder().put(Integer.class, Property.Type.INTEGER).put(int.class, Property.Type.INTEGER).put(Integer[].class, Property.Type.INTEGER).put(int[].class, Property.Type.INTEGER).put(Double.class, Property.Type.DOUBLE).put(double.class, Property.Type.DOUBLE).put(Double[].class, Property.Type.DOUBLE).put(double[].class, Property.Type.DOUBLE).put(Boolean.class, Property.Type.BOOLEAN).put(boolean.class, Property.Type.BOOLEAN).put(Boolean[].class, Property.Type.BOOLEAN).put(boolean[].class, Property.Type.BOOLEAN).put(String.class, Property.Type.STRING).put(String[].class, Property.Type.STRING).build();
+	private static Map<Class<?>, Property.Type> CONFIG_TYPES = ImmutableMap.<Class<?>, Property.Type> builder().put(Integer.class, Property.Type.INTEGER).put(int.class, Property.Type.INTEGER).put(Integer[].class, Property.Type.INTEGER).put(int[].class, Property.Type.INTEGER).put(Double.class, Property.Type.DOUBLE).put(double.class, Property.Type.DOUBLE).put(Double[].class, Property.Type.DOUBLE).put(double[].class, Property.Type.DOUBLE).put(Float.class, Property.Type.DOUBLE).put(float.class, Property.Type.DOUBLE).put(Float[].class, Property.Type.DOUBLE).put(float[].class, Property.Type.DOUBLE).put(Boolean.class, Property.Type.BOOLEAN).put(boolean.class, Property.Type.BOOLEAN).put(Boolean[].class, Property.Type.BOOLEAN).put(boolean[].class, Property.Type.BOOLEAN).put(String.class, Property.Type.STRING).put(String[].class, Property.Type.STRING).build();
 
 	private static Log log;
 	
@@ -103,11 +103,20 @@ public class ConfigProcessor {
 					}
 					break;
 				case DOUBLE:
-					if (f.getType().isArray()) {
-						f.set(obj, config.get(category, key, (double[]) defaultValue, comment).getDoubleList());
-					} else {
-						f.set(obj, config.get(category, key, (Double) defaultValue, comment).getDouble((Double) defaultValue));
-					}
+                    if (f.getType().equals(Float.class) || f.getType().equals(float.class)) {
+                        if (f.getType().isArray()) {
+                            // TODO Implement float arrays
+                            //f.set(obj, (float[]) config.get(category, key, (double[]) defaultValue, comment).getDoubleList());
+                        } else {
+                            f.set(obj, (float) config.get(category, key, (Float) defaultValue, comment).getDouble((Float) defaultValue));
+                        }
+                    } else {
+                        if (f.getType().isArray()) {
+                            f.set(obj, config.get(category, key, (double[]) defaultValue, comment).getDoubleList());
+                        } else {
+                            f.set(obj, config.get(category, key, (Double) defaultValue, comment).getDouble((Double) defaultValue));
+                        }
+                    }
 					break;
 				case BOOLEAN:
 					if (f.getType().isArray()) {
