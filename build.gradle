@@ -15,6 +15,7 @@ buildscript {
     }
 }
 
+// Load Configs
 ext.configFile = file "build.properties"
 
 ext.configFile.withReader {
@@ -23,16 +24,22 @@ ext.configFile.withReader {
     ext.config = new ConfigSlurper().parse prop
 }
 
+if (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty()) {
+    ext.config.build_number = System.env.TRAVIS_TAG.substring(0, System.env.TRAVIS_TAG.length()-1)
+    ext.config.build_type = System.env.TRAVIS_TAG.substring(System.env.TRAVIS_TAG.length()-1)
+} else {
+    ext.config.build_number = "0.0"
+    ext.config.build_type = "r"
+}
+
+// Apply Plugins
+apply plugin: "curseforge"
 apply plugin: "forge"
 
-version = "${config.minecraft_version}-${config.mod_version}.${config.build_number}"
+// Configure Everything
+version = "${config.minecraft_version}-${config.build_number}${config.build_type}"
 group = config.group
 archivesBaseName = config.archivesBaseName
-
-dependencies {
-    testCompile "junit:junit:4.11"
-    compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
-}
 
 minecraft {
     version = "${config.minecraft_version}-${config.forge_version}"
@@ -40,6 +47,13 @@ minecraft {
     replace "@VERSION@", "${project.version}"
 }
 
+// Setup Deps
+dependencies {
+    testCompile "junit:junit:4.11"
+    compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
+}
+
+// Process Resources, injecting version numbers in
 processResources {
     inputs.property "mod_version", project.version
     inputs.property "minecraft_version", project.minecraft.version
@@ -54,6 +68,7 @@ processResources {
     }
 }
 
+// Modify jar. Generate custom manifest
 jar {
     classifier = 'universal'
     manifest {
@@ -62,4 +77,18 @@ jar {
             'FMLCorePluginContainsFMLMod': 'true'
         )
     }
+}
+
+// Setup Curse Upload task
+curse {
+    apiKey = System.env.CURSEFORGEKEY
+    projectId = config.project_id
+    changelog = "" // TODO Add changelog support
+    releaseType = config.build_type.equals('a') ? "alpha" : (config.build_type.equals('b') ? "beta" : "release")
+}
+
+// Only allow if built by Travis-CI
+if (System.env.CURSEFORGEKEY != null && System.env.TRAVIS == "true" && System.env.TRAVIS_PULL_REQUEST == "false" && (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty())) {
+    tasks.build.dependsOn("curse")
+    tasks.assemble.dependsOn("curse")
 }
