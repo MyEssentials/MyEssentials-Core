@@ -15,6 +15,13 @@ buildscript {
     }
 }
 
+repositories {
+    maven {
+        name = "bukkit-repo"
+        url = "http://repo.bukkit.org/content/groups/public/"
+    }
+}
+
 // Load Configs
 ext.configFile = file "build.properties"
 
@@ -51,6 +58,9 @@ minecraft {
 dependencies {
     testCompile "junit:junit:4.11"
     compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
+
+    // Deps for Bukkit/Cauldron compat
+    compile "org.bukkit:bukkit:1.7.9-R0.2"
 }
 
 // Process Resources, injecting version numbers in
