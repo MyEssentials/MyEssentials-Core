@@ -1,20 +1,14 @@
 package mytown.core.utils.economy;
 
 import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.registry.GameRegistry;
+import mytown.core.bukkit.BukkitCompat;
 import mytown.core.utils.ItemUtils;
 import mytown.core.utils.PlayerUtils;
 import mytown.core.utils.economy.forgeessentials.ForgeessentialsEconomy;
-import mytown.core.utils.economy.vault.VaultEconomy;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.UUID;
 
@@ -30,16 +24,7 @@ public class Economy {
         this.costItemName = costItemName;
         if(costItemName.equals("$Vault")) {
             if (MinecraftServer.getServer().getServerModName().contains("cauldron") || MinecraftServer.getServer().getServerModName().contains("mcpc")) {
-                Server server = Bukkit.getServer();
-
-                RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> economyProvider = server.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-                if (economyProvider != null) {
-                    VaultEconomy.econ = economyProvider.getProvider();
-                    if (VaultEconomy.econ != null && VaultEconomy.econ.isEnabled()) {
-                        econManagerClass = (Class<IEconManager>) ((Class<?>) VaultEconomy.class);
-                        //MyTown.instance.log.info("Enabling Vault economy system!");
-                    }
-                }
+                econManagerClass = BukkitCompat.initEconomy();
             }
         } else if(costItemName.equals("$ForgeEssentials")) {
             econManagerClass = (Class<IEconManager>) ((Class<?>) ForgeessentialsEconomy.class);
