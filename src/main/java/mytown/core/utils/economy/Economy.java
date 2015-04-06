@@ -1,10 +1,17 @@
 package mytown.core.utils.economy;
 
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.registry.GameRegistry;
+import mytown.core.utils.ItemUtils;
 import mytown.core.utils.PlayerUtils;
 import mytown.core.utils.economy.forgeessentials.ForgeessentialsEconomy;
 import mytown.core.utils.economy.vault.VaultEconomy;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -15,6 +22,7 @@ import java.util.UUID;
  * @author Joe Goett
  */
 public class Economy {
+    private static Logger log = LogManager.getLogger("MyEconomy");
     private String costItemName;
     public Class<IEconManager> econManagerClass;
 
@@ -49,7 +57,7 @@ public class Economy {
             manager.setUUID(uuid);
             return manager;
         } catch(Exception ex) {
-            //MyTown.instance.log.info("Failed to create IEconManager", ex);
+            log.info("Failed to create IEconManager", ex);
         }
 
         return null; // Hopefully this doesn't break things...
@@ -86,5 +94,43 @@ public class Economy {
         } else {
             PlayerUtils.giveItemToPlayer(player, costItemName, amount);
         }
+    }
+
+    /**
+     * Gets the currency string currently used.
+     */
+    public String getCurrency(int amount) {
+        if(costItemName.equals("$ForgeEssentials") || costItemName.equals("$Vault")) {
+            if (econManagerClass == null) {
+                return null;
+            }
+            try {
+                IEconManager manager = econManagerClass.newInstance();
+                return manager.currency(amount);
+            } catch(Exception ex) {
+                log.info("Failed to create IEconManager", ex);
+            }
+            return "$";
+
+        } else {
+            return ItemUtils.itemStackFromName(costItemName).getDisplayName() + (amount == 1 ? "" : "s");
+        }
+    }
+
+    /**
+     * Returns true if the string matches one of the implemented Economy systems.
+     * Returns false if the item based Economy is used.
+     */
+    public boolean checkCurrencyString(String currencyString) {
+        if(currencyString.equals("$ForgeEssentials")) {
+            if(!Loader.isModLoaded("ForgeEssentials") || econManagerClass == null)
+                throw new RuntimeException("ForgeEssentials economy failed to initialize.");
+            return true;
+        } else if(currencyString.equals("$Vault")) {
+            if(econManagerClass == null)
+                throw new RuntimeException("Vault economy failed to initialize");
+            return true;
+        }
+        return false;
     }
 }
