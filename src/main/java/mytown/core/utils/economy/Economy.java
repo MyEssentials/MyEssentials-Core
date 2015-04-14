@@ -1,6 +1,7 @@
 package mytown.core.utils.economy;
 
 import cpw.mods.fml.common.Loader;
+import mytown.core.MyEssentialsCore;
 import mytown.core.bukkit.BukkitCompat;
 import mytown.core.utils.ItemUtils;
 import mytown.core.utils.PlayerUtils;
@@ -9,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import scala.reflect.runtime.ThreadLocalStorage;
 
 import java.util.UUID;
 
@@ -16,7 +18,6 @@ import java.util.UUID;
  * @author Joe Goett
  */
 public class Economy {
-    private static Logger log = LogManager.getLogger("MyEconomy");
     private String costItemName;
     public Class<IEconManager> econManagerClass;
 
@@ -26,9 +27,13 @@ public class Economy {
             if (MinecraftServer.getServer().getServerModName().contains("cauldron") || MinecraftServer.getServer().getServerModName().contains("mcpc")) {
                 econManagerClass = BukkitCompat.initEconomy();
             }
+            if(econManagerClass == null)
+                throw new RuntimeException("Failed to initialize Vault economy!");
         } else if(costItemName.equals("$ForgeEssentials")) {
-            econManagerClass = (Class<IEconManager>) ((Class<?>) ForgeessentialsEconomy.class);
-            //MyTown.instance.log.info("Enabling ForgeEssentials economy system!");
+            if(Loader.isModLoaded("ForgeEssentials"))
+                econManagerClass = (Class<IEconManager>) ((Class<?>) ForgeessentialsEconomy.class);
+            if(econManagerClass == null)
+                throw new RuntimeException("Failed to initialize ForgeEssentials economy!");
         }
     }
 
@@ -36,13 +41,12 @@ public class Economy {
         if (econManagerClass == null) {
             return null;
         }
-
         try {
             IEconManager manager = econManagerClass.newInstance();
             manager.setUUID(uuid);
             return manager;
         } catch(Exception ex) {
-            log.info("Failed to create IEconManager", ex);
+            MyEssentialsCore.Instance.log.info("Failed to create IEconManager", ex);
         }
 
         return null; // Hopefully this doesn't break things...
@@ -53,7 +57,7 @@ public class Economy {
      * Returns false if player doesn't have the money necessary
      */
     public boolean takeMoneyFromPlayer(EntityPlayer player, int amount) {
-        if(costItemName.startsWith("$")) {
+        if(costItemName.equals("$ForgeEssentials") || costItemName.equals("$Vault")) {
             IEconManager eco = economyManagerForUUID(player.getUniqueID());
             if (eco == null) return false;
             int wallet = eco.getWallet();
@@ -72,7 +76,7 @@ public class Economy {
      * Returns false if player doesn't have the money necessary
      */
     public void giveMoneyToPlayer(EntityPlayer player, int amount) {
-        if (costItemName.startsWith("$")) {
+        if (costItemName.equals("$ForgeEssentials") || costItemName.equals("$Vault")) {
             IEconManager eco = economyManagerForUUID(player.getUniqueID());
             if (eco == null) return;
             eco.addToWallet(amount);
@@ -93,29 +97,12 @@ public class Economy {
                 IEconManager manager = econManagerClass.newInstance();
                 return manager.currency(amount);
             } catch(Exception ex) {
-                log.info("Failed to create IEconManager", ex);
+                MyEssentialsCore.Instance.log.info("Failed to create IEconManager", ex);
             }
             return "$";
 
         } else {
             return ItemUtils.itemStackFromName(costItemName).getDisplayName() + (amount == 1 ? "" : "s");
         }
-    }
-
-    /**
-     * Returns true if the string matches one of the implemented Economy systems.
-     * Returns false if the item based Economy is used.
-     */
-    public boolean checkCurrencyString(String currencyString) {
-        if(currencyString.equals("$ForgeEssentials")) {
-            if(!Loader.isModLoaded("ForgeEssentials") || econManagerClass == null)
-                throw new RuntimeException("ForgeEssentials economy failed to initialize.");
-            return true;
-        } else if(currencyString.equals("$Vault")) {
-            if(econManagerClass == null)
-                throw new RuntimeException("Vault economy failed to initialize");
-            return true;
-        }
-        return false;
     }
 }
