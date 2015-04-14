@@ -27,11 +27,11 @@ public class Utils {
      */
     @SuppressWarnings("unchecked")
     public static boolean isOp(EntityPlayer player) {
-		if(player == null) // TODO: It appears fakeplayers can be null?
+		if(player == null)
             return false;
         
         if(player.getGameProfile() == null)
-            return false; // TODO: Could be for fake players. Still not sure if I should allow it.
+            return false;
 
         UserListOps ops = MinecraftServer.getServer().getConfigurationManager().func_152603_m();
         try {

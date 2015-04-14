@@ -145,7 +145,6 @@ public class CommandManager {
             }
         }
 
-        // Try it twice like a gangsta
         try {
             try {
                 m.invoke(null, sender, args);
