@@ -1,7 +1,7 @@
 package mytown.core.utils.command;
 
-import mytown.core.Utils;
 import mytown.core.utils.Assert;
+import mytown.core.utils.PlayerUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -79,7 +79,7 @@ public class CommandModel extends CmdBase {
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
         // Return if player is not allowed to use this command
-        if(sender instanceof EntityPlayer && commandAnnot.opsOnlyAccess() && !Utils.isOp((EntityPlayer)sender))
+        if(sender instanceof EntityPlayer && commandAnnot.opsOnlyAccess() && !PlayerUtils.isOp((EntityPlayer) sender))
             throw new CommandException("commands.generic.permission");
 
         CommandManager.commandCall(getPermissionNode(), sender, Arrays.asList(args));

@@ -4,6 +4,9 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+/**
+ * All utilities that are exclusively for Items and ItemStacks go here.
+ */
 public class ItemUtils {
     /**
      * Returns the item from a String that has this pattern: (modid):(unique_name)[:meta]

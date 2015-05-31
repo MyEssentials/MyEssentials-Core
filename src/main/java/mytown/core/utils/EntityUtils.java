@@ -1,11 +1,17 @@
 package mytown.core.utils;
 
+import mytown.core.utils.teleport.EssentialsTeleporter;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 
 /**
  * Created by joe on 4/5/15.
+ * All utilities that are exclusively for Entity and not for EntityPlayer go here.
  */
 public class EntityUtils {
     /**

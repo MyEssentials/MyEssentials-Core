@@ -1,18 +1,28 @@
 package mytown.core.utils;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import mytown.core.MyEssentialsCore;
+import mytown.core.utils.teleport.EssentialsTeleporter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.UserList;
+import net.minecraft.server.management.UserListOps;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Joe Goett
+ * All utilities that are exclusively for EntityPlayerMP or EntityPlayer go here.
  */
 public class PlayerUtils {
     /**
@@ -124,5 +134,51 @@ public class PlayerUtils {
                 ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, slot.slotNumber, player.inventory.mainInventory[i]));
             }
         }
+    }
+
+    /**
+     * Teleports player to the dimension without creating any nether portals of sorts.
+     * Most of it is code from Delpi (from minecraftforge forums). Thank you!
+     */
+    public static void teleport(EntityPlayerMP player, int dim, double x, double y, double z) {
+        World world = DimensionManager.getWorld(dim);
+        // Offset locations for accuracy
+        x = x + 0.5d;
+        y = y + 1.0d;
+        z = z + 0.5d;
+        player.setPosition(x, y, z);
+        player.motionX = player.motionY = player.motionZ = 0.0D;
+        if (player.worldObj.provider.dimensionId != dim) {
+            player.mcServer.getConfigurationManager().transferPlayerToDimension(player, dim, new EssentialsTeleporter((WorldServer)world));
+        }
+    }
+
+    /**
+     * Returns whether or not a player is OP.
+     *
+     * @param player
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static boolean isOp(EntityPlayer player) {
+		if(player == null)
+            return false;
+
+        if(player.getGameProfile() == null)
+            return false;
+
+        UserListOps ops = MinecraftServer.getServer().getConfigurationManager().func_152603_m();
+        try {
+            Class clazz = Class.forName("net.minecraft.server.management.UserList");
+            Method method = clazz.getDeclaredMethod("func_152692_d", Object.class);
+            method.setAccessible(true);
+            return (Boolean)method.invoke(ops, player.getGameProfile());
+        } catch (Exception e) {
+            for(Method mt : UserList.class.getMethods()) {
+                MyEssentialsCore.Instance.log.info(mt.getName());
+            }
+            e.printStackTrace();
+        }
+        return false;
     }
 }
