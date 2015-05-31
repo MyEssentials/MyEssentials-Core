@@ -9,7 +9,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
 /**
- * @author Joe Goett
+ * Retains the needed information for the action of teleporting a player to a certain position.
  */
 public class Teleport {
     private int dim;

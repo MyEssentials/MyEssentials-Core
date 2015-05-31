@@ -8,7 +8,6 @@ import net.minecraft.util.IChatComponent;
 
 /**
  * Helper to build JSON IChatComponents
- * @author Joe Goett
  */
 public class JsonMessageBuilder {
     private JsonMessageBuilder parentBuilder = null;

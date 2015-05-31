@@ -155,9 +155,6 @@ public class PlayerUtils {
 
     /**
      * Returns whether or not a player is OP.
-     *
-     * @param player
-     * @return
      */
     @SuppressWarnings("unchecked")
     public static boolean isOp(EntityPlayer player) {

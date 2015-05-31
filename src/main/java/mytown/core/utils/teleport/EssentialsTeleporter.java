@@ -5,7 +5,6 @@ import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
 
 /**
- * Created by AfterWind on 4/1/2015.
  * Used for teleporting a player to another dimension
  * Most of it is code from Delpi (from minecraftforge forums). Thank you!
  */

@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 
 /**
  * Test the localization system
- * @author Joe Goett
  */
 public class LocalizationTest {
     private static Localization local = null;

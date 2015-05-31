@@ -1,12 +1,11 @@
-package mytown.core;
+package mytown.core.utils;
 
+import mytown.core.Localization;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
 
 /**
  * Useful methods for Chat
- * 
- * @author Joe Goett
  */
 public class ChatUtils {
 	/**
@@ -30,7 +29,7 @@ public class ChatUtils {
 
 	/**
 	 * Sends a localized msg to sender
-     * @see mytown.core.ChatUtils#sendChat(net.minecraft.command.ICommandSender, String, Object...)
+     * @see ChatUtils#sendChat(net.minecraft.command.ICommandSender, String, Object...)
 	 * 
 	 * @param sender
 	 * @param local

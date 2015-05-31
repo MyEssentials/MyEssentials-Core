@@ -14,9 +14,6 @@ import scala.reflect.runtime.ThreadLocalStorage;
 
 import java.util.UUID;
 
-/**
- * @author Joe Goett
- */
 public class Economy {
     private String costItemName;
     public Class<IEconManager> econManagerClass;

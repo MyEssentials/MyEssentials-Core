@@ -14,8 +14,6 @@ import java.util.Map;
 
 /**
  * Loads and handles Localization files
- * 
- * @author Joe Goett
  */
 public class Localization {
 	/**

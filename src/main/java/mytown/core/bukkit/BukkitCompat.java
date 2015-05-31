@@ -8,7 +8,6 @@ import org.bukkit.Server;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 /**
- * Created by AfterWind on 4/6/2015.
  * Everything related to Bukkit, putting this in a separate class since it will crash if server doesn't have bukkit.
  */
 public class BukkitCompat {

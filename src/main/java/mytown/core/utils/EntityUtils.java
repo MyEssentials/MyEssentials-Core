@@ -10,7 +10,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
 /**
- * Created by joe on 4/5/15.
  * All utilities that are exclusively for Entity and not for EntityPlayer go here.
  */
 public class EntityUtils {

@@ -6,7 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by AfterWind on 8/28/2014.
  * CommandNode annotation, has parent
  */
 

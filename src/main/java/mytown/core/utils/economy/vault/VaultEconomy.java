@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * @author Joe Goett
+ * Economy implementation for the Vault API
  */
 public class VaultEconomy implements IEconManager {
     public static Economy econ;
