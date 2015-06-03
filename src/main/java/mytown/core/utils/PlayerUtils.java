@@ -3,7 +3,6 @@ package mytown.core.utils;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.core.MyEssentialsCore;
-import mytown.core.utils.teleport.EssentialsTeleporter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Slot;
@@ -18,20 +17,25 @@ import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.server.management.UserList;
 import net.minecraft.server.management.UserListOps;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author Joe Goett
  * All utilities that are exclusively for EntityPlayerMP or EntityPlayer go here.
  */
 public class PlayerUtils {
+
+    private PlayerUtils() {
+
+    }
+
     /**
      * Takes the amount of items specified.
      * Returns false if player doesn't have the items necessary
@@ -108,7 +112,6 @@ public class PlayerUtils {
     public static void giveItemToPlayer(EntityPlayer player, Item item, int amount, int meta) {
         for (int left = amount; left > 0; left -= 64) {
             ItemStack stack = new ItemStack(item, left > 64 ? 64 : left, meta);
-            //stack = addToInventory(player.inventory, stack);
             int i = -1;
             for(int j = 0; j < player.inventory.mainInventory.length; j++) {
                 if (player.inventory.mainInventory[j] != null && player.inventory.mainInventory[j].getItem() == item && player.inventory.mainInventory[j].getItemDamage() == meta &&
@@ -132,7 +135,7 @@ public class PlayerUtils {
 
             if (i == -1) {
                 // Drop it on the ground if it fails to add to the inventory
-                EntityUtils.dropAsEntity(player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ, stack);
+                WorldUtils.dropAsEntity(player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ, stack);
             } else {
 
                 // get the actual inventory Slot:
@@ -165,12 +168,13 @@ public class PlayerUtils {
     /**
      * krwminer's interdimensional teleport code.
      */
+    @SuppressWarnings("unchecked")
     public static void transferPlayerToDimension(EntityPlayerMP player, int dim, double x, double y, double z) {
         ServerConfigurationManager configManager = player.mcServer.getConfigurationManager();
         int oldDimension = player.dimension;
 
         WorldServer oldWorldServer = configManager.getServerInstance().worldServerForDimension(oldDimension);
-        WorldServer newWorldServer = configManager.getServerInstance().worldServerForDimension(0);
+        WorldServer newWorldServer = configManager.getServerInstance().worldServerForDimension(dim);
 
         player.dimension = dim;
         player.playerNetServerHandler.sendPacket(new S07PacketRespawn(player.dimension, player.worldObj.difficultySetting, player.worldObj.getWorldInfo().getTerrainType(), player.theItemInWorldManager.getGameType()));
@@ -191,9 +195,7 @@ public class PlayerUtils {
         player.theItemInWorldManager.setWorld(newWorldServer);
         configManager.updateTimeAndWeatherForPlayer(player, newWorldServer);
         configManager.syncPlayerInventory(player);
-        Iterator<PotionEffect> iterator = player.getActivePotionEffects().iterator();
-        while (iterator.hasNext()) {
-            PotionEffect potioneffect = iterator.next();
+        for (PotionEffect potioneffect : (Iterable<PotionEffect>) player.getActivePotionEffects()) {
             player.playerNetServerHandler.sendPacket(new S1DPacketEntityEffect(player.getEntityId(), potioneffect));
         }
         FMLCommonHandler.instance().firePlayerChangedDimensionEvent(player, oldDimension, dim);
@@ -222,7 +224,7 @@ public class PlayerUtils {
      */
     @SuppressWarnings("unchecked")
     public static boolean isOp(EntityPlayer player) {
-		if(player == null)
+        if(player == null)
             return false;
 
         if(player.getGameProfile() == null)
@@ -236,10 +238,35 @@ public class PlayerUtils {
             return (Boolean)method.invoke(ops, player.getGameProfile());
         } catch (Exception e) {
             for(Method mt : UserList.class.getMethods()) {
-                MyEssentialsCore.Instance.log.info(mt.getName());
+                MyEssentialsCore.Instance.LOG.info(mt.getName());
             }
-            e.printStackTrace();
+            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
         }
         return false;
+    }
+
+    /**
+     * Gets the position at which the player is looking
+     */
+    public static MovingObjectPosition getMovingObjectPositionFromPlayer(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_) {
+        float f = 1.0F;
+        float f1 = p_77621_2_.prevRotationPitch + (p_77621_2_.rotationPitch - p_77621_2_.prevRotationPitch) * f;
+        float f2 = p_77621_2_.prevRotationYaw + (p_77621_2_.rotationYaw - p_77621_2_.prevRotationYaw) * f;
+        double d0 = p_77621_2_.prevPosX + (p_77621_2_.posX - p_77621_2_.prevPosX) * (double) f;
+        double d1 = p_77621_2_.prevPosY + (p_77621_2_.posY - p_77621_2_.prevPosY) * (double) f + (double) (p_77621_1_.isRemote ? p_77621_2_.getEyeHeight() - p_77621_2_.getDefaultEyeHeight() : p_77621_2_.getEyeHeight()); // isRemote check to revert changes to ray trace position due to adding the eye height clientside and player yOffset differences
+        double d2 = p_77621_2_.prevPosZ + (p_77621_2_.posZ - p_77621_2_.prevPosZ) * (double) f;
+        Vec3 vec3 = Vec3.createVectorHelper(d0, d1, d2);
+        float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
+        float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
+        float f5 = -MathHelper.cos(-f1 * 0.017453292F);
+        float f6 = MathHelper.sin(-f1 * 0.017453292F);
+        float f7 = f4 * f5;
+        float f8 = f3 * f5;
+        double d3 = 5.0D;
+        if (p_77621_2_ instanceof EntityPlayerMP) {
+            d3 = ((EntityPlayerMP) p_77621_2_).theItemInWorldManager.getBlockReachDistance();
+        }
+        Vec3 vec31 = vec3.addVector((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
+        return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
     }
 }

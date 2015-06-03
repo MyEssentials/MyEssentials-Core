@@ -100,7 +100,7 @@ public class DepLoader implements IFMLLoadingPlugin, IFMLCallHook {
             addPropertyChangeListener(new PropertyChangeListener() {
                 @Override
                 public void propertyChange(PropertyChangeEvent evt) {
-                    if (evt.getSource() == Downloader.this && evt.getPropertyName() == VALUE_PROPERTY) {
+                    if (evt.getSource() == Downloader.this && evt.getPropertyName().equals(VALUE_PROPERTY)) {
                         requestClose("This will stop minecraft from launching\nAre you sure you want to do this?");
                     }
                 }

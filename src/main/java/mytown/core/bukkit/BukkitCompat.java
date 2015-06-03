@@ -1,7 +1,7 @@
 package mytown.core.bukkit;
 
-import mytown.core.utils.economy.IEconManager;
-import mytown.core.utils.economy.vault.VaultEconomy;
+import mytown.core.economy.IEconManager;
+import mytown.core.economy.vault.VaultEconomy;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -12,15 +12,19 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  */
 public class BukkitCompat {
 
-    public static Class<IEconManager> initEconomy() {
+    private BukkitCompat() {
+
+    }
+
+    public static Class<? extends IEconManager> initEconomy() {
         Server server = Bukkit.getServer();
 
         RegisteredServiceProvider<Economy> economyProvider = server.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (economyProvider != null) {
             VaultEconomy.econ = economyProvider.getProvider();
             if (VaultEconomy.econ != null && VaultEconomy.econ.isEnabled()) {
-                return (Class<IEconManager>) ((Class<?>) VaultEconomy.class);
-                //MyTown.instance.log.info("Enabling Vault economy system!");
+                return VaultEconomy.class;
+                //return (Class<IEconManager>) ((Class<?>) VaultEconomy.class);
             }
         }
         return null;

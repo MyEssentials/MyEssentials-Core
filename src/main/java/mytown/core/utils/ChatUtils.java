@@ -8,15 +8,16 @@ import net.minecraft.util.ChatComponentText;
  * Useful methods for Chat
  */
 public class ChatUtils {
-	/**
-	 * Sends msg to sender.<br />
+
+	private ChatUtils() {
+
+	}
+
+    /**
+     * Sends msg to sender.<br />
      * This method will split the message at newline chars (\n) and send each line as a separate message.
-	 * 
-	 * @param sender
-	 * @param msg
-	 * @param args
-	 */
-	public static void sendChat(ICommandSender sender, String msg, Object... args) {
+     */
+    public static void sendChat(ICommandSender sender, String msg, Object... args) {
         String[] lines;
         if(args == null)
             lines = msg.split("\\\\n");
@@ -25,41 +26,30 @@ public class ChatUtils {
         for (String line : lines) {
             sender.addChatMessage(new ChatComponentText(line));
         }
-	}
+    }
 
-	/**
-	 * Sends a localized msg to sender
+    /**
+     * Sends a localized msg to sender
      * @see ChatUtils#sendChat(net.minecraft.command.ICommandSender, String, Object...)
-	 * 
-	 * @param sender
-	 * @param local
-	 * @param key
-	 * @param args
-	 */
-	public static void sendLocalizedChat(ICommandSender sender, Localization local, String key, Object... args) {
-		ChatUtils.sendChat(sender, local.getLocalization(key), args);
-	}
-	
-	/**
-	 * Returns true if arg equals on, enable, true, or t. False otherwise.
-	 * 
-	 * @param arg
-	 * @param caseSensitive
-	 * @return
-	 */
+     */
+    public static void sendLocalizedChat(ICommandSender sender, Localization local, String key, Object... args) {
+        ChatUtils.sendChat(sender, local.getLocalization(key), args);
+    }
+
+    /**
+     * Returns true if arg equals on, enable, true, or t. False otherwise.
+     */
     // TODO: Overside equal maybe?
-	// TODO Change name/change location?
-	public static boolean equalsOn(String arg, boolean caseSensitive) {
-		if (!caseSensitive) arg = arg.toLowerCase();
-		return arg.equals("on") || arg.equals("enable") || arg.equals("true") || arg.equals("t");
-	}
-	
-	/**
-	 * Same as {@link ChatUtils#equalsOn(String, boolean)}, but is not case sensitive
-	 * @param arg
-	 * @return
-	 */
-	public static boolean equalsOn(String arg) {
-		return equalsOn(arg, false);
-	}
+    // TODO Change name/change location?
+    public static boolean equalsOn(String arg, boolean caseSensitive) {
+        if (!caseSensitive) arg = arg.toLowerCase();
+        return arg.equals("on") || arg.equals("enable") || arg.equals("true") || arg.equals("t");
+    }
+
+    /**
+     * Same as {@link ChatUtils#equalsOn(String, boolean)}, but is not case sensitive
+     */
+    public static boolean equalsOn(String arg) {
+        return equalsOn(arg, false);
+    }
 }

@@ -8,6 +8,11 @@ import net.minecraft.item.ItemStack;
  * All utilities that are exclusively for Items and ItemStacks go here.
  */
 public class ItemUtils {
+
+    private ItemUtils() {
+
+    }
+
     /**
      * Returns the item from a String that has this pattern: (modid):(unique_name)[:meta]
      */
