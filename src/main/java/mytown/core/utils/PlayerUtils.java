@@ -170,7 +170,7 @@ public class PlayerUtils {
         int oldDimension = player.dimension;
 
         WorldServer oldWorldServer = configManager.getServerInstance().worldServerForDimension(oldDimension);
-        WorldServer newWorldServer = configManager.getServerInstance().worldServerForDimension(0);
+        WorldServer newWorldServer = configManager.getServerInstance().worldServerForDimension(dim);
 
         player.dimension = dim;
         player.playerNetServerHandler.sendPacket(new S07PacketRespawn(player.dimension, player.worldObj.difficultySetting, player.worldObj.getWorldInfo().getTerrainType(), player.theItemInWorldManager.getGameType()));
