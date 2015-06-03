@@ -9,9 +9,9 @@ import net.minecraft.util.ChatComponentText;
  */
 public class ChatUtils {
 
-	private ChatUtils() {
+    private ChatUtils() {
 
-	}
+    }
 
     /**
      * Sends msg to sender.<br />
@@ -43,7 +43,7 @@ public class ChatUtils {
     // TODO Change name/change location?
     public static boolean equalsOn(String arg, boolean caseSensitive) {
         if (!caseSensitive) arg = arg.toLowerCase();
-        return arg.equals("on") || arg.equals("enable") || arg.equals("true") || arg.equals("t");
+        return "on".equals(arg) || "enable".equals(arg) || "true".equals(arg) || "t".equals(arg);
     }
 
     /**

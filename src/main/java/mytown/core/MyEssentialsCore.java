@@ -16,8 +16,8 @@ import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 @Mod(modid = "MyEssentials-Core", name = "MyEssentials-Core", version = "2.0", dependencies = "required-after:Forge", acceptableRemoteVersions = "*")
 public class MyEssentialsCore {
     @Instance("MyEssentials-Core")
-    public static MyEssentialsCore Instance;
-    public static boolean IS_MCPC = false;
+    public static MyEssentialsCore instance;
+    public static boolean isMCPC = false;
 
     public Log LOG;
     public Configuration config;
@@ -39,6 +39,6 @@ public class MyEssentialsCore {
     public void serverAboutToStart(FMLServerAboutToStartEvent ev) {
         //Used to decide side to prevent this from erroring out if someone decides to use this on a client (eg development testing)
         if(ev.getSide() == Side.SERVER)
-            MyEssentialsCore.IS_MCPC = ev.getServer().getServerModName().contains("mcpc");
+            MyEssentialsCore.isMCPC = ev.getServer().getServerModName().contains("mcpc");
     }
 }

@@ -18,12 +18,12 @@ public class ForgeessentialsEconomy implements IEconManager {
         try {
             walletHandlerClass = Class.forName("com.forgeessentials.economy.WalletHandler");
         } catch (ClassNotFoundException e2) {
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(e2));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(e2));
         }
         try {
             walletHandlerObject = walletHandlerClass.newInstance();
         } catch (Exception ex) {
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
         }
     }
 
@@ -31,12 +31,12 @@ public class ForgeessentialsEconomy implements IEconManager {
         try {
             walletHandlerClass = Class.forName("com.forgeessentials.economy.WalletHandler");
         } catch (ClassNotFoundException e2) {
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(e2));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(e2));
         }
         try {
             walletHandlerObject = walletHandlerClass.newInstance();
         } catch (Exception ex) {
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
         }
     }
 
@@ -50,7 +50,7 @@ public class ForgeessentialsEconomy implements IEconManager {
         try {
             money = (Integer) walletHandlerClass.getDeclaredMethod("getWallet", UUID.class).invoke(walletHandlerObject, uuid);
         } catch (Exception ex) {
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
         }
 
         return money;
@@ -62,7 +62,7 @@ public class ForgeessentialsEconomy implements IEconManager {
         try {
             money = (String) walletHandlerClass.getDeclaredMethod("getMoneyString", UUID.class).invoke(walletHandlerObject, uuid);
         } catch (Exception ex) {
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
         }
         return money;
     }
@@ -72,7 +72,7 @@ public class ForgeessentialsEconomy implements IEconManager {
         try {
             walletHandlerClass.getDeclaredMethod("addToWallet", Integer.TYPE, UUID.class).invoke(walletHandlerObject, amountToAdd, uuid);
         } catch (Exception ex) {
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
         }
     }
 
@@ -82,7 +82,7 @@ public class ForgeessentialsEconomy implements IEconManager {
         try {
             result = (Boolean) walletHandlerClass.getDeclaredMethod("removeFromWallet", Integer.TYPE, UUID.class).invoke(walletHandlerObject, amountToSubtract, uuid);
         } catch (Exception ex) {
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
         }
         return result;
     }
@@ -92,7 +92,7 @@ public class ForgeessentialsEconomy implements IEconManager {
         try {
             walletHandlerClass.getDeclaredMethod("setWallet", Integer.TYPE, EntityPlayer.class).invoke(walletHandlerObject, setAmount, player);
         } catch (Exception ex) {
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
         }
     }
 
@@ -105,7 +105,7 @@ public class ForgeessentialsEconomy implements IEconManager {
         try {
             money = (String) walletHandlerClass.getDeclaredMethod("currency", Integer.TYPE).invoke(walletHandlerObject, amount);
         } catch (Exception ex) {
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
         }
         return money;
     }
@@ -115,7 +115,7 @@ public class ForgeessentialsEconomy implements IEconManager {
         try {
             walletHandlerClass.getDeclaredMethod("save").invoke(walletHandlerObject);
         } catch (Exception ex) {
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
         }
 
     }

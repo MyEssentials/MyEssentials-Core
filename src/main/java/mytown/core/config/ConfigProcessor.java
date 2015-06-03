@@ -9,12 +9,9 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 public class ConfigProcessor {
-
-    private ConfigProcessor() {
-
-    }
 
     /**
      * Maps classes to the appropriate Property.Type
@@ -30,7 +27,10 @@ public class ConfigProcessor {
             .put(boolean[].class, Property.Type.BOOLEAN).put(String.class, Property.Type.STRING)
             .put(String[].class, Property.Type.STRING).build();
 
-    private static Log LOG;
+    private static final Log LOG = MyEssentialsCore.instance.LOG.createChild("ConfigProcessor");
+
+    private ConfigProcessor() {
+    }
 
     /**
      * @see ConfigProcessor#load(Configuration, Class, Object)
@@ -43,9 +43,9 @@ public class ConfigProcessor {
      * load all static fields in c with {@link ConfigProperty} annotation and loads their value from the given config
      */
     public static void load(Configuration config, Class<?> c, Object obj) {
-        getLOG().debug("Loading Class: %s", c.getName());
+        LOG.debug("Loading Class: %s", c.getName());
         for (Field f : c.getDeclaredFields()) {
-            getLOG().debug("- Field: %s", f.getName());
+            LOG.debug("- Field: %s", f.getName());
             ConfigProperty propAnnot = f.getAnnotation(ConfigProperty.class);
             if (propAnnot == null)
                 return;
@@ -68,9 +68,9 @@ public class ConfigProcessor {
      * Saves all static fields in c with {@link ConfigProcessor} annotation to the config
      */
     public static void save(Configuration config, Class<?> c, Object obj) {
-        getLOG().debug("Saving Class: %s", c.getName());
+        LOG.debug("Saving Class: %s", c.getName());
         for (Field f : c.getFields()) {
-            getLOG().debug("- Field: %s", f.getName());
+            LOG.debug("- Field: %s", f.getName());
             ConfigProperty propAnnot = f.getAnnotation(ConfigProperty.class);
             if (propAnnot == null)
                 return;
@@ -84,12 +84,12 @@ public class ConfigProcessor {
 
     private static void setField(Field f, Object obj, Configuration config, String category, String key, String comment) {
         if (f == null || config == null) {
-            ConfigProcessor.getLOG().warn("Field or Config was null");
+            LOG.warn("Field or Config was null");
             return;
         }
         Property.Type type = ConfigProcessor.CONFIG_TYPES.get(f.getType());
         if (type == null) {
-            ConfigProcessor.getLOG().warn("Unknown config type for field type: %s", f.getType().getName());
+            LOG.warn("Unknown config type for field type: %s", f.getType().getName());
             return;
         }
         try {
@@ -140,18 +140,19 @@ public class ConfigProcessor {
                     LOG.warn("Unknown type %s", type);
             }
         } catch (Exception ex) {
-            ConfigProcessor.getLOG().warn("An exception has occurred while loading field: %s", ex, f.getName());
+            LOG.error("An exception has occurred while loading field: %s", f.getName());
+            LOG.error(ExceptionUtils.getFullStackTrace(ex));
         }
     }
 
     private static void setConfig(Field f, Object obj, Configuration config, String category, String key, String comment) {
         if (f == null || config == null) {
-            ConfigProcessor.getLOG().warn("Field or Config was null");
+            LOG.warn("Field or Config was null");
             return;
         }
         Property.Type type = ConfigProcessor.CONFIG_TYPES.get(f.getType());
         if (type == null) {
-            ConfigProcessor.getLOG().warn("Unknown config type for field type: %s", f.getType().getName());
+            LOG.warn("Unknown config type for field type: %s", f.getType().getName());
             return;
         }
         try {
@@ -190,14 +191,8 @@ public class ConfigProcessor {
                     LOG.warn("Unknown type %s", type);
             }
         } catch (Exception ex) {
-            ConfigProcessor.getLOG().warn("An exception has occurred while processing field: %s", ex, f.getName());
+            LOG.error("An exception has occurred while processing field: %s", f.getName());
+            LOG.error(ExceptionUtils.getFullStackTrace(ex));
         }
-    }
-
-    private static Log getLOG() {
-        if (ConfigProcessor.LOG == null) {
-            ConfigProcessor.LOG = MyEssentialsCore.Instance.LOG.createChild("ConfigProcessor");
-        }
-        return ConfigProcessor.LOG;
     }
 }

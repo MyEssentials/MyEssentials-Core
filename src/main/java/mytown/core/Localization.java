@@ -19,7 +19,7 @@ public class Localization {
      * The localization map
      */
     Map<String, String> localizations;
-    public final Map<Character, String> colorMap;
+    public static final Map<Character, String> colorMap = new HashMap<Character, String>();
     Reader reader = null;
 
     /**
@@ -28,7 +28,6 @@ public class Localization {
     public Localization(Reader r) {
         reader = r;
         localizations = new HashMap<String, String>();
-        colorMap = new HashMap<Character, String>();
         colorMap.put('0', "BLACK");
         colorMap.put('1', "DARK_BLUE");
         colorMap.put('2', "DARK_GREEN");

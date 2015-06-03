@@ -49,9 +49,9 @@ public class HelpMenu {
      */
     public void send(ICommandSender sender, int page) {
         if (page < 1)
-			page = 1;
+            page = 1;
         if (page > numberOfPages)
-			page = numberOfPages;
+            page = numberOfPages;
         int start = getMaxLines()*(page-1);
 
         sender.addChatMessage(new ChatComponentText(String.format("---------- %s Help (%s/%s) ----------", WordUtils.capitalizeFully(name), page, numberOfPages)));

@@ -17,7 +17,7 @@ public class Economy {
     public static final String CURRENCY_FORGE_ESSENTIALS = "$ForgeEssentials";
 
     private String costItemName;
-    public Class<? extends IEconManager> econManagerClass;
+    private Class<? extends IEconManager> econManagerClass;
 
     public Economy(String costItemName) {
         this.costItemName = costItemName;
@@ -44,7 +44,7 @@ public class Economy {
             manager.setPlayer(uuid);
             return manager;
         } catch(Exception ex) {
-            MyEssentialsCore.Instance.LOG.info("Failed to create IEconManager", ex);
+            MyEssentialsCore.instance.LOG.info("Failed to create IEconManager", ex);
         }
 
         return null; // Hopefully this doesn't break things...
@@ -57,7 +57,8 @@ public class Economy {
     public boolean takeMoneyFromPlayer(EntityPlayer player, int amount) {
         if(costItemName.equals(CURRENCY_FORGE_ESSENTIALS) || costItemName.equals(CURRENCY_VAULT)) {
             IEconManager eco = economyManagerForUUID(player.getUniqueID());
-            if (eco == null) return false;
+            if (eco == null)
+                return false;
             int wallet = eco.getWallet();
             if (wallet >= amount) {
                 eco.removeFromWallet(amount);
@@ -76,7 +77,8 @@ public class Economy {
     public void giveMoneyToPlayer(EntityPlayer player, int amount) {
         if (costItemName.equals(CURRENCY_FORGE_ESSENTIALS) || costItemName.equals(CURRENCY_VAULT)) {
             IEconManager eco = economyManagerForUUID(player.getUniqueID());
-            if (eco == null) return;
+            if (eco == null)
+                return;
             eco.addToWallet(amount);
         } else {
             PlayerUtils.giveItemToPlayer(player, costItemName, amount);
@@ -95,7 +97,7 @@ public class Economy {
                 IEconManager manager = econManagerClass.newInstance();
                 return manager.currency(amount);
             } catch(Exception ex) {
-                MyEssentialsCore.Instance.LOG.info("Failed to create IEconManager", ex);
+                MyEssentialsCore.instance.LOG.info("Failed to create IEconManager", ex);
             }
             return "$";
 

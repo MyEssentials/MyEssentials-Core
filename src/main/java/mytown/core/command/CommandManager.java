@@ -15,9 +15,6 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class CommandManager {
-    private CommandManager() {
-
-    }
 
     /**
      * Map with the permission node as key and method as value.
@@ -43,6 +40,10 @@ public class CommandManager {
      * Map with the completion as key and a list of available completions as value
      */
     public static final Map<String, List<String>> completionMap = new HashMap<String, List<String>>();
+
+
+    private CommandManager() {
+    }
 
     /**
      * Registers all commands that are static and have the @Command or @CommandNode annotation on it.
@@ -106,7 +107,7 @@ public class CommandManager {
     public static void commandCall(String permission, ICommandSender sender, List<String> args) {
         Method m = commandList.get(permission);
         if(m == null) {
-            MyEssentialsCore.Instance.LOG.error("Command with permission node " + permission + " does not exist. Aborting call.");
+            MyEssentialsCore.instance.LOG.error("Command with permission node " + permission + " does not exist. Aborting call.");
             return;
         }
 
@@ -128,7 +129,7 @@ public class CommandManager {
             try {
                 result = (Boolean)permMethod.invoke(null, permission, sender);
             } catch (Exception e) {
-                MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+                MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
             }
             if(!result) {
                 // If the first permission breach did not allow the method to be called then call is aborted
@@ -148,7 +149,7 @@ public class CommandManager {
             // TODO: Maybe have a list of all types of exceptions that could be thrown?
             throw (RuntimeException) e.getTargetException();
         } catch (Exception e2) {
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(e2));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(e2));
         }
     }
 
@@ -185,7 +186,7 @@ public class CommandManager {
      */
     public static List<String> getTabCompletionList(ICommandSender sender, List<String> args, String permission) {
         String perm = getPermissionNodeFromArgs(args.subList(0, args.size() - 1), permission);
-        if(commandCompletionKeys.get(perm)[0].equals("")) {
+        if("".equals(commandCompletionKeys.get(perm)[0])) {
             List<String> subCommands = new ArrayList<String>();
             for(String p : CommandManager.getSubCommandsList(perm)) {
                 subCommands.add(CommandManager.commandNames.get(p));

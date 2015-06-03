@@ -35,14 +35,16 @@ public class CommandUtils {
         try {
             CommandUtils.commandHandler = (CommandHandler) MinecraftServer.getServer().getCommandManager();
         } catch (Exception ex) {
-            MyEssentialsCore.Instance.LOG.info("CommandHandler could not be found.");
-            MyEssentialsCore.Instance.LOG.info(ExceptionUtils.getFullStackTrace(ex));
+            MyEssentialsCore.instance.LOG.info("CommandHandler could not be found.");
+            MyEssentialsCore.instance.LOG.info(ExceptionUtils.getFullStackTrace(ex));
         }
         CommandUtils.access = MethodAccess.get(CommandHandler.class);
         try {
             CommandUtils.method = CommandUtils.access.getIndex("registerCommand", ICommand.class, String.class);
         } catch (Exception e) {
             CommandUtils.method = -1;
+            MyEssentialsCore.instance.LOG.error("Could not find registerCommand method when initializing command registerer.");
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
         }
 
         isInit = true;
@@ -72,7 +74,8 @@ public class CommandUtils {
      * Registers a command.
      */
     public static void registerCommand(ICommand command, boolean enabled) {
-        if (command == null) return;
+        if (command == null)
+            return;
         String permNode;
         if (command.getClass().isAnnotationPresent(Command.class)) {
             permNode = command.getClass().getAnnotation(Command.class).permission();

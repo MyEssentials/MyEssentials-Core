@@ -238,9 +238,9 @@ public class PlayerUtils {
             return (Boolean)method.invoke(ops, player.getGameProfile());
         } catch (Exception e) {
             for(Method mt : UserList.class.getMethods()) {
-                MyEssentialsCore.Instance.LOG.info(mt.getName());
+                MyEssentialsCore.instance.LOG.info(mt.getName());
             }
-            MyEssentialsCore.Instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
         }
         return false;
     }

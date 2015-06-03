@@ -36,6 +36,6 @@ public class StringUtils {
      * Returns whether or not the String can be parsed as an Boolean
      */
     public static boolean tryParseBoolean(String value) {
-        return value.equals("true") || value.equals("false");
+        return "true".equals(value) || "false".equals(value);
     }
 }

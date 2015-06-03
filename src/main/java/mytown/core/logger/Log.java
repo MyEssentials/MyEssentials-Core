@@ -11,9 +11,9 @@ public class Log {
     private Log parent = null;
 
     public Log(String name, Log parent) {
-		this.name = name;
-		this.parent = parent;
-	}
+        this.name = name;
+        this.parent = parent;
+    }
 
     public Log(Logger logger) {
         this.LOGGER = logger;
