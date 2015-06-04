@@ -7,7 +7,7 @@ import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.rcon.RConConsoleSource;
 import net.minecraft.server.MinecraftServer;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -113,11 +113,12 @@ public class CommandManager {
 
         // Check if sender is allowed to use this command
         CommandNode cmdAnnot = commandList.get(permission).getAnnotation(CommandNode.class);
+
         if(cmdAnnot != null &&
-                !cmdAnnot.players() && sender instanceof EntityPlayer ||
+                ((!cmdAnnot.players() && sender instanceof EntityPlayer) ||
                 (!cmdAnnot.nonPlayers() && sender instanceof MinecraftServer) ||
                 (!cmdAnnot.nonPlayers() && sender instanceof RConConsoleSource) ||
-                (!cmdAnnot.nonPlayers() && sender instanceof CommandBlockLogic)) {
+                (!cmdAnnot.nonPlayers() && sender instanceof CommandBlockLogic))) {
             throw new CommandException("commands.generic.permission");
         }
 
@@ -129,7 +130,7 @@ public class CommandManager {
             try {
                 result = (Boolean)permMethod.invoke(null, permission, sender);
             } catch (Exception e) {
-                MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+                MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(e));
             }
             if(!result) {
                 // If the first permission breach did not allow the method to be called then call is aborted
@@ -149,7 +150,7 @@ public class CommandManager {
             // TODO: Maybe have a list of all types of exceptions that could be thrown?
             throw (RuntimeException) e.getTargetException();
         } catch (Exception e2) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(e2));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(e2));
         }
     }
 

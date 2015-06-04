@@ -21,7 +21,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -240,7 +240,7 @@ public class PlayerUtils {
             for(Method mt : UserList.class.getMethods()) {
                 MyEssentialsCore.instance.LOG.info(mt.getName());
             }
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(e));
         }
         return false;
     }

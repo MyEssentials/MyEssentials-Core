@@ -9,7 +9,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class ConfigProcessor {
 
@@ -141,7 +141,7 @@ public class ConfigProcessor {
             }
         } catch (Exception ex) {
             LOG.error("An exception has occurred while loading field: %s", f.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            LOG.error(ExceptionUtils.getStackTrace(ex));
         }
     }
 
@@ -192,7 +192,7 @@ public class ConfigProcessor {
             }
         } catch (Exception ex) {
             LOG.error("An exception has occurred while processing field: %s", f.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            LOG.error(ExceptionUtils.getStackTrace(ex));
         }
     }
 }

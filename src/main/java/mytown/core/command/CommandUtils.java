@@ -5,7 +5,7 @@ import mytown.core.MyEssentialsCore;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.server.MinecraftServer;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class CommandUtils {
 
@@ -36,7 +36,7 @@ public class CommandUtils {
             CommandUtils.commandHandler = (CommandHandler) MinecraftServer.getServer().getCommandManager();
         } catch (Exception ex) {
             MyEssentialsCore.instance.LOG.info("CommandHandler could not be found.");
-            MyEssentialsCore.instance.LOG.info(ExceptionUtils.getFullStackTrace(ex));
+            MyEssentialsCore.instance.LOG.info(ExceptionUtils.getStackTrace(ex));
         }
         CommandUtils.access = MethodAccess.get(CommandHandler.class);
         try {
@@ -44,7 +44,7 @@ public class CommandUtils {
         } catch (Exception e) {
             CommandUtils.method = -1;
             MyEssentialsCore.instance.LOG.error("Could not find registerCommand method when initializing command registerer.");
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(e));
         }
 
         isInit = true;
