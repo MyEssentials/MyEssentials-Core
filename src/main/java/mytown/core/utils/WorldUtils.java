@@ -52,7 +52,7 @@ public class WorldUtils {
     public static int getMaxHeightWithSolid(int dim, int x, int z) {
         World world = DimensionManager.getWorld(dim);
         int y = world.getActualHeight();
-        while(!world.getBlock(x, y, z).getMaterial().isOpaque())
+        while(!world.getBlock(x, y, z).getMaterial().isOpaque() && y > 0)
             y--;
         return y;
     }
