@@ -69,8 +69,8 @@ public class Localization {
         String line;
         while ((line = br.readLine()) != null) {
             line = line.trim(); // Trim it in-case there is spaces before the actual key-value pairs
-			String[] entry = line.split("=");
-			if (line.startsWith("#") || line.isEmpty() || entry.length < 2) {
+            String[] entry = line.split("=");
+            if (line.startsWith("#") || line.isEmpty() || entry.length < 2) {
                 // Ignore entries that are not formatted correctly (maybe log later)
                 // Ignore comments and empty lines
                 continue;

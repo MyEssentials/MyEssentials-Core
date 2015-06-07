@@ -151,13 +151,8 @@ public class PlayerUtils {
      * Most of it is code from Delpi (from minecraftforge forums). Thank you!
      */
     public static void teleport(EntityPlayerMP player, int dim, double x, double y, double z) {
-
-        // Offset locations for accuracy
-        x = x + 0.5d;
-        y = y + 1.0d;
-        z = z + 0.5d;
         player.motionX = player.motionY = player.motionZ = 0.0D;
-        player.setPosition(x, y, z);
+        player.setPositionAndUpdate(x, y, z);
         if (player.worldObj.provider.dimensionId != dim) {
             transferPlayerToDimension(player, dim, x, y, z);
             //World world = DimensionManager.getWorld(dim);

@@ -4,10 +4,10 @@ package mytown.core.entities;
  * Helper class for storing position of a block
  */
 public class BlockPos {
-    public final int dim;
-    public final int x;
-    public final int y;
-    public final int z;
+    private final int dim;
+    private final int x;
+    private final int y;
+    private final int z;
 
     public BlockPos(int x, int y, int z, int dim) {
         this.x = x;
@@ -15,4 +15,21 @@ public class BlockPos {
         this.z = z;
         this.dim = dim;
     }
+
+    public int getDim() {
+        return dim;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
+    }
 }
+
