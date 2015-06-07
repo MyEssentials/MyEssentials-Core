@@ -42,7 +42,8 @@ public class ChatUtils {
     // TODO: Overside equal maybe?
     // TODO Change name/change location?
     public static boolean equalsOn(String arg, boolean caseSensitive) {
-        if (!caseSensitive) arg = arg.toLowerCase();
+        if (!caseSensitive)
+            arg = arg.toLowerCase();
         return "on".equals(arg) || "enable".equals(arg) || "true".equals(arg) || "t".equals(arg);
     }
 

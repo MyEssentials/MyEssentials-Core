@@ -9,10 +9,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class CommandUtils {
 
-    private CommandUtils() {
-        
-    }
-
     private static boolean isInit = false;
 
     /**
@@ -28,6 +24,8 @@ public class CommandUtils {
      */
     private static int method = -1;
 
+    private CommandUtils() {
+    }
     /**
      * Initializing the fields
      */
