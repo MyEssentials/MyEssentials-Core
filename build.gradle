@@ -5,10 +5,10 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
-		maven {
-			name = "sonatype"
-			url = "https://oss.sonatype.org/content/repositories/snapshots/"
-		}
+	maven {
+	    name = "sonatype"
+	    url = "https://oss.sonatype.org/content/repositories/snapshots/"
+	}
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
@@ -19,6 +19,14 @@ repositories {
     maven {
         name = "bukkit-repo"
         url = "http://repo.bukkit.org/content/groups/public/"
+    }
+    maven {
+        name = "SpongePowered"
+        url = "https://repo.spongepowered.org/maven"
+    }
+    maven {
+        name = "sk89q"
+        url = "http://maven.sk89q.com/artifactory/repo/"
     }
 }
 
