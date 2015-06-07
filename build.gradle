@@ -58,6 +58,7 @@ minecraft {
 dependencies {
     testCompile "junit:junit:4.11"
     compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
+    compile "com.forgeessentials:forgeessentials:1.4.0-SNAPSHOT"
 
     // Deps for Bukkit/Cauldron compat
     compile "org.bukkit:bukkit:1.7.9-R0.2"
