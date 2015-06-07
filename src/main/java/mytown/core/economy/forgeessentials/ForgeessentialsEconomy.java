@@ -1,128 +1,63 @@
 package mytown.core.economy.forgeessentials;
 
-import mytown.core.MyEssentialsCore;
+import com.forgeessentials.api.APIRegistry;
+import com.forgeessentials.api.UserIdent;
+import com.forgeessentials.api.economy.Wallet;
 import mytown.core.economy.IEconManager;
 import net.minecraft.entity.player.EntityPlayer;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.Map;
 import java.util.UUID;
 
 public class ForgeessentialsEconomy implements IEconManager {
-    private Class<?> walletHandlerClass;
-    private Object walletHandlerObject;
-    private UUID uuid;
+    private Wallet wallet;
 
-    public ForgeessentialsEconomy(UUID uuid){
-        this.uuid=uuid;
-        try {
-            walletHandlerClass = Class.forName("com.forgeessentials.economy.WalletHandler");
-        } catch (ClassNotFoundException e2) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(e2));
-        }
-        try {
-            walletHandlerObject = walletHandlerClass.newInstance();
-        } catch (Exception ex) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
+    public ForgeessentialsEconomy(UUID uuid) {
+        this.setPlayer(uuid);
     }
 
-    public ForgeessentialsEconomy() {
-        try {
-            walletHandlerClass = Class.forName("com.forgeessentials.economy.WalletHandler");
-        } catch (ClassNotFoundException e2) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(e2));
-        }
-        try {
-            walletHandlerObject = walletHandlerClass.newInstance();
-        } catch (Exception ex) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
-    }
-
+    @Override
     public void setPlayer(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    @Override
-    public int getWallet() {
-        int money = 0;
-        try {
-            money = (Integer) walletHandlerClass.getDeclaredMethod("getWallet", UUID.class).invoke(walletHandlerObject, uuid);
-        } catch (Exception ex) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
-
-        return money;
-    }
-
-    @Override
-    public String getMoneyString() {
-        String money="$";
-        try {
-            money = (String) walletHandlerClass.getDeclaredMethod("getMoneyString", UUID.class).invoke(walletHandlerObject, uuid);
-        } catch (Exception ex) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
-        return money;
+        this.wallet = APIRegistry.economy.getWallet(UserIdent.get(uuid));
     }
 
     @Override
     public void addToWallet(int amountToAdd) {
-        try {
-            walletHandlerClass.getDeclaredMethod("addToWallet", Integer.TYPE, UUID.class).invoke(walletHandlerObject, amountToAdd, uuid);
-        } catch (Exception ex) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
+        this.wallet.add(amountToAdd);
+    }
+
+    @Override
+    public int getWallet() {
+        return (int) this.wallet.get();
     }
 
     @Override
     public boolean removeFromWallet(int amountToSubtract) {
-        boolean result = false;
-        try {
-            result = (Boolean) walletHandlerClass.getDeclaredMethod("removeFromWallet", Integer.TYPE, UUID.class).invoke(walletHandlerObject, amountToSubtract, uuid);
-        } catch (Exception ex) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
-        return result;
+        return this.wallet.withdraw(amountToSubtract);
     }
 
     @Override
     public void setWallet(int setAmount, EntityPlayer player) {
-        try {
-            walletHandlerClass.getDeclaredMethod("setWallet", Integer.TYPE, EntityPlayer.class).invoke(walletHandlerObject, setAmount, player);
-        } catch (Exception ex) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
+        // TODO Find some way to support this?
     }
 
-    /**
-     * this is broken for some reason... i think
-     */
     @Override
     public String currency(int amount) {
-        String money="$";
-        try {
-            money = (String) walletHandlerClass.getDeclaredMethod("currency", Integer.TYPE).invoke(walletHandlerObject, amount);
-        } catch (Exception ex) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
-        return money;
+        return APIRegistry.economy.currency(amount);
+    }
+
+    @Override
+    public String getMoneyString() {
+        return this.wallet.toString();
     }
 
     @Override
     public void save() {
-        try {
-            walletHandlerClass.getDeclaredMethod("save").invoke(walletHandlerObject);
-        } catch (Exception ex) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
-
+        // TODO Does this need to be implemented?
     }
 
     @Override
     public Map<String, Integer> getItemTables() {
-        // TODO Auto-generated method stub
         return null;
     }
 }
