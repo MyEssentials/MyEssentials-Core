@@ -17,7 +17,8 @@ import java.lang.reflect.Method;
 public class BukkitCompat extends VanillaCompat {
     private Method registerCmdMethod = null;
 
-    public void BukkitCompat() {
+    public BukkitCompat() {
+        super();
         try {
             CommandHandler.class.getMethod("registerCommand", ICommand.class, String.class);
         } catch (NoSuchMethodException e) {

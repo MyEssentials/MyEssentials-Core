@@ -13,7 +13,7 @@ import net.minecraft.server.MinecraftServer;
 public class VanillaCompat extends ICommandRegistrar {
     protected CommandHandler commandHandler;
 
-    public void VanillaCompat() {
+    public VanillaCompat() {
         this.commandHandler = (CommandHandler) MinecraftServer.getServer().getCommandManager();
     }
 
