@@ -1,5 +1,7 @@
 package mytown.core.utils;
 
+import net.minecraft.server.MinecraftServer;
+
 /**
  * All utilities exclusively for classes go here
  */
@@ -19,5 +21,9 @@ public class ClassUtils {
             value = false;
         }
         return value;
+    }
+
+    public static boolean isBukkitLoaded() {
+        return MinecraftServer.getServer().getServerModName().contains("cauldron") || MinecraftServer.getServer().getServerModName().contains("mcpc");
     }
 }

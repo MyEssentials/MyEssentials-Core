@@ -1,7 +1,14 @@
 package mytown.core.command;
 
+import cpw.mods.fml.common.Loader;
 import mytown.core.MyEssentialsCore;
+import mytown.core.command.registrar.BukkitCommandRegistrar;
+import mytown.core.command.registrar.ForgeEssentialsCommandRegistrar;
+import mytown.core.command.registrar.ICommandRegistrar;
+import mytown.core.command.registrar.VanillaCommandRegistrar;
+import mytown.core.utils.ClassUtils;
 import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,6 +23,11 @@ import java.util.*;
 
 public class CommandManager {
 
+
+    /**
+     * Registrar used to register any commands. Offers compatibility for Bukkit and ForgeEssentials
+     */
+    public static final ICommandRegistrar registrar = makeRegistrar();
     /**
      * Map with the permission node as key and method as value.
      */
@@ -73,10 +85,9 @@ public class CommandManager {
      */
     public static void registerCommands(Class clazz, Method firstPermissionBreach) {
         for (final Method m : clazz.getDeclaredMethods()) {
-
             if (m.isAnnotationPresent(Command.class)) {
                 final Command cmd = m.getAnnotation(Command.class);
-                CommandUtils.registerCommand(new CommandModel(cmd, m));
+                registerCommand(new CommandModel(cmd, m), cmd.permission());
 
                 commandList.put(cmd.permission(), m);
                 commandNames.put(cmd.permission(), cmd.name());
@@ -99,6 +110,13 @@ public class CommandManager {
                 }
             }
         }
+    }
+
+    public static void registerCommand(ICommand command, String permNode) {
+        if (command == null)
+            return;
+
+        registrar.registerCommand(command, permNode, false);
     }
 
     /**
@@ -282,15 +300,20 @@ public class CommandManager {
         return false;
     }
 
+    private static ICommandRegistrar makeRegistrar() {
+        if (ClassUtils.isBukkitLoaded()) { // Bukkit Compat takes precedence
+            return new BukkitCommandRegistrar();
+        } else if (Loader.isModLoaded("ForgeEssentials")) { // Then Forge Essentials
+            return new ForgeEssentialsCommandRegistrar();
+        } else { // Finally revert to Vanilla (Ew, Vanilla Minecraft)
+            return new VanillaCommandRegistrar();
+        }
+    }
+
     /**
      * Checks if the permission method sent is actually valid
      */
     private static boolean checkPermissionBreachMethod(Method method) {
         return method != null && Modifier.isStatic(method.getModifiers());
     }
-
-
-
-
-
 }

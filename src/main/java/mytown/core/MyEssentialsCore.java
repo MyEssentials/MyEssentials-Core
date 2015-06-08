@@ -17,7 +17,6 @@ import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 public class MyEssentialsCore {
     @Instance("MyEssentials-Core")
     public static MyEssentialsCore instance;
-    public static boolean isMCPC = false;
 
     public Log LOG;
     public Configuration config;
@@ -33,12 +32,5 @@ public class MyEssentialsCore {
 
         // Register handlers/trackers
         FMLCommonHandler.instance().bus().register(new PlayerTracker());
-    }
-
-    @EventHandler
-    public void serverAboutToStart(FMLServerAboutToStartEvent ev) {
-        //Used to decide side to prevent this from erroring out if someone decides to use this on a client (eg development testing)
-        if(ev.getSide() == Side.SERVER)
-            MyEssentialsCore.isMCPC = ev.getServer().getServerModName().contains("mcpc");
     }
 }

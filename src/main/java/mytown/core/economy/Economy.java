@@ -4,6 +4,7 @@ import cpw.mods.fml.common.Loader;
 import mytown.core.MyEssentialsCore;
 import mytown.core.bukkit.BukkitCompat;
 import mytown.core.exception.EconomyException;
+import mytown.core.utils.ClassUtils;
 import mytown.core.utils.ItemUtils;
 import mytown.core.utils.PlayerUtils;
 import mytown.core.economy.forgeessentials.ForgeessentialsEconomy;
@@ -22,7 +23,7 @@ public class Economy {
     public Economy(String costItemName) {
         this.costItemName = costItemName;
         if(costItemName.equals(CURRENCY_VAULT)) {
-            if (MinecraftServer.getServer().getServerModName().contains("cauldron") || MinecraftServer.getServer().getServerModName().contains("mcpc")) {
+            if (ClassUtils.isBukkitLoaded()) {
                 econManagerClass = BukkitCompat.initEconomy();
             }
             if(econManagerClass == null)

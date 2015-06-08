@@ -1,19 +1,16 @@
-package mytown.core.command.compat;
+package mytown.core.command.registrar;
 
-import mytown.core.command.ICommandRegistrar;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.server.MinecraftServer;
 
 /**
  * Standard vanilla command registrar
- *
- * @author Joe Goett
  */
-public class VanillaCompat extends ICommandRegistrar {
+public class VanillaCommandRegistrar implements ICommandRegistrar {
     protected CommandHandler commandHandler;
 
-    public VanillaCompat() {
+    public VanillaCommandRegistrar() {
         this.commandHandler = (CommandHandler) MinecraftServer.getServer().getCommandManager();
     }
 
