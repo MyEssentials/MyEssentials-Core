@@ -13,7 +13,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 public class BukkitCompat {
 
     private BukkitCompat() {
-
     }
 
     public static Class<? extends IEconManager> initEconomy() {
