@@ -21,6 +21,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.lang.reflect.Method;
@@ -146,25 +147,31 @@ public class PlayerUtils {
         }
     }
 
-    /**
-     * Teleports player to the dimension without creating any nether portals of sorts.
-     * Most of it is code from Delpi (from minecraftforge forums). Thank you!
+    /*
+     * Teleports a player to (x, y, z) in dimension dim without creating any nether portals of sorts.
+     * Also preserves motion and potion effects even on cross dimensional teleports.
+     * Only the player teleports, leaving mounts behind.
+     * 
+     * The base of the Teleport code came from CoFHLib teleport code:
+     * https://github.com/CoFH/CoFHLib/blob/master/src/main/java/cofh/lib/util/helpers/EntityHelper.java
      */
     public static void teleport(EntityPlayerMP player, int dim, double x, double y, double z) {
-        player.motionX = player.motionY = player.motionZ = 0.0D;
-        player.setPositionAndUpdate(x, y, z);
-        if (player.worldObj.provider.dimensionId != dim) {
-            transferPlayerToDimension(player, dim, x, y, z);
-            //World world = DimensionManager.getWorld(dim);
-            //player.mcServer.getConfigurationManager().transferPlayerToDimension(player, dim, new EssentialsTeleporter((WorldServer)world));
+    	if (player.riddenByEntity != null) {
+			player.riddenByEntity.mountEntity(null);
+		}
+		if (player.ridingEntity != null) {
+			player.mountEntity(null);
+		}
+		if (player.dimension != dim) {
+            transferPlayerToDimension(player, dim);
         }
+        player.setPositionAndUpdate(x, y, z);        	
     }
 
-    /**
-     * krwminer's interdimensional teleport code.
+    /*
+     * Transfers a player to a new dimension preserving potion effects and motion.
      */
-    @SuppressWarnings("unchecked")
-    public static void transferPlayerToDimension(EntityPlayerMP player, int dim, double x, double y, double z) {
+    public static void transferPlayerToDimension(EntityPlayerMP player, int dim) {
         ServerConfigurationManager configManager = player.mcServer.getConfigurationManager();
         int oldDimension = player.dimension;
 
@@ -178,14 +185,6 @@ public class PlayerUtils {
 
         transferPlayerToWorld(player, oldWorldServer, newWorldServer);
         configManager.func_72375_a(player, oldWorldServer);
-
-        player.setLocationAndAngles(x + 0.5D, y + 0.1D, z + 0.5D, 0.0F, 0.0F);
-
-        newWorldServer.theChunkProviderServer.loadChunk((int)player.posX >> 4, (int)player.posZ >> 4);
-        while (!newWorldServer.getCollidingBoundingBoxes(player, player.boundingBox).isEmpty()) {
-            player.setPosition(player.posX, player.posY + 1.0D, player.posZ);
-        }
-
         player.playerNetServerHandler.setPlayerLocation(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
         player.theItemInWorldManager.setWorld(newWorldServer);
         configManager.updateTimeAndWeatherForPlayer(player, newWorldServer);
@@ -196,8 +195,8 @@ public class PlayerUtils {
         FMLCommonHandler.instance().firePlayerChangedDimensionEvent(player, oldDimension, dim);
     }
 
-    /**
-     * krwminer's interdimensional teleport code.
+    /*
+     * Tranfers a player to a new world preserving motion.
      */
     public static void transferPlayerToWorld(EntityPlayerMP player, WorldServer oldWorld, WorldServer newWorld) {
         double moveFactor = oldWorld.provider.getMovementFactor() / newWorld.provider.getMovementFactor();
@@ -212,7 +211,6 @@ public class PlayerUtils {
         }
         player.setWorld(newWorld);
     }
-
 
     /**
      * Returns whether or not a player is OP.
