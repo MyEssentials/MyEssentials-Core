@@ -46,26 +46,26 @@ public class PlayerUtils {
     }
 
     /**
-     * Takes a specified amount of the itemStack from the player's inventory.
-     */
-    public static boolean takeItemFromPlayer(EntityPlayer player, ItemStack itemStack, int amount) {
-        return takeItemFromPlayer(player, itemStack.getItem(), amount, itemStack.getItemDamage());
-    }
-
-    /**
      * Takes the amount of items specified.
      * Returns false if player doesn't have the items necessary
      */
     public static boolean takeItemFromPlayer(EntityPlayer player, Item item, int amount, int meta) {
+        return takeItemFromPlayer(player, new ItemStack(item, 1, meta), amount);
+    }
+
+    /**
+     * Takes a specified amount of the itemStack from the player's inventory.
+     */
+    public static boolean takeItemFromPlayer(EntityPlayer player, ItemStack itemStack, int amount) {
         List<Integer> slots = new ArrayList<Integer>();
         int itemSum = 0;
         for (int i = 0; i < player.inventory.mainInventory.length; i++) {
-            ItemStack itemStack = player.inventory.mainInventory[i];
-            if (itemStack == null)
+            ItemStack invStack = player.inventory.mainInventory[i];
+            if (invStack == null)
                 continue;
-            if (itemStack.getItem() == item && (meta == -1 || itemStack.getItemDamage() == meta)) {
+            if (invStack.getItem() == itemStack.getItem() && invStack.getDisplayName().equals(itemStack.getDisplayName()) && invStack.getItemDamage() == itemStack.getItemDamage()) {
                 slots.add(i);
-                itemSum += itemStack.stackSize;
+                itemSum += invStack.stackSize;
                 if(itemSum >= amount)
                     break;
             }
@@ -102,20 +102,20 @@ public class PlayerUtils {
     /**
      * Gives the amount of items specified.
      */
-    public static void giveItemToPlayer(EntityPlayer player, ItemStack itemStack, int amount) {
-        giveItemToPlayer(player, itemStack.getItem(), amount, itemStack.getItemDamage());
+    public static void giveItemToPlayer(EntityPlayer player, Item item, int amount, int meta) {
+        giveItemToPlayer(player, new ItemStack(item, 1, meta), amount);
     }
 
     /**
      * Gives the amount of items specified.
      */
-    public static void giveItemToPlayer(EntityPlayer player, Item item, int amount, int meta) {
+    public static void giveItemToPlayer(EntityPlayer player, ItemStack itemStack, int amount) {
         for (int left = amount; left > 0; left -= 64) {
-            ItemStack stack = new ItemStack(item, left > 64 ? 64 : left, meta);
             int i = -1;
             for(int j = 0; j < player.inventory.mainInventory.length; j++) {
-                if (player.inventory.mainInventory[j] != null && player.inventory.mainInventory[j].getItem() == item && player.inventory.mainInventory[j].getItemDamage() == meta &&
-                        player.inventory.mainInventory[j].stackSize + stack.stackSize <= 64) {
+                if (player.inventory.mainInventory[j] != null && player.inventory.mainInventory[j].getItem() == itemStack.getItem()
+                        && player.inventory.mainInventory[j].getItemDamage() == itemStack.getItemDamage()
+                        && player.inventory.mainInventory[j].stackSize + itemStack.stackSize <= 64) {
                     i = j;
                     break;
                 }
@@ -128,16 +128,15 @@ public class PlayerUtils {
                     }
                 }
                 if(i != -1)
-                    player.inventory.mainInventory[i] = stack;
+                    player.inventory.mainInventory[i] = itemStack;
             } else {
                 player.inventory.mainInventory[i].stackSize += amount;
             }
 
             if (i == -1) {
                 // Drop it on the ground if it fails to add to the inventory
-                WorldUtils.dropAsEntity(player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ, stack);
+                WorldUtils.dropAsEntity(player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ, itemStack);
             } else {
-
                 // get the actual inventory Slot:
                 Slot slot = player.openContainer.getSlotFromInventory(player.inventory, i);
                 // send S2FPacketSetSlot to the player with the new / changed stack (or null)
@@ -146,9 +145,22 @@ public class PlayerUtils {
         }
     }
 
+
+    /**
+     * Gets the first occurrence of the item from a player's inventory.
+     */
+    public static ItemStack getItemStackFromPlayer(EntityPlayer player, Item item, String name) {
+        for(int i = 0; i < player.inventory.mainInventory.length; i++) {
+            ItemStack itemStack = player.inventory.mainInventory[i];
+            if(itemStack != null && itemStack.getItem() == item && itemStack.getDisplayName().equals(name)) {
+                return itemStack;
+            }
+        }
+        return null;
+    }
+
     /**
      * Teleports player to the dimension without creating any nether portals of sorts.
-     * Most of it is code from Delpi (from minecraftforge forums). Thank you!
      */
     public static void teleport(EntityPlayerMP player, int dim, double x, double y, double z) {
         player.motionX = player.motionY = player.motionZ = 0.0D;
