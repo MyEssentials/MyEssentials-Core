@@ -66,16 +66,16 @@ public class PlayerUtils {
             if (invStack.getItem() == itemStack.getItem() && invStack.getDisplayName().equals(itemStack.getDisplayName()) && invStack.getItemDamage() == itemStack.getItemDamage()) {
                 slots.add(i);
                 itemSum += invStack.stackSize;
-                if(itemSum >= amount)
+                if (itemSum >= amount)
                     break;
             }
         }
 
-        if(itemSum < amount)
+        if (itemSum < amount)
             return false;
 
-        for(int i : slots) {
-            if(player.inventory.mainInventory[i].stackSize >= amount) {
+        for (int i : slots) {
+            if (player.inventory.mainInventory[i].stackSize >= amount) {
                 player.inventory.decrStackSize(i, amount);
                 Slot slot = player.openContainer.getSlotFromInventory(player.inventory, i);
                 ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, slot.slotNumber, player.inventory.mainInventory[i]));
@@ -112,7 +112,7 @@ public class PlayerUtils {
     public static void giveItemToPlayer(EntityPlayer player, ItemStack itemStack, int amount) {
         for (int left = amount; left > 0; left -= 64) {
             int i = -1;
-            for(int j = 0; j < player.inventory.mainInventory.length; j++) {
+            for (int j = 0; j < player.inventory.mainInventory.length; j++) {
                 if (player.inventory.mainInventory[j] != null && player.inventory.mainInventory[j].getItem() == itemStack.getItem()
                         && player.inventory.mainInventory[j].getItemDamage() == itemStack.getItemDamage()
                         && player.inventory.mainInventory[j].stackSize + itemStack.stackSize <= 64) {
@@ -120,14 +120,14 @@ public class PlayerUtils {
                     break;
                 }
             }
-            if(i == -1) {
-                for(int j = 0; j < player.inventory.mainInventory.length; j++) {
-                    if(player.inventory.mainInventory[j] == null) {
+            if (i == -1) {
+                for (int j = 0; j < player.inventory.mainInventory.length; j++) {
+                    if (player.inventory.mainInventory[j] == null) {
                         i = j;
                         break;
                     }
                 }
-                if(i != -1)
+                if (i != -1)
                     player.inventory.mainInventory[i] = itemStack;
             } else {
                 player.inventory.mainInventory[i].stackSize += amount;
@@ -150,9 +150,9 @@ public class PlayerUtils {
      * Gets the first occurrence of the item from a player's inventory.
      */
     public static ItemStack getItemStackFromPlayer(EntityPlayer player, Item item, String name) {
-        for(int i = 0; i < player.inventory.mainInventory.length; i++) {
+        for (int i = 0; i < player.inventory.mainInventory.length; i++) {
             ItemStack itemStack = player.inventory.mainInventory[i];
-            if(itemStack != null && itemStack.getItem() == item && itemStack.getDisplayName().equals(name)) {
+            if (itemStack != null && itemStack.getItem() == item && itemStack.getDisplayName().equals(name)) {
                 return itemStack;
             }
         }
@@ -160,23 +160,30 @@ public class PlayerUtils {
     }
 
     /**
-     * Teleports player to the dimension without creating any nether portals of sorts.
+     * Teleports a player to (x, y, z) in dimension dim without creating any nether portals of sorts.
+     * Also preserves motion and potion effects even on cross dimensional teleports.
+     * Only the player teleports, leaving mounts behind.
+     * <p/>
+     * The base of the Teleport code came from CoFHLib teleport code:
+     * https://github.com/CoFH/CoFHLib/blob/master/src/main/java/cofh/lib/util/helpers/EntityHelper.java
      */
     public static void teleport(EntityPlayerMP player, int dim, double x, double y, double z) {
-        player.motionX = player.motionY = player.motionZ = 0.0D;
-        player.setPositionAndUpdate(x, y, z);
-        if (player.worldObj.provider.dimensionId != dim) {
-            transferPlayerToDimension(player, dim, x, y, z);
-            //World world = DimensionManager.getWorld(dim);
-            //player.mcServer.getConfigurationManager().transferPlayerToDimension(player, dim, new EssentialsTeleporter((WorldServer)world));
+        if (player.riddenByEntity != null) {
+            player.riddenByEntity.mountEntity(null);
         }
+        if (player.ridingEntity != null) {
+            player.mountEntity(null);
+        }
+        if (player.dimension != dim) {
+            transferPlayerToDimension(player, dim);
+        }
+        player.setPositionAndUpdate(x, y, z);
     }
 
     /**
-     * krwminer's interdimensional teleport code.
+     * Transfers a player to a new dimension preserving potion effects and motion.
      */
-    @SuppressWarnings("unchecked")
-    public static void transferPlayerToDimension(EntityPlayerMP player, int dim, double x, double y, double z) {
+    public static void transferPlayerToDimension(EntityPlayerMP player, int dim) {
         ServerConfigurationManager configManager = player.mcServer.getConfigurationManager();
         int oldDimension = player.dimension;
 
@@ -190,14 +197,6 @@ public class PlayerUtils {
 
         transferPlayerToWorld(player, oldWorldServer, newWorldServer);
         configManager.func_72375_a(player, oldWorldServer);
-
-        player.setLocationAndAngles(x + 0.5D, y + 0.1D, z + 0.5D, 0.0F, 0.0F);
-
-        newWorldServer.theChunkProviderServer.loadChunk((int)player.posX >> 4, (int)player.posZ >> 4);
-        while (!newWorldServer.getCollidingBoundingBoxes(player, player.boundingBox).isEmpty()) {
-            player.setPosition(player.posX, player.posY + 1.0D, player.posZ);
-        }
-
         player.playerNetServerHandler.setPlayerLocation(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
         player.theItemInWorldManager.setWorld(newWorldServer);
         configManager.updateTimeAndWeatherForPlayer(player, newWorldServer);
@@ -209,7 +208,7 @@ public class PlayerUtils {
     }
 
     /**
-     * krwminer's interdimensional teleport code.
+     * Tranfers a player to a new world preserving motion.
      */
     public static void transferPlayerToWorld(EntityPlayerMP player, WorldServer oldWorld, WorldServer newWorld) {
         double moveFactor = oldWorld.provider.getMovementFactor() / newWorld.provider.getMovementFactor();
@@ -231,10 +230,10 @@ public class PlayerUtils {
      */
     @SuppressWarnings("unchecked")
     public static boolean isOp(EntityPlayer player) {
-        if(player == null)
+        if (player == null)
             return false;
 
-        if(player.getGameProfile() == null)
+        if (player.getGameProfile() == null)
             return false;
 
         UserListOps ops = MinecraftServer.getServer().getConfigurationManager().func_152603_m();
@@ -242,9 +241,9 @@ public class PlayerUtils {
             Class clazz = Class.forName("net.minecraft.server.management.UserList");
             Method method = clazz.getDeclaredMethod("func_152692_d", Object.class);
             method.setAccessible(true);
-            return (Boolean)method.invoke(ops, player.getGameProfile());
+            return (Boolean) method.invoke(ops, player.getGameProfile());
         } catch (Exception e) {
-            for(Method mt : UserList.class.getMethods()) {
+            for (Method mt : UserList.class.getMethods()) {
                 MyEssentialsCore.instance.LOG.info(mt.getName());
             }
             MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(e));
