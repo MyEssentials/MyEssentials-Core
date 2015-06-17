@@ -16,6 +16,10 @@ public class ForgeessentialsEconomy implements IEconManager {
         this.setPlayer(uuid);
     }
 
+    public ForgeessentialsEconomy() {
+
+    }
+
     @Override
     public void setPlayer(UUID uuid) {
         this.wallet = APIRegistry.economy.getWallet(UserIdent.get(uuid));

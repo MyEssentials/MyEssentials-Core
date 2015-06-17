@@ -166,7 +166,7 @@ public class CommandManager {
         } catch (InvocationTargetException e) {
             // Forced, since the functions are only gonna throw that... I think
             // TODO: Maybe have a list of all types of exceptions that could be thrown?
-            throw (RuntimeException) e.getTargetException();
+            throw new mytown.core.exception.CommandException(e.getTargetException());
         } catch (Exception e2) {
             MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(e2));
         }
