@@ -1,6 +1,5 @@
 package mytown.core.command;
 
-import mytown.core.Assert;
 import mytown.core.utils.PlayerUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -89,8 +88,6 @@ public class CommandModel extends CmdBase {
     @SuppressWarnings("RedundantIfStatement")
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender sender) {
-        Assert.perm(sender, getPermissionNode(), canConsoleUseCommand(), canRConUseCommand(), canCommandBlockUseCommand());
-
         if(sender instanceof EntityPlayer && commandAnnot.opsOnlyAccess() && !MinecraftServer.getServer().getConfigurationManager().func_152607_e(((EntityPlayer) sender).getGameProfile()))
             return false;
 
