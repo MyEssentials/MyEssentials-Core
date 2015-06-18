@@ -1,15 +1,14 @@
 package mytown.core.config;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-
+import com.google.common.collect.ImmutableMap;
 import mytown.core.MyEssentialsCore;
-import mytown.core.logger.Log;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.logging.log4j.Logger;
+
+import java.lang.reflect.Field;
+import java.util.Map;
 
 public class ConfigProcessor {
 
@@ -27,7 +26,7 @@ public class ConfigProcessor {
             .put(boolean[].class, Property.Type.BOOLEAN).put(String.class, Property.Type.STRING)
             .put(String[].class, Property.Type.STRING).build();
 
-    private static final Log LOG = MyEssentialsCore.instance.LOG.createChild("ConfigProcessor");
+    private static final Logger LOG = MyEssentialsCore.instance.LOG;
 
     private ConfigProcessor() {
     }
