@@ -21,3 +21,6 @@ run
 
 #mac
 .DS_Store
+
+#zsh
+.gradletasknamecache
