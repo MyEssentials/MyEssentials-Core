@@ -135,7 +135,7 @@ public class DepLoader {
 
         String repo = node.get("repo").getAsString();
         String filename = node.get("file").getAsString();
-        if (obfuscated && node.has("dev"))
+        if (!obfuscated && node.has("dev"))
             filename = node.get("dev").getAsString();
 
         boolean coreLib = node.has("coreLib") && node.get("coreLib").getAsBoolean();
