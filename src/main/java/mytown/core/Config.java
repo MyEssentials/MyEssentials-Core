@@ -2,6 +2,7 @@ package mytown.core;
 
 import mytown.core.config.ConfigProperty;
 
+@SuppressWarnings({"squid:S1444"}) // Suppresses SonarQube warnings to mark fields in Config as final.
 public class Config {
 
     @ConfigProperty(category = "general", comment = "Allows toggling maintenance mode")
