@@ -91,12 +91,12 @@ public class DepLoader {
     private void scanDepInfo(File file) {
         try {
             ZipFile zip = new ZipFile(file);
-            ZipEntry e = zip.getEntry("dependencies.info");
+            ZipEntry e = zip.getEntry("deps.info");
             if (e != null)
                 parseDepInfo(zip.getInputStream(e));
             zip.close();
         } catch(Exception e) {
-            System.err.println("[MyEssentials-Core] Failed to load dependencies.info from " + file.getName() + " as JSON");
+            System.err.println("[MyEssentials-Core] Failed to load deps.info from " + file.getName() + " as JSON");
             e.printStackTrace();
         }
     }
@@ -117,7 +117,7 @@ public class DepLoader {
             if (node.isJsonObject()) {
                 parseJson(node.getAsJsonObject());
             } else {
-                System.out.println("[MyEssentials-Core] Invalid node in dependencies.info!");
+                System.out.println("[MyEssentials-Core] Invalid node in deps.info!");
             }
         }
     }
