@@ -28,7 +28,10 @@ public class Downloader {
     // Returns true if dep exists, false if it doesn't
     private boolean checkExisting(Dependency dep) {
         VersionedFile vFile;
-        for (File f : destinationFolder.listFiles()) {
+        File[] files = destinationFolder.listFiles();
+        if (files == null) return false;
+
+        for (File f : files) {
             vFile = new VersionedFile(f.getName(), dep.getFile().getPattern());
 
             if (!vFile.matches() || !vFile.getName().equals(dep.getName()))
