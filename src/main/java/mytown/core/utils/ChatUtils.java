@@ -18,6 +18,7 @@ public class ChatUtils {
      * This method will split the message at newline chars (\n) and send each line as a separate message.
      */
     public static void sendChat(ICommandSender sender, String msg, Object... args) {
+        if (sender == null) return;
         String[] lines;
         if(args == null)
             lines = msg.split("\\\\n");
