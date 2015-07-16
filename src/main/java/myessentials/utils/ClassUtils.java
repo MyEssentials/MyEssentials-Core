@@ -24,6 +24,6 @@ public class ClassUtils {
     }
 
     public static boolean isBukkitLoaded() {
-        return MinecraftServer.getServer().getServerModName().contains("cauldron") || MinecraftServer.getServer().getServerModName().contains("mcpc");
+        return isClassLoaded("org.bukkit.Bukkit");
     }
 }

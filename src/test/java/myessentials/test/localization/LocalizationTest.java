@@ -1,4 +1,4 @@
-package myessentials.test;
+package myessentials.test.localization;
 
 import myessentials.Localization;
 import org.junit.Assert;
@@ -19,12 +19,12 @@ public class LocalizationTest {
     }
 
     @Test
-    public void testLoad() throws Exception {
+    public void shouldLoadLocalization() throws Exception {
         local.load();
     }
 
     @Test
-    public void testKeyRetrieval() throws Exception {
+    public void shouldRetrieveValuesFromLocalization() throws Exception {
         Assert.assertEquals("There is too many key-value pairs!", 5, local.getLocalizationMap().size());
         Assert.assertEquals("Test Value 1...", local.getLocalization("mytown.core.test.value1"));
         Assert.assertEquals("Test Value 2...", local.getLocalization("mytown.core.test.value2"));
