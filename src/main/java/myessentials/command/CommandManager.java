@@ -1,8 +1,10 @@
 package myessentials.command;
 
 import cpw.mods.fml.common.Loader;
+import myessentials.Localization;
 import myessentials.command.registrar.BukkitCommandRegistrar;
 import myessentials.command.registrar.ICommandRegistrar;
+import myessentials.utils.ChatUtils;
 import myessentials.utils.ClassUtils;
 import myessentials.MyEssentialsCore;
 import myessentials.command.registrar.ForgeEssentialsCommandRegistrar;
@@ -318,5 +320,68 @@ public class CommandManager {
      */
     private static boolean checkPermissionBreachMethod(Method method) {
         return method != null && Modifier.isStatic(method.getModifiers());
+    }
+
+    /**
+     * Calls the method to which the set of arguments corresponds to.
+     */
+    public static boolean callSubFunctions(ICommandSender sender, List<String> args, String callersPermNode, Localization local) {
+        List<String> subCommands = getSubCommandsList(callersPermNode);
+        if (!args.isEmpty()) {
+            for (String s : subCommands) {
+                String name = commandNames.get(s);
+                // Checking if name corresponds and if parent's
+                if (name.equals(args.get(0)) && getParentPermNode(s).equals(callersPermNode)) {
+                    commandCall(s, sender, args.subList(1, args.size()));
+                    return true;
+                }
+            }
+        }
+
+        sendHelpMessage(sender, callersPermNode, null, local);
+        return false;
+    }
+
+    /**
+     * Sends the help message for the permission node with the arguments.
+     */
+    public static void sendHelpMessage(ICommandSender sender, String permBase, List<String> args, Localization local) {
+        String node;
+        if (args == null || args.isEmpty()) {
+            //If no arguments are provided then we check for the base permission
+            node = permBase;
+        } else {
+            node = getPermissionNodeFromArgs(args, permBase);
+        }
+
+
+        String command = "/" + commandNames.get(permBase);
+
+        if(args != null) {
+            String prevNode = permBase;
+            for (String s : args) {
+                String t = getSubCommandNode(s, prevNode);
+                if (t != null) {
+                    command += " " + s;
+                    prevNode = t;
+                } else
+                    break;
+            }
+        }
+
+        ChatUtils.sendChat(sender, command);
+        List<String> scList = getSubCommandsList(node);
+        if (scList == null || scList.isEmpty()) {
+            ChatUtils.sendChat(sender, "   " + local.getLocalization(node + ".help"));
+        } else {
+            List<String> nameList = new ArrayList<String>();
+            for(String s : scList) {
+                nameList.add(commandNames.get(s));
+            }
+            Collections.sort(nameList);
+            for (String s : nameList) {
+                ChatUtils.sendChat(sender, "   " + s + ": " + local.getLocalization(getSubCommandNode(s, node) + ".help"));
+            }
+        }
     }
 }
