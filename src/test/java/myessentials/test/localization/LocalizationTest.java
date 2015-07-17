@@ -2,6 +2,7 @@ package myessentials.test.localization;
 
 import myessentials.Localization;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ public class LocalizationTest {
         local = new Localization(new InputStreamReader(LocalizationTest.class.getClassLoader().getResourceAsStream("test.lang")));
     }
 
-    @Test
+    @Before
     public void shouldLoadLocalization() throws Exception {
         local.load();
     }
