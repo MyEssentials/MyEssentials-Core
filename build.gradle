@@ -92,7 +92,7 @@ jar {
     classifier = 'universal'
     manifest {
         attributes (
-            'FMLCorePlugin': 'mytown.core.DepLoader',
+            'FMLCorePlugin': 'myessentials.DepLoader',
             'FMLCorePluginContainsFMLMod': 'true'
         )
     }
