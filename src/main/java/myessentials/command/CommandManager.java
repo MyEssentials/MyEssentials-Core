@@ -338,41 +338,19 @@ public class CommandManager {
             }
         }
 
-        sendHelpMessage(sender, callersPermNode, null, local);
+        sendHelpMessage(sender, callersPermNode, local);
         return false;
     }
 
     /**
-     * Sends the help message for the permission node with the arguments.
+     * Sends the help message for the permission node.
      */
-    public static void sendHelpMessage(ICommandSender sender, String permBase, List<String> args, Localization local) {
-        String node;
-        if (args == null || args.isEmpty()) {
-            //If no arguments are provided then we check for the base permission
-            node = permBase;
-        } else {
-            node = getPermissionNodeFromArgs(args, permBase);
-        }
+    public static void sendHelpMessage(ICommandSender sender, String sendHelpNode, Localization local) {
+        ChatUtils.sendChat(sender, getCommandLineFromNode(sendHelpNode));
 
-
-        String command = "/" + commandNames.get(permBase);
-
-        if(args != null) {
-            String prevNode = permBase;
-            for (String s : args) {
-                String t = getSubCommandNode(s, prevNode);
-                if (t != null) {
-                    command += " " + s;
-                    prevNode = t;
-                } else
-                    break;
-            }
-        }
-
-        ChatUtils.sendChat(sender, command);
-        List<String> scList = getSubCommandsList(node);
+        List<String> scList = getSubCommandsList(sendHelpNode);
         if (scList == null || scList.isEmpty()) {
-            ChatUtils.sendChat(sender, "   " + local.getLocalization(node + ".help"));
+            ChatUtils.sendChat(sender, "   " + local.getLocalization(sendHelpNode + ".help"));
         } else {
             List<String> nameList = new ArrayList<String>();
             for(String s : scList) {
@@ -380,8 +358,27 @@ public class CommandManager {
             }
             Collections.sort(nameList);
             for (String s : nameList) {
-                ChatUtils.sendChat(sender, "   " + s + ": " + local.getLocalization(getSubCommandNode(s, node) + ".help"));
+                ChatUtils.sendChat(sender, "   " + s + ": " + local.getLocalization(getSubCommandNode(s, sendHelpNode) + ".help"));
             }
         }
+    }
+
+    /**
+     * It will construct and return the command line, that a player needs to execute, to call the method linked to the sent permNode.
+     */
+    public static String getCommandLineFromNode(String permNode) {
+        Stack<String> commandStack = new Stack<String>();
+        String currentNode = permNode;
+        while(currentNode != null) {
+            commandStack.push(commandNames.get(currentNode));
+            currentNode = commandParents.get(currentNode);
+        }
+
+        String command = "/";
+        while(!commandStack.isEmpty()) {
+            command += commandStack.pop() + " ";
+        }
+
+        return command;
     }
 }
