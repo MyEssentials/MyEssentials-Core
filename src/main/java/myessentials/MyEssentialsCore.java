@@ -6,6 +6,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import myessentials.config.ConfigProcessor;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Logger;
 
@@ -29,6 +30,7 @@ public class MyEssentialsCore {
         config.save();
 
         // Register handlers/trackers
-        FMLCommonHandler.instance().bus().register(new PlayerTracker());
+        FMLCommonHandler.instance().bus().register(PlayerTracker.getInstance());
+        MinecraftForge.EVENT_BUS.register(PlayerTracker.getInstance());
     }
 }
