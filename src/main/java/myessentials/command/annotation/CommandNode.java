@@ -1,13 +1,9 @@
-package myessentials.command;
+package myessentials.command.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-/**
- * CommandNode annotation, has parent
- */
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -16,7 +12,7 @@ public @interface CommandNode {
 
     String permission();
 
-    String parentName();
+    String parentName() default "ROOT";
 
     String syntax() default "";
 

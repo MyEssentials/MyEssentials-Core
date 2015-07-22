@@ -1,62 +1,55 @@
 package myessentials.chat;
 
-import java.util.List;
-
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 
-import org.apache.commons.lang3.text.WordUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HelpMenu {
-    private int maxLines = 9;  // maxLines is 9 because 1 is taken up by the "top bar"
-    private int numberOfPages = 0;
+    private final JsonMessageBuilder messageBuilder = new JsonMessageBuilder();
+
+    private int maxPageLines = 9;  // maxPageLines is 9 because 1 is taken up by the "top bar"
     private String name;
-    private String[] lines;
+    private List<IChatComponent> lines = new ArrayList<IChatComponent>();
 
-    public HelpMenu(String name, String msg) {
-        this(name, msg.split("\n"));
-    }
-
-    public HelpMenu(String name, String...lines) {
+    public HelpMenu(String name) {
         this.name = name;
-        this.lines = lines;
-        numberOfPages = Math.round((float)lines.length/(float)maxLines);
     }
 
-    public void setLines(String...lines) {
-        this.lines = lines;
-        numberOfPages = Math.round((float)lines.length/(float)maxLines);
+    public void addLine(String line) {
+        lines.add(new ChatComponentText(line));
     }
 
-    public void setLines(List<String> lines) {
-        if (this.lines == null) {
-            this.lines = new String[]{};
-        }
-        setLines(lines.toArray(this.lines));
+    public void addLineWithHoverText(String line, String hoverText) {
+        messageBuilder.setText(line);
+        messageBuilder.setHoverEventShowText(hoverText);
+        lines.add(messageBuilder.build());
     }
 
-    public void setMaxLines(int maxLines) {
-        this.maxLines = maxLines;
-        numberOfPages = lines.length/maxLines;
+    public void setMaxPageLines(int maxPageLines) {
+        this.maxPageLines = maxPageLines;
     }
 
-    public int getMaxLines() {
-        return maxLines;
+    public int getMaxPageLines() {
+        return maxPageLines;
     }
 
-    /**
-     * Sends the help page to the given sender
-     */
-    public void send(ICommandSender sender, int page) {
+    public void sendHelpPage(ICommandSender sender, int page) {
+
+        int numberOfPages = (int) Math.ceil((double) lines.size() / (double) maxPageLines);
+
         if (page < 1)
             page = 1;
         if (page > numberOfPages)
             page = numberOfPages;
-        int start = getMaxLines()*(page-1);
 
-        sender.addChatMessage(new ChatComponentText(String.format("---------- %s Help (%s/%s) ----------", WordUtils.capitalizeFully(name), page, numberOfPages)));
-        for (int i=0; start+i<lines.length && i<getMaxLines(); i++) {
-            sender.addChatMessage(new ChatComponentText(lines[start+i]));
+        sender.addChatMessage(new ChatComponentText(String.format("---------- %s Help (%s/%s) ----------", name.toUpperCase(), page, numberOfPages)));
+
+        int start = getMaxPageLines()*(page-1);
+        for(int i = 0; i < maxPageLines; i++) {
+            sender.addChatMessage(lines.get(i + start));
         }
     }
 }

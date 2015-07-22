@@ -2,6 +2,8 @@ package myessentials.command;
 
 import cpw.mods.fml.common.Loader;
 import myessentials.Localization;
+import myessentials.chat.HelpMenu;
+import myessentials.command.annotation.CommandNode;
 import myessentials.command.registrar.BukkitCommandRegistrar;
 import myessentials.command.registrar.ICommandRegistrar;
 import myessentials.utils.ChatUtils;
@@ -55,6 +57,7 @@ public class CommandManager {
      */
     public static final Map<String, List<String>> completionMap = new HashMap<String, List<String>>();
 
+    private static HelpMenu helpMenu;
 
     private CommandManager() {
     }
@@ -87,21 +90,13 @@ public class CommandManager {
      */
     public static void registerCommands(Class clazz, Method firstPermissionBreach) {
         for (final Method m : clazz.getDeclaredMethods()) {
-            if (m.isAnnotationPresent(Command.class)) {
-                final Command cmd = m.getAnnotation(Command.class);
-                registerCommand(new CommandModel(cmd, m), cmd.permission());
-
-                commandList.put(cmd.permission(), m);
-                commandNames.put(cmd.permission(), cmd.name());
-                commandCompletionKeys.put(cmd.permission(), cmd.completionKeys());
-                if(checkPermissionBreachMethod(firstPermissionBreach)) {
-                    firstPermissionBreaches.put(cmd.permission(), firstPermissionBreach);
-                }
-
-            } else if(m.isAnnotationPresent(CommandNode.class)) {
+            if(m.isAnnotationPresent(CommandNode.class)) {
                 final CommandNode cmd = m.getAnnotation(CommandNode.class);
                 if(hasSubCommand(cmd.name(), cmd.parentName()))
                     throw new CommandException("Sub-command with name " + cmd.name() + " and parent " + cmd.parentName() + " is registered twice!");
+
+                if(cmd.parentName().equals("ROOT"))
+                    registerCommand(new CommandModel(cmd, m), cmd.permission());
 
                 commandList.put(cmd.permission(), m);
                 commandNames.put(cmd.permission(), cmd.name());
@@ -361,6 +356,11 @@ public class CommandManager {
                 ChatUtils.sendChat(sender, "   " + s + ": " + local.getLocalization(getSubCommandNode(s, sendHelpNode) + ".help"));
             }
         }
+    }
+
+    public static void constructHelpMenu(String name) {
+        helpMenu = new HelpMenu(name);
+
     }
 
     /**

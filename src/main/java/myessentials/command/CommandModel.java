@@ -1,6 +1,8 @@
 package myessentials.command;
 
+import myessentials.command.annotation.CommandNode;
 import myessentials.utils.PlayerUtils;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,18 +15,18 @@ import java.util.List;
 /**
  * Command model which instantiates all base commands that need to be registered to Minecraft
  */
-public class CommandModel extends CmdBase {
+public class CommandModel extends CommandBase {
     /**
      * The Command annotation which holds information about the node's position.
      */
-    private final Command commandAnnot;
+    private final CommandNode commandAnnot;
 
     /**
      * List which retains all aliases for ease of use
      */
     private List commandAliasCache = null;
 
-    public CommandModel(Command cmd, Method method) {
+    public CommandModel(CommandNode cmd, Method method) {
         this.commandAnnot = cmd;
     }
 
@@ -36,32 +38,26 @@ public class CommandModel extends CmdBase {
         return commandAliasCache;
     }
 
-    @Override
     public String getPermissionNode() {
         return commandAnnot.permission();
     }
 
-    @Override
     public boolean canConsoleUseCommand() {
-        return commandAnnot.console();
+        return commandAnnot.nonPlayers();
     }
 
-    @Override
     public boolean canRConUseCommand() {
-        return commandAnnot.rcon();
+        return commandAnnot.nonPlayers();
     }
 
-    @Override
     public boolean canCommandBlockUseCommand() {
-        return commandAnnot.commandblocks();
+        return commandAnnot.nonPlayers();
     }
 
-    @Override
     public String getCommandName() {
         return commandAnnot.name();
     }
 
-    @Override
     public String getCommandUsage(ICommandSender sender) {
         return "/" + commandAnnot.name() + " " + commandAnnot.syntax();
     }
@@ -73,10 +69,11 @@ public class CommandModel extends CmdBase {
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
         // Return if player is not allowed to use this command
+        /*
         if(sender instanceof EntityPlayer && commandAnnot.opsOnlyAccess() && !PlayerUtils.isOp((EntityPlayer) sender))
             throw new CommandException("commands.generic.permission");
-
-        CommandManager.commandCall(getPermissionNode(), sender, Arrays.asList(args));
+        */
+        CommandManagerNew.getTree(commandAnnot.permission()).commandCall(sender, Arrays.asList(args));
     }
 
     @SuppressWarnings("unchecked")
@@ -88,9 +85,10 @@ public class CommandModel extends CmdBase {
     @SuppressWarnings("RedundantIfStatement")
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender sender) {
+        /*
         if(sender instanceof EntityPlayer && commandAnnot.opsOnlyAccess() && !MinecraftServer.getServer().getConfigurationManager().func_152607_e(((EntityPlayer) sender).getGameProfile()))
             return false;
-
+        */
         return true;
     }
 }
