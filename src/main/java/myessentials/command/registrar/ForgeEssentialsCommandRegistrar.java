@@ -1,8 +1,8 @@
 package myessentials.command.registrar;
 
 import net.minecraft.command.ICommand;
-import net.minecraftforge.fe.server.CommandHandlerForge;
-import net.minecraftforge.permissions.PermissionsManager;
+import net.minecraftforge.permission.PermissionLevel;
+import net.minecraftforge.permission.PermissionManager;
 
 /**
  * ForgeEssentials command registrar.
@@ -10,6 +10,6 @@ import net.minecraftforge.permissions.PermissionsManager;
 public class ForgeEssentialsCommandRegistrar implements ICommandRegistrar {
     @Override
     public void registerCommand(ICommand cmd, String permNode, boolean defaultPerm) {
-        CommandHandlerForge.registerCommand(cmd, permNode, PermissionsManager.RegisteredPermValue.fromBoolean(defaultPerm));
+        PermissionManager.registerPermission(permNode, PermissionLevel.fromBoolean(defaultPerm));
     }
 }

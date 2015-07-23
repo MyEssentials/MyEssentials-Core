@@ -1,10 +1,13 @@
 package myessentials.command;
 
+import cpw.mods.fml.common.Optional;
 import myessentials.utils.PlayerUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.permission.PermissionLevel;
+import net.minecraftforge.permission.PermissionObject;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -13,7 +16,10 @@ import java.util.List;
 /**
  * Command model which instantiates all base commands that need to be registered to Minecraft
  */
-public class CommandModel extends CmdBase {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "net.minecraftforge.permission.PermissionObject", modid = "ForgeEssentials")
+})
+public class CommandModel extends CmdBase implements PermissionObject {
     /**
      * The Command annotation which holds information about the node's position.
      */
@@ -39,6 +45,16 @@ public class CommandModel extends CmdBase {
     @Override
     public String getPermissionNode() {
         return commandAnnot.permission();
+    }
+
+    @Override
+    @Optional.Method(modid = "ForgeEssentials")
+    public PermissionLevel getPermissionLevel() {
+        if (commandAnnot.opsOnlyAccess()) {
+            return PermissionLevel.OP;
+        }
+
+        return PermissionLevel.FALSE;
     }
 
     @Override
