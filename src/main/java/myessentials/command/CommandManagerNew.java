@@ -1,6 +1,7 @@
 package myessentials.command;
 
 import cpw.mods.fml.common.Loader;
+import myessentials.Localization;
 import myessentials.MyEssentialsCore;
 import myessentials.command.annotation.CommandNode;
 import myessentials.command.registrar.BukkitCommandRegistrar;
@@ -21,6 +22,11 @@ public class CommandManagerNew {
      */
     public static final ICommandRegistrar registrar = makeRegistrar();
 
+    /**
+     * Map with the completion as key and a list of available completions as value
+     */
+    public static final Map<String, List<String>> completionMap = new HashMap<String, List<String>>();
+
     private static final List<CommandTree> commandTrees = new ArrayList<CommandTree>();
 
     private static final String ROOT_PERM_NODE = "ROOT";
@@ -31,7 +37,7 @@ public class CommandManagerNew {
     /**
      * It is enforced that the class has to contain ONE root command .
      */
-    public static void registerCommands(Class clazz, String rootPerm) {
+    public static void registerCommands(Class clazz, String rootPerm, Localization localization) {
         CommandTreeNode root = null;
         CommandTree commandTree = rootPerm == null ? null : getTree(rootPerm);
 
@@ -56,7 +62,7 @@ public class CommandManagerNew {
             if (root == null) {
                 throw new CommandException("Class " + clazz.getName() + " has no root command.");
             } else {
-                commandTree = new CommandTree(root);
+                commandTree = new CommandTree(root, localization);
                 commandTrees.add(commandTree);
             }
         }
@@ -79,12 +85,42 @@ public class CommandManagerNew {
         return null;
     }
 
-
     public static void registerCommand(ICommand command, String permNode) {
         if (command == null)
             return;
         registrar.registerCommand(command, permNode, false);
     }
+
+    public static void addCompletionKey(String key, String completion) {
+        List<String> completionList = completionMap.get(key);
+
+        if(completionList == null) {
+            completionList = new ArrayList<String>();
+            completionMap.put(key, completionList);
+        }
+
+        completionList.add(completion);
+    }
+
+    public static List<String> getCompletionList(String key) {
+        return completionMap.get(key);
+    }
+
+
+    public static void removeCompletionKey(String key, String completion) {
+        List<String> completionList = completionMap.get(key);
+
+        if(completionList == null)
+            return;
+
+        for(Iterator<String> it = completionList.iterator(); it.hasNext(); ) {
+            if(it.next().equals(completion)) {
+                it.remove();
+                return;
+            }
+        }
+    }
+
 
     private static void constructTree(CommandTreeNode treeNode, Map<CommandNode, Method> nodes) {
         for(Iterator<Map.Entry<CommandNode, Method>> it = nodes.entrySet().iterator(); it.hasNext();) {

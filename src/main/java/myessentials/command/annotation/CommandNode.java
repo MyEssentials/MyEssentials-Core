@@ -24,5 +24,5 @@ public @interface CommandNode {
 
     boolean players() default true;
 
-    String[] completionKeys() default {""};
+    String[] completionKeys() default {};
 }

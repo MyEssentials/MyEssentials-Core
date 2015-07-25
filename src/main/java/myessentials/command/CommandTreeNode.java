@@ -1,6 +1,8 @@
 package myessentials.command;
 
+import myessentials.Localization;
 import myessentials.MyEssentialsCore;
+import myessentials.chat.HelpMenu;
 import myessentials.command.annotation.CommandNode;
 import myessentials.entities.TreeNode;
 import net.minecraft.command.CommandException;
@@ -13,6 +15,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +26,8 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
 
     private CommandNode commandAnnot;
     private Method method;
+
+    private HelpMenu helpMenu;
 
     public CommandTreeNode(CommandNode commandAnnot, Method method) {
         this.commandAnnot = commandAnnot;
@@ -76,12 +81,24 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
         }
     }
 
-    public List<String> getTabCompletionList() {
-        return null; // TODO: implement this once it's done
+    public List<String> getTabCompletionList(int argumentNumber) {
+        List<String> completion = new ArrayList<String>();
+        if(commandAnnot.completionKeys().length == 0) {
+            for(CommandTreeNode child : getChildren()) {
+                completion.add(child.commandAnnot.name());
+            }
+        } else {
+            if(argumentNumber < commandAnnot.completionKeys().length) {
+                completion.addAll(CommandManagerNew.getCompletionList(commandAnnot.completionKeys()[argumentNumber]));
+            }
+        }
+        return completion;
     }
 
-    public void sendHelpMessage(ICommandSender sender) {
-        return; // TODO: implement this with the HelpMenu
+    public void sendHelpMessage(ICommandSender sender, int page, Localization local) {
+        if(helpMenu == null)
+            constructHelpMenu(local);
+        helpMenu.sendHelpPage(sender, page);
     }
 
     public CommandTreeNode getChild(String name) {
@@ -92,6 +109,13 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
         return null;
     }
 
+    public String getCommandLine() {
+        if(getParent() == null)
+            return "/" + commandAnnot.name();
+        else
+            return getParent().commandAnnot.name() + commandAnnot.name();
+    }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -100,5 +124,13 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
         }
 
         return super.equals(obj);
+    }
+
+    private void constructHelpMenu(Localization local) {
+        String commandLine = getCommandLine();
+        helpMenu = new HelpMenu(commandLine);
+        for(CommandTreeNode child : getChildren()) {
+            helpMenu.addLineWithHoverText(getCommandLine() + " " + child.commandAnnot.name(), local.getLocalization(commandAnnot.permission() + ".help"));
+        }
     }
 }

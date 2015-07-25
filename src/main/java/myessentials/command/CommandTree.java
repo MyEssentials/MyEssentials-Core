@@ -1,5 +1,6 @@
 package myessentials.command;
 
+import myessentials.Localization;
 import myessentials.entities.Tree;
 import net.minecraft.command.ICommandSender;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 public class CommandTree extends Tree<CommandTreeNode> {
 
-    public CommandTree(CommandTreeNode root) {
+    public CommandTree(CommandTreeNode root, Localization localization) {
         super(root);
     }
 
@@ -18,7 +19,7 @@ public class CommandTree extends Tree<CommandTreeNode> {
 
     public CommandTreeNode getNodeFromArgs(List<String> args) {
         CommandTreeNode child = getRoot();
-        while(!args.isEmpty() && child.getChild(args.get(0)) != null) {
+        while (!args.isEmpty() && child.getChild(args.get(0)) != null) {
             child = child.getChild(args.get(0));
             args = args.subList(1, args.size());
         }

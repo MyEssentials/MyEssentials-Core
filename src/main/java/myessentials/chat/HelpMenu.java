@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HelpMenu {
-    private final JsonMessageBuilder messageBuilder = new JsonMessageBuilder();
+    private static final JsonMessageBuilder messageBuilder = new JsonMessageBuilder();
 
     private int maxPageLines = 9;  // maxPageLines is 9 because 1 is taken up by the "top bar"
     private String name;
