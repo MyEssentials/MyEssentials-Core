@@ -3,7 +3,7 @@ package myessentials.command;
 import cpw.mods.fml.common.Loader;
 import myessentials.Localization;
 import myessentials.chat.HelpMenu;
-import myessentials.command.annotation.CommandNode;
+import myessentials.command.annotation.Command;
 import myessentials.command.registrar.BukkitCommandRegistrar;
 import myessentials.command.registrar.ICommandRegistrar;
 import myessentials.utils.ChatUtils;
@@ -63,21 +63,21 @@ public class CommandManager {
     }
 
     /**
-     * Registers all commands that are static and have the @Command or @CommandNode annotation on it.
+     * Registers all commands that are static and have the @Command or @Command annotation on it.
      */
     public static void registerCommands(Class clazz) {
         registerCommands(clazz, null);
     }
 
     /**
-     * Registers all commands that are static and have the @Command or @CommandNode annotation on it.
+     * Registers all commands that are static and have the @Command or @Command annotation on it.
      */
     public static void registerCommands(Object obj) {
         registerCommands(obj.getClass(), null);
     }
 
     /**
-     * Registers all commands that are static and have the @Command or @CommandNode annotation on it
+     * Registers all commands that are static and have the @Command or @Command annotation on it
      * and can add a custom permission check , if none is added it will use the default per-player permission system
      */
     public static void registerCommands(Object commandObj, Method firstPermissionBreach) {
@@ -85,13 +85,13 @@ public class CommandManager {
     }
 
     /**
-     * Registers all commands that are static and have the @Command or @CommandNode annotation on it
+     * Registers all commands that are static and have the @Command or @Command annotation on it
      * and can add a custom permission check , if none is added it will use the default per-player permission system
      */
     public static void registerCommands(Class clazz, Method firstPermissionBreach) {
         for (final Method m : clazz.getDeclaredMethods()) {
-            if(m.isAnnotationPresent(CommandNode.class)) {
-                final CommandNode cmd = m.getAnnotation(CommandNode.class);
+            if(m.isAnnotationPresent(Command.class)) {
+                final Command cmd = m.getAnnotation(Command.class);
                 if(hasSubCommand(cmd.name(), cmd.parentName()))
                     throw new CommandException("Sub-command with name " + cmd.name() + " and parent " + cmd.parentName() + " is registered twice!");
 
@@ -127,7 +127,7 @@ public class CommandManager {
         }
 
         // Check if sender is allowed to use this command
-        CommandNode cmdAnnot = commandList.get(permission).getAnnotation(CommandNode.class);
+        Command cmdAnnot = commandList.get(permission).getAnnotation(Command.class);
 
         if(cmdAnnot != null &&
                 ((!cmdAnnot.players() && sender instanceof EntityPlayer) ||
@@ -173,7 +173,7 @@ public class CommandManager {
     }
 
     /**
-     * Gets the subCommands from a method with the @Command or @CommandNode annotation
+     * Gets the subCommands from a method with the @Command or @Command annotation
      */
     @SuppressWarnings("unchecked")
     public static List<String> getSubCommandsList(String permission) {
@@ -193,8 +193,8 @@ public class CommandManager {
      */
     public static String getParentPermNode(String childPermNode) {
         Method m = commandList.get(childPermNode);
-        if(m.isAnnotationPresent(CommandNode.class)) {
-            return m.getAnnotation(CommandNode.class).parentName();
+        if(m.isAnnotationPresent(Command.class)) {
+            return m.getAnnotation(Command.class).parentName();
         } else {
             return null;
         }

@@ -3,14 +3,14 @@ package myessentials.command;
 import cpw.mods.fml.common.Loader;
 import myessentials.Localization;
 import myessentials.MyEssentialsCore;
-import myessentials.command.annotation.CommandNode;
+import myessentials.command.annotation.Command;
 import myessentials.command.registrar.BukkitCommandRegistrar;
 import myessentials.command.registrar.ForgeEssentialsCommandRegistrar;
 import myessentials.command.registrar.ICommandRegistrar;
 import myessentials.command.registrar.VanillaCommandRegistrar;
 import myessentials.exception.CommandException;
 import myessentials.utils.ClassUtils;
-import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandSender;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -20,16 +20,11 @@ public class CommandManagerNew {
     /**
      * Registrar used to register any commands. Offers compatibility for Bukkit and ForgeEssentials
      */
-    public static final ICommandRegistrar registrar = makeRegistrar();
-
-    /**
-     * Map with the completion as key and a list of available completions as value
-     */
-    public static final Map<String, List<String>> completionMap = new HashMap<String, List<String>>();
+    private static final ICommandRegistrar registrar = makeRegistrar();
 
     private static final List<CommandTree> commandTrees = new ArrayList<CommandTree>();
 
-    private static final String ROOT_PERM_NODE = "ROOT";
+    public static final String ROOT_PERM_NODE = "ROOT";
 
     private CommandManagerNew() {
     }
@@ -37,23 +32,27 @@ public class CommandManagerNew {
     /**
      * It is enforced that the class has to contain ONE root command .
      */
-    public static void registerCommands(Class clazz, String rootPerm, Localization localization) {
+    public static void registerCommands(Class clazz, String rootPerm, Localization local) {
         CommandTreeNode root = null;
         CommandTree commandTree = rootPerm == null ? null : getTree(rootPerm);
 
-        Map<CommandNode, Method> nodes = new HashMap<CommandNode, Method>();
+        Map<Command, Method> nodes = new HashMap<Command, Method>();
 
         for (final Method method : clazz.getDeclaredMethods()) {
-            if(method.isAnnotationPresent(CommandNode.class)) {
-                CommandNode commandNode = method.getAnnotation(CommandNode.class);
-                if(commandNode.parentName().equals(ROOT_PERM_NODE)) {
-                    if(commandTree == null) {
-                        root = new CommandTreeNode(commandNode, method);
+            if(method.isAnnotationPresent(Command.class)) {
+                if(isMethodValid(method)) {
+                    Command command = method.getAnnotation(Command.class);
+                    if (command.parentName().equals(ROOT_PERM_NODE)) {
+                        if (commandTree == null) {
+                            root = new CommandTreeNode(command, method);
+                        } else {
+                            throw new CommandException("Class " + clazz.getName() + " has more than one root command.");
+                        }
                     } else {
-                        throw new CommandException("Class " + clazz.getName() + " has more than one root command.");
+                        nodes.put(command, method);
                     }
                 } else {
-                    nodes.put(commandNode, method);
+                    MyEssentialsCore.instance.LOG.error("Method " + method.getName() + " from class " + clazz.getName() + " is not valid for command usage");
                 }
             }
         }
@@ -62,16 +61,17 @@ public class CommandManagerNew {
             if (root == null) {
                 throw new CommandException("Class " + clazz.getName() + " has no root command.");
             } else {
-                commandTree = new CommandTree(root, localization);
+                commandTree = new CommandTree(root, local);
                 commandTrees.add(commandTree);
             }
         }
 
-        registerCommand(new CommandModel(commandTree.getRoot().getAnnotation(), commandTree.getRoot().getMethod()), commandTree.getRoot().getAnnotation().permission());
+        registrar.registerCommand(new CommandModel(commandTree.getRoot().getAnnotation(), commandTree.getRoot().getMethod()), commandTree.getRoot().getAnnotation().permission(), false);
+
         constructTree(commandTree.getRoot(), nodes);
 
         if(!nodes.isEmpty()) {
-            for(Map.Entry<CommandNode, Method> entry : nodes.entrySet()) {
+            for(Map.Entry<Command, Method> entry : nodes.entrySet()) {
                 MyEssentialsCore.instance.LOG.error("Node " + entry.getKey().permission() + " has an invalid parent " + entry.getKey().parentName());
             }
         }
@@ -85,46 +85,9 @@ public class CommandManagerNew {
         return null;
     }
 
-    public static void registerCommand(ICommand command, String permNode) {
-        if (command == null)
-            return;
-        registrar.registerCommand(command, permNode, false);
-    }
-
-    public static void addCompletionKey(String key, String completion) {
-        List<String> completionList = completionMap.get(key);
-
-        if(completionList == null) {
-            completionList = new ArrayList<String>();
-            completionMap.put(key, completionList);
-        }
-
-        completionList.add(completion);
-    }
-
-    public static List<String> getCompletionList(String key) {
-        return completionMap.get(key);
-    }
-
-
-    public static void removeCompletionKey(String key, String completion) {
-        List<String> completionList = completionMap.get(key);
-
-        if(completionList == null)
-            return;
-
-        for(Iterator<String> it = completionList.iterator(); it.hasNext(); ) {
-            if(it.next().equals(completion)) {
-                it.remove();
-                return;
-            }
-        }
-    }
-
-
-    private static void constructTree(CommandTreeNode treeNode, Map<CommandNode, Method> nodes) {
-        for(Iterator<Map.Entry<CommandNode, Method>> it = nodes.entrySet().iterator(); it.hasNext();) {
-            Map.Entry<CommandNode, Method> entry = it.next();
+    private static void constructTree(CommandTreeNode treeNode, Map<Command, Method> nodes) {
+        for(Iterator<Map.Entry<Command, Method>> it = nodes.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<Command, Method> entry = it.next();
             if(entry.getKey().parentName().equals(treeNode.getAnnotation().permission())) {
                 treeNode.addChild(new CommandTreeNode(entry.getKey(), entry.getValue()));
                 it.remove();
@@ -134,6 +97,19 @@ public class CommandManagerNew {
         for(CommandTreeNode child : treeNode.getChildren()) {
             constructTree(child, nodes);
         }
+    }
+
+    private static boolean isMethodValid(Method method) {
+        if(!method.getReturnType().equals(CommandResponse.class))
+            return false;
+
+        if(method.getParameterCount() != 2)
+            return false;
+
+        if(!(method.getParameterTypes()[0].equals(ICommandSender.class) && method.getParameterTypes()[1].equals(List.class)))
+            return false;
+
+        return true;
     }
 
     private static ICommandRegistrar makeRegistrar() {

@@ -1,6 +1,6 @@
 package myessentials.test.command;
 
-import myessentials.command.annotation.CommandNode;
+import myessentials.command.annotation.Command;
 import net.minecraft.command.ICommandSender;
 
 import java.util.List;
@@ -14,14 +14,14 @@ public class TestCommands {
         return true;
     }
 
-    @CommandNode(
+    @Command(
             name="test",
             permission="myessentials.test")
     public static void testCommand(ICommandSender sender, List<String> args) {
 
     }
 
-    @CommandNode(
+    @Command(
             name="sub",
             permission="myessentials.test.sub",
             parentName = "myessentials.test")

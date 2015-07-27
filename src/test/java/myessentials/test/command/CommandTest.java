@@ -14,29 +14,4 @@ import java.util.List;
  */
 public class CommandTest {
 
-    //
-    // Test methods
-    //
-
-    //@Before
-    public void testRegister() throws Exception {
-        CommandManager.registerCommands(TestCommands.class);
-    }
-
-    //@Test
-    public void testCommandCall() {
-        List<String> args = new ArrayList<String>();
-        args.add("this");
-        args.add("is");
-        args.add("a");
-        args.add("test");
-        CommandManager.commandCall("myessentials.test", new TestCommandSender(), args);
-    }
-
-    //@Test
-    public void testCommandExistance() {
-        Assert.assertEquals("test", CommandManager.commandNames.get("myessentials.test"));
-        Assert.assertEquals("sub", CommandManager.commandNames.get("myessentials.test.sub"));
-        Assert.assertEquals("myessentails.test", CommandManager.commandParents.get("myessentials.test.sub"));
-    }
 }

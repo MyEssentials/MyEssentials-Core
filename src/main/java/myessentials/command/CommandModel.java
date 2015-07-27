@@ -1,12 +1,8 @@
 package myessentials.command;
 
-import myessentials.command.annotation.CommandNode;
-import myessentials.utils.PlayerUtils;
+import myessentials.command.annotation.Command;
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -19,14 +15,14 @@ public class CommandModel extends CommandBase {
     /**
      * The Command annotation which holds information about the node's position.
      */
-    private final CommandNode commandAnnot;
+    private final Command commandAnnot;
 
     /**
      * List which retains all aliases for ease of use
      */
     private List commandAliasCache = null;
 
-    public CommandModel(CommandNode cmd, Method method) {
+    public CommandModel(Command cmd, Method method) {
         this.commandAnnot = cmd;
     }
 
@@ -79,7 +75,10 @@ public class CommandModel extends CommandBase {
     @SuppressWarnings("unchecked")
     @Override
     public List addTabCompletionOptions(ICommandSender sender, String[] args) {
-        return CommandManager.getTabCompletionList(sender, Arrays.asList(args), commandAnnot.permission());
+        CommandTree tree = CommandManagerNew.getTree("mytown.cmd");
+        CommandTreeNode node = tree.getNodeFromArgs(Arrays.asList(args));
+
+        return node.getTabCompletionList(tree.getArgumentNumber(Arrays.asList(args)));
     }
 
     @SuppressWarnings("RedundantIfStatement")

@@ -3,7 +3,7 @@ package myessentials.command;
 import myessentials.Localization;
 import myessentials.MyEssentialsCore;
 import myessentials.chat.HelpMenu;
-import myessentials.command.annotation.CommandNode;
+import myessentials.command.annotation.Command;
 import myessentials.entities.TreeNode;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -20,21 +20,21 @@ import java.util.List;
 
 /**
  * The declaration is a bit difficult to understand.
- * It means that the super class "TreeNode" should only work with other "CommandTreeNode" objects.
+ * It means that the super class "TreeNode" should work with other "CommandTreeNode" objects.
  */
 public class CommandTreeNode extends TreeNode<CommandTreeNode> {
 
-    private CommandNode commandAnnot;
+    private Command commandAnnot;
     private Method method;
 
     private HelpMenu helpMenu;
 
-    public CommandTreeNode(CommandNode commandAnnot, Method method) {
+    public CommandTreeNode(Command commandAnnot, Method method) {
         this.commandAnnot = commandAnnot;
         this.method = method;
     }
 
-    public CommandNode getAnnotation() {
+    public Command getAnnotation() {
         return commandAnnot;
     }
 
@@ -70,7 +70,10 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
         */
 
         try {
-            method.invoke(null, sender, args);
+            CommandResponse response = (CommandResponse)method.invoke(null, sender, args);
+            if(response == CommandResponse.SEND_HELP_MESSAGE) {
+                sendHelpMessage(sender, 1);
+            }
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof RuntimeException)
                 throw (RuntimeException) e.getCause();
@@ -89,15 +92,15 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
             }
         } else {
             if(argumentNumber < commandAnnot.completionKeys().length) {
-                completion.addAll(CommandManagerNew.getCompletionList(commandAnnot.completionKeys()[argumentNumber]));
+                completion.addAll(CommandCompletion.getCompletionList(commandAnnot.completionKeys()[argumentNumber]));
             }
         }
         return completion;
     }
 
-    public void sendHelpMessage(ICommandSender sender, int page, Localization local) {
+    public void sendHelpMessage(ICommandSender sender, int page) {
         if(helpMenu == null)
-            constructHelpMenu(local);
+            constructHelpMenu();
         helpMenu.sendHelpPage(sender, page);
     }
 
@@ -126,11 +129,19 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
         return super.equals(obj);
     }
 
-    private void constructHelpMenu(Localization local) {
+    private void constructHelpMenu() {
         String commandLine = getCommandLine();
         helpMenu = new HelpMenu(commandLine);
         for(CommandTreeNode child : getChildren()) {
-            helpMenu.addLineWithHoverText(getCommandLine() + " " + child.commandAnnot.name(), local.getLocalization(commandAnnot.permission() + ".help"));
+            helpMenu.addLineWithHoverText(getCommandLine() + " " + child.commandAnnot.name(), getLocal().getLocalization(commandAnnot.permission() + ".help"));
         }
+    }
+
+    private Localization getLocal() {
+        CommandTreeNode node = this;
+        while(!node.getAnnotation().parentName().equals(CommandManagerNew.ROOT_PERM_NODE)) {
+            node = node.getParent();
+        }
+        return CommandManagerNew.getTree(node.getAnnotation().permission()).getLocal();
     }
 }

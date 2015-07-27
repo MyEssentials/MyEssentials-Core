@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CommandNode {
+public @interface Command {
     String name();
 
     String permission();
@@ -20,7 +20,7 @@ public @interface CommandNode {
 
     String[] alias() default {};
 
-    boolean nonPlayers() default false;
+    boolean nonPlayers() default true;
 
     boolean players() default true;
 

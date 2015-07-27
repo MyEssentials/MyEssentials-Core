@@ -1,5 +1,6 @@
 package myessentials.chat;
 
+import myessentials.MyEssentialsCore;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
@@ -38,7 +39,12 @@ public class HelpMenu {
 
     public void sendHelpPage(ICommandSender sender, int page) {
 
-        int numberOfPages = (int) Math.ceil((double) lines.size() / (double) maxPageLines);
+        int numberOfPages = (int) Math.ceil((double) (lines.size() / maxPageLines));
+
+        MyEssentialsCore.instance.LOG.info(lines.size());
+        MyEssentialsCore.instance.LOG.info(maxPageLines);
+        MyEssentialsCore.instance.LOG.info((double) (lines.size() / maxPageLines));
+        MyEssentialsCore.instance.LOG.info(Math.ceil((double) (lines.size() / maxPageLines)));
 
         if (page < 1)
             page = 1;
