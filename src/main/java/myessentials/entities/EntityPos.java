@@ -31,4 +31,9 @@ public class EntityPos {
     public double getZ() {
         return z;
     }
+
+    @Override
+    public String toString() {
+        return "EntityPos(x: " + x + ", y: " + y + ", z: " + z + " | dim: " + dim + ")";
+    }
 }

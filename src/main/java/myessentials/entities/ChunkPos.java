@@ -19,4 +19,9 @@ public class ChunkPos {
     public int getZ() {
         return z;
     }
+
+    @Override
+    public String toString() {
+        return "ChunkPos(x: " + x + ", z: " + z + ")";
+    }
 }

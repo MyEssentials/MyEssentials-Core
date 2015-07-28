@@ -31,5 +31,10 @@ public class BlockPos {
     public int getZ() {
         return z;
     }
+
+    @Override
+    public String toString() {
+        return "BlockPos(x: " + x + ", y: " + y + ", z: " + z + " | dim: " + dim + ")";
+    }
 }
 
