@@ -6,10 +6,11 @@ public class ConfigPropertyData {
     private final Field field;
     private Object defaultValue;
     private final String name;
+    private final String fullName;
     private final String comment;
     private final boolean editByCommands;
 
-    public ConfigPropertyData(Field field, String name, String comment, boolean editByCommands) {
+    public ConfigPropertyData(Field field, String name, String fullName, String comment, boolean editByCommands) {
         this.field = field;
         try {
             defaultValue = this.field.get(null);
@@ -18,12 +19,17 @@ public class ConfigPropertyData {
             defaultValue = null;
         }
         this.name = name;
+        this.fullName = fullName;
         this.comment = comment;
         this.editByCommands = editByCommands;
     }
 
     public String name() {
         return name;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 
     public String comment() {

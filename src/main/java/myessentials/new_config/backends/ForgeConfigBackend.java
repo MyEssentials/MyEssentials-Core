@@ -13,22 +13,20 @@ import java.util.Map;
 
 public class ForgeConfigBackend implements IConfigBackend {
     private final Configuration forgeConfig;
-    private final ConfigData data;
 
-    public ForgeConfigBackend(Configuration forgeConfig, ConfigData data) {
+    public ForgeConfigBackend(final Configuration forgeConfig) {
         this.forgeConfig = forgeConfig;
-        this.data = data;
     }
 
     @Override
-    public void load() {
+    public void load(ConfigData data) {
         for (ConfigGroupData groupData : data.getGroups()) {
             loadGroup(null, groupData);
         }
     }
 
     @Override
-    public void save() {
+    public void save(ConfigData data) {
         for (ConfigGroupData groupData : data.getGroups()) {
             saveGroup(null, groupData);
         }

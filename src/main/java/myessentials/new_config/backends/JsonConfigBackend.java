@@ -11,15 +11,13 @@ import java.io.*;
 
 public class JsonConfigBackend implements IConfigBackend {
     private final File file;
-    private final ConfigData data;
 
-    public JsonConfigBackend (final File file, final ConfigData data) {
+    public JsonConfigBackend (final File file) {
         this.file = file;
-        this.data = data;
     }
 
     @Override
-    public void load() {
+    public void load(ConfigData data) {
         try {
             FileReader fileReader = new FileReader(file);
             JsonParser parser = new JsonParser();
@@ -37,7 +35,7 @@ public class JsonConfigBackend implements IConfigBackend {
     }
 
     @Override
-    public void save() {
+    public void save(ConfigData data) {
         JsonObject rootObj = new JsonObject();
         for (ConfigGroupData groupData : data.getGroups()) {
             rootObj.add(groupData.name(), saveGroup(groupData));
