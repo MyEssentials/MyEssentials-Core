@@ -5,6 +5,7 @@ import myessentials.MyEssentialsCore;
 import myessentials.chat.HelpMenu;
 import myessentials.command.annotation.Command;
 import myessentials.entities.TreeNode;
+import myessentials.utils.StringUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.server.CommandBlockLogic;
@@ -30,6 +31,11 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
     private HelpMenu helpMenu;
 
     public CommandTreeNode(Command commandAnnot, Method method) {
+        this(null, commandAnnot, method);
+    }
+
+    public CommandTreeNode(CommandTreeNode parent, Command commandAnnot, Method method) {
+        this.parent = parent;
         this.commandAnnot = commandAnnot;
         this.method = method;
     }
@@ -72,7 +78,10 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
         try {
             CommandResponse response = (CommandResponse)method.invoke(null, sender, args);
             if(response == CommandResponse.SEND_HELP_MESSAGE) {
-                sendHelpMessage(sender, 1);
+                int page = 1;
+                if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0)))
+                    page = Integer.parseInt(args.get(0));
+                sendHelpMessage(sender, page);
             }
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof RuntimeException)
@@ -116,30 +125,23 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
         if(getParent() == null)
             return "/" + commandAnnot.name();
         else
-            return getParent().commandAnnot.name() + commandAnnot.name();
-    }
-
-
-    @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof String) {
-            return commandAnnot.name().equals(obj);
-        }
-
-        return super.equals(obj);
+            return getParent().getCommandLine() + " " + commandAnnot.name();
     }
 
     private void constructHelpMenu() {
         String commandLine = getCommandLine();
         helpMenu = new HelpMenu(commandLine);
         for(CommandTreeNode child : getChildren()) {
-            helpMenu.addLineWithHoverText(getCommandLine() + " " + child.commandAnnot.name(), getLocal().getLocalization(commandAnnot.permission() + ".help"));
+            MyEssentialsCore.instance.LOG.info("Adding child: " + child.getAnnotation().permission() + " to " + getAnnotation().permission());
+            helpMenu.addLineWithHoverText(getCommandLine() + " " + child.getAnnotation().name(), getLocal().getLocalization(child.getAnnotation().permission() + ".help"));
         }
     }
 
     private Localization getLocal() {
         CommandTreeNode node = this;
-        while(!node.getAnnotation().parentName().equals(CommandManagerNew.ROOT_PERM_NODE)) {
+
+        while(node.getParent() != null) {
+            MyEssentialsCore.instance.LOG.info("Node is " + node.getAnnotation().permission());
             node = node.getParent();
         }
         return CommandManagerNew.getTree(node.getAnnotation().permission()).getLocal();

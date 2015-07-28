@@ -5,8 +5,8 @@ import java.util.List;
 
 public class TreeNode<T> {
 
-    private T parent;
-    private List<T> children = new ArrayList<T>();
+    protected T parent;
+    protected List<T> children = new ArrayList<T>();
 
     public TreeNode() {
         this(null);

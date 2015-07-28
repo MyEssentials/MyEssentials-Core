@@ -3,6 +3,7 @@ package myessentials.chat;
 import myessentials.MyEssentialsCore;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class HelpMenu {
     }
 
     public void addLineWithHoverText(String line, String hoverText) {
-        messageBuilder.setText(line);
+        messageBuilder.setText(EnumChatFormatting.BLUE + line);
         messageBuilder.setHoverEventShowText(hoverText);
         lines.add(messageBuilder.build());
     }
@@ -39,23 +40,18 @@ public class HelpMenu {
 
     public void sendHelpPage(ICommandSender sender, int page) {
 
-        int numberOfPages = (int) Math.ceil((double) (lines.size() / maxPageLines));
-
-        MyEssentialsCore.instance.LOG.info(lines.size());
-        MyEssentialsCore.instance.LOG.info(maxPageLines);
-        MyEssentialsCore.instance.LOG.info((double) (lines.size() / maxPageLines));
-        MyEssentialsCore.instance.LOG.info(Math.ceil((double) (lines.size() / maxPageLines)));
+        int numberOfPages = (int) Math.ceil( (double)lines.size() / (double)maxPageLines);
 
         if (page < 1)
             page = 1;
         if (page > numberOfPages)
             page = numberOfPages;
 
-        sender.addChatMessage(new ChatComponentText(String.format("---------- %s Help (%s/%s) ----------", name.toUpperCase(), page, numberOfPages)));
+        sender.addChatMessage(new ChatComponentText(String.format("%s------ %s Help (%s/%s) <Hover> ------", EnumChatFormatting.GREEN, name, page, numberOfPages)));
 
-        int start = getMaxPageLines()*(page-1);
-        for(int i = 0; i < maxPageLines; i++) {
-            sender.addChatMessage(lines.get(i + start));
+        int start = maxPageLines * (page-1);
+        for(int i = start; i < Math.min(lines.size(), maxPageLines * page); i++) {
+            sender.addChatMessage(lines.get(i));
         }
     }
 }

@@ -89,7 +89,7 @@ public class CommandManagerNew {
         for(Iterator<Map.Entry<Command, Method>> it = nodes.entrySet().iterator(); it.hasNext();) {
             Map.Entry<Command, Method> entry = it.next();
             if(entry.getKey().parentName().equals(treeNode.getAnnotation().permission())) {
-                treeNode.addChild(new CommandTreeNode(entry.getKey(), entry.getValue()));
+                treeNode.addChild(new CommandTreeNode(treeNode, entry.getKey(), entry.getValue()));
                 it.remove();
             }
         }
