@@ -131,17 +131,19 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
     private void constructHelpMenu() {
         String commandLine = getCommandLine();
         helpMenu = new HelpMenu(commandLine);
-        for(CommandTreeNode child : getChildren()) {
-            MyEssentialsCore.instance.LOG.info("Adding child: " + child.getAnnotation().permission() + " to " + getAnnotation().permission());
-            helpMenu.addLineWithHoverText(getCommandLine() + " " + child.getAnnotation().name(), getLocal().getLocalization(child.getAnnotation().permission() + ".help"));
+        if(getChildren().isEmpty()) {
+            helpMenu.addLine(getLocal().getLocalization(getAnnotation().permission() + ".help"));
+        } else {
+            for (CommandTreeNode child : getChildren()) {
+                helpMenu.addLineWithHoverText(commandLine + " " + child.getAnnotation().name(), getLocal().getLocalization(child.getAnnotation().permission() + ".help"));
+            }
         }
     }
 
-    private Localization getLocal() {
+    public Localization getLocal() {
         CommandTreeNode node = this;
 
         while(node.getParent() != null) {
-            MyEssentialsCore.instance.LOG.info("Node is " + node.getAnnotation().permission());
             node = node.getParent();
         }
         return CommandManagerNew.getTree(node.getAnnotation().permission()).getLocal();

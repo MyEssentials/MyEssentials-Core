@@ -72,7 +72,7 @@ public class CommandManagerNew {
 
         if(!nodes.isEmpty()) {
             for(Map.Entry<Command, Method> entry : nodes.entrySet()) {
-                MyEssentialsCore.instance.LOG.error("Node " + entry.getKey().permission() + " has an invalid parent " + entry.getKey().parentName());
+                MyEssentialsCore.instance.LOG.error("Missing parent: " + entry.getKey().permission() + " |<-| " + entry.getKey().parentName());
             }
         }
     }
@@ -85,18 +85,36 @@ public class CommandManagerNew {
         return null;
     }
 
-    private static void constructTree(CommandTreeNode treeNode, Map<Command, Method> nodes) {
-        for(Iterator<Map.Entry<Command, Method>> it = nodes.entrySet().iterator(); it.hasNext();) {
-            Map.Entry<Command, Method> entry = it.next();
-            if(entry.getKey().parentName().equals(treeNode.getAnnotation().permission())) {
-                treeNode.addChild(new CommandTreeNode(treeNode, entry.getKey(), entry.getValue()));
-                it.remove();
-            }
-        }
+    private static CommandTreeNode findNode(CommandTreeNode root, String perm) {
+        if(root.getAnnotation().permission().equals(perm))
+            return root;
 
-        for(CommandTreeNode child : treeNode.getChildren()) {
-            constructTree(child, nodes);
+        for(CommandTreeNode child : root.getChildren()) {
+            CommandTreeNode foundNode = findNode(child, perm);
+            if(foundNode != null)
+                return foundNode;
         }
+        return null;
+    }
+
+    private static void constructTree(CommandTreeNode root, Map<Command, Method> nodes) {
+        int currentNodeNumber;
+        do {
+            currentNodeNumber = nodes.size();
+            for (Iterator<Map.Entry<Command, Method>> it = nodes.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry<Command, Method> entry = it.next();
+
+                CommandTreeNode parent = findNode(root, entry.getKey().parentName());
+
+                if (parent != null) {
+                    parent.addChild(new CommandTreeNode(parent, entry.getKey(), entry.getValue()));
+                    if(!root.getLocal().hasLocalization(entry.getKey().permission() + ".help")) {
+                        MyEssentialsCore.instance.LOG.error("Missing help: " + entry.getKey().permission() + ".help");
+                    }
+                    it.remove();
+                }
+            }
+        } while(currentNodeNumber != nodes.size());
     }
 
     private static boolean isMethodValid(Method method) {

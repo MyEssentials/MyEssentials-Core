@@ -111,6 +111,11 @@ public class Localization {
             return getLocalizationFromKey(key);
     }
 
+    public boolean hasLocalization(String key) {
+        return localizations.containsKey(key);
+    }
+
+
     public Map<String, String> getLocalizationMap() {
         return localizations;
     }

@@ -213,6 +213,11 @@ public class JsonMessageBuilder {
         return setHoverEvent("show_entity", entity);
     }
 
+    public JsonMessageBuilder resetHoverEvent() {
+        rootObj.remove("hoverEvent");
+        return this;
+    }
+
     /**
      * Returns the parent JsonMessageBuilder, or null if there is no parent
      */
