@@ -1,13 +1,9 @@
 package myessentials;
 
 import net.minecraft.util.EnumChatFormatting;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,19 +11,10 @@ import java.util.Map;
  * Loads and handles Localization files
  */
 public class Localization {
-    /**
-     * The localization map
-     */
-    Map<String, String> localizations;
     public static final Map<Character, String> colorMap = new HashMap<Character, String>();
-    Reader reader = null;
+    public static final String defaultLocalization = "en_US.lang";
 
-    /**
-     * Specifies the {@link Reader} to use when reading the localization
-     */
-    public Localization(Reader r) {
-        reader = r;
-        localizations = new HashMap<String, String>();
+    static {
         colorMap.put('0', "BLACK");
         colorMap.put('1', "DARK_BLUE");
         colorMap.put('2', "DARK_GREEN");
@@ -46,40 +33,52 @@ public class Localization {
         colorMap.put('f', "WHITE");
     }
 
-    /**
-     * Specifies the file to load via a {@link File}
-     */
-    public Localization(File file) throws FileNotFoundException {
-        this(new FileReader(file));
+    private Map<String, String> localizations = new HashMap<String, String>();
+    private Reader reader = null;
+
+    public Localization(String path) {
+        try {
+            InputStream is;
+
+            File file = new File(path);
+            if (file.exists()) {
+                is = new FileInputStream(file);
+                reader = new InputStreamReader(is);
+            }
+        } catch (Exception ex) {
+            MyEssentialsCore.instance.LOG.error("Failed to load localization for the path given " + path);
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
+        }
     }
 
-    /**
-     * Specifies the file to load via a filename
-     */
-    public Localization(String filename) throws FileNotFoundException {
-        this(new File(filename));
+    public Localization(Reader reader) {
+        this.reader = reader;
     }
 
     /**
      * Do the actual loading of the Localization file
      */
-    public void load() throws IOException {
+    public void load() {
         BufferedReader br = new BufferedReader(reader);
 
         String line;
-        while ((line = br.readLine()) != null) {
-            line = line.trim(); // Trim it in-case there is spaces before the actual key-value pairs
-            String[] entry = line.split("=");
-            if (line.startsWith("#") || line.isEmpty() || entry.length < 2) {
-                // Ignore entries that are not formatted correctly (maybe log later)
-                // Ignore comments and empty lines
-                continue;
+        try {
+            while ((line = br.readLine()) != null) {
+                line = line.trim(); // Trim it in-case there is spaces before the actual key-value pairs
+                String[] entry = line.split("=");
+                if (line.startsWith("#") || line.isEmpty() || entry.length < 2) {
+                    // Ignore entries that are not formatted correctly (maybe log later)
+                    // Ignore comments and empty lines
+                    continue;
+                }
+
+                localizations.put(entry[0].trim(), entry[1].trim());
             }
-
-            localizations.put(entry[0].trim(), entry[1].trim());
+            br.close();
+        } catch (IOException ex) {
+            MyEssentialsCore.instance.LOG.error("Failed to load localization file!");
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
         }
-
-        br.close();
     }
 
     private String getLocalizationFromKey(String key) {
