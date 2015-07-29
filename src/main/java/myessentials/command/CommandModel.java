@@ -18,21 +18,13 @@ public class CommandModel extends CommandBase {
      */
     private final Command commandAnnot;
 
-    /**
-     * List which retains all aliases for ease of use
-     */
-    private List commandAliasCache = null;
-
     public CommandModel(Command cmd, Method method) {
         this.commandAnnot = cmd;
     }
 
     @Override
     public List getCommandAliases() {
-        if (commandAliasCache == null) {
-            commandAliasCache = Arrays.asList(commandAnnot.alias());
-        }
-        return commandAliasCache;
+        return Arrays.asList(commandAnnot.alias());
     }
 
     public String getPermissionNode() {
@@ -62,18 +54,14 @@ public class CommandModel extends CommandBase {
     /**
      * Processes the command by calling the method that was linked to it.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
-        // Return if player is not allowed to use this command
-        /*
-        if(sender instanceof EntityPlayer && commandAnnot.opsOnlyAccess() && !PlayerUtils.isOp((EntityPlayer) sender))
-            throw new CommandException("commands.generic.permission");
-        */
+
         CommandManagerNew.getTree(commandAnnot.permission()).commandCall(sender, Arrays.asList(args));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Override
     public List addTabCompletionOptions(ICommandSender sender, String[] args) {
         CommandTree tree = CommandManagerNew.getTree(commandAnnot.permission());
@@ -86,13 +74,12 @@ public class CommandModel extends CommandBase {
         return node.getTabCompletionList(argumentNumber, args[args.length - 1]);
     }
 
-    @SuppressWarnings("RedundantIfStatement")
+    /**
+     * This method does not have enough arguments to check for subcommands down the command trees therefore it always returns true.
+     * The check is moved directly to the processCommand method.
+     */
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender sender) {
-        /*
-        if(sender instanceof EntityPlayer && commandAnnot.opsOnlyAccess() && !MinecraftServer.getServer().getConfigurationManager().func_152607_e(((EntityPlayer) sender).getGameProfile()))
-            return false;
-        */
         return true;
     }
 }
