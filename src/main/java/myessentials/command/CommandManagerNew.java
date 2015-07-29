@@ -121,7 +121,7 @@ public class CommandManagerNew {
         if(!method.getReturnType().equals(CommandResponse.class))
             return false;
 
-        if(method.getParameterCount() != 2)
+        if(method.getParameterTypes().length != 2)
             return false;
 
         if(!(method.getParameterTypes()[0].equals(ICommandSender.class) && method.getParameterTypes()[1].equals(List.class)))
