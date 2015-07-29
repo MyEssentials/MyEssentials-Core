@@ -20,11 +20,11 @@ public class WorldUtils {
     /**
      * Transforms a box made out of actual coordinates to a list of all the chunks that this box is in
      */
-    public static List<ChunkPos> getChunksInBox(int minX, int minZ, int maxX, int maxZ) {
+    public static List<ChunkPos> getChunksInBox(int dim, int minX, int minZ, int maxX, int maxZ) {
         List<ChunkPos> list = new ArrayList<ChunkPos>();
         for (int i = minX >> 4; i <= maxX >> 4; i++) {
             for (int j = minZ >> 4; j <= maxZ >> 4; j++) {
-                list.add(new ChunkPos(i, j));
+                list.add(new ChunkPos(dim, i, j));
             }
         }
         return list;
