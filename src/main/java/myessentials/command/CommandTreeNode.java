@@ -93,15 +93,21 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
         }
     }
 
-    public List<String> getTabCompletionList(int argumentNumber) {
+    public List<String> getTabCompletionList(int argumentNumber, String argumentStart) {
         List<String> completion = new ArrayList<String>();
         if(commandAnnot.completionKeys().length == 0) {
             for(CommandTreeNode child : getChildren()) {
-                completion.add(child.commandAnnot.name());
+                if(child.commandAnnot.name().startsWith(argumentStart)) {
+                    completion.add(child.commandAnnot.name());
+                }
             }
         } else {
             if(argumentNumber < commandAnnot.completionKeys().length) {
-                completion.addAll(CommandCompletion.getCompletionList(commandAnnot.completionKeys()[argumentNumber]));
+                for(String s : CommandCompletion.getCompletionList(commandAnnot.completionKeys()[argumentNumber])) {
+                    if(s.startsWith(argumentStart)) {
+                        completion.add(s);
+                    }
+                }
             }
         }
         return completion;

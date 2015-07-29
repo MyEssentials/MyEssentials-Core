@@ -65,6 +65,7 @@ minecraft {
 // Setup Deps
 dependencies {
     testCompile "junit:junit:4.11"
+    compile "org.spongepowered:mixin:0.4.4-SNAPSHOT"
     compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
     compile "com.forgeessentials:forgeessentials:1.4.0-SNAPSHOT"
 

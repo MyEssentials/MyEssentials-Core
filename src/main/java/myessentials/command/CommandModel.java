@@ -1,5 +1,6 @@
 package myessentials.command;
 
+import myessentials.MyEssentialsCore;
 import myessentials.command.annotation.Command;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -75,10 +76,14 @@ public class CommandModel extends CommandBase {
     @SuppressWarnings("unchecked")
     @Override
     public List addTabCompletionOptions(ICommandSender sender, String[] args) {
-        CommandTree tree = CommandManagerNew.getTree("mytown.cmd");
+        CommandTree tree = CommandManagerNew.getTree(commandAnnot.permission());
         CommandTreeNode node = tree.getNodeFromArgs(Arrays.asList(args));
 
-        return node.getTabCompletionList(tree.getArgumentNumber(Arrays.asList(args)));
+        int argumentNumber = tree.getArgumentNumber(Arrays.asList(args));
+        if(argumentNumber < 0)
+            return null;
+
+        return node.getTabCompletionList(argumentNumber, args[args.length - 1]);
     }
 
     @SuppressWarnings("RedundantIfStatement")

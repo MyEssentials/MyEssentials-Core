@@ -36,13 +36,13 @@ public class CommandTree extends Tree<CommandTreeNode> {
     }
 
     public int getArgumentNumber(List<String> args) {
-        CommandTreeNode child = getRoot();
-        while (!args.isEmpty() && child.getChild(args.get(0)) != null) {
-            child = child.getChild(args.get(0));
+        CommandTreeNode current = getRoot();
+        while (!args.isEmpty() && current.getChild(args.get(0)) != null) {
+            current = current.getChild(args.get(0));
             args = args.subList(1, args.size());
         }
 
-        return args.size();
+        return args.size() - 1;
     }
 
     public boolean hasCommandNode(String perm) {
