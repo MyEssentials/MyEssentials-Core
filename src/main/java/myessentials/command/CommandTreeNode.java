@@ -12,6 +12,8 @@ import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.rcon.RConConsoleSource;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -50,10 +52,9 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
 
     public void commandCall(ICommandSender sender, List<String> args) {
         if (commandAnnot != null &&
-                ((!commandAnnot.players() && sender instanceof EntityPlayer) ||
-                        (!commandAnnot.nonPlayers() && sender instanceof MinecraftServer) ||
-                        (!commandAnnot.nonPlayers() && sender instanceof RConConsoleSource) ||
-                        (!commandAnnot.nonPlayers() && sender instanceof CommandBlockLogic))) {
+                ((!commandAnnot.console() && sender instanceof MinecraftServer) ||
+                 (!commandAnnot.console() && sender instanceof RConConsoleSource) ||
+                 (!commandAnnot.console() && sender instanceof CommandBlockLogic))) {
             throw new CommandException("commands.generic.permission");
         }
 
@@ -82,6 +83,8 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
                 if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0)))
                     page = Integer.parseInt(args.get(0));
                 sendHelpMessage(sender, page);
+            } else if(response == CommandResponse.SEND_SYNTAX) {
+                sendSyntax(sender);
             }
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof RuntimeException)
@@ -119,6 +122,10 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
         helpMenu.sendHelpPage(sender, page);
     }
 
+    public void sendSyntax(ICommandSender sender) {
+        sender.addChatMessage(new ChatComponentText(EnumChatFormatting.DARK_AQUA + getAnnotation().syntax()));
+    }
+
     public CommandTreeNode getChild(String name) {
         for(CommandTreeNode child : getChildren()) {
             if(child.getAnnotation().name().equals(name))
@@ -136,7 +143,7 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
 
     private void constructHelpMenu() {
         String commandLine = getCommandLine();
-        helpMenu = new HelpMenu(commandLine);
+        helpMenu = new HelpMenu(getAnnotation().syntax());
         if(getChildren().isEmpty()) {
             helpMenu.addLine(getLocal().getLocalization(getAnnotation().permission() + ".help"));
         } else {
@@ -152,6 +159,6 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
         while(node.getParent() != null) {
             node = node.getParent();
         }
-        return CommandManagerNew.getTree(node.getAnnotation().permission()).getLocal();
+        return CommandManager.getTree(node.getAnnotation().permission()).getLocal();
     }
 }

@@ -12,17 +12,13 @@ public @interface Command {
 
     String permission();
 
+    String syntax();
+
     String parentName() default "ROOT";
-
-    String syntax() default "";
-
-    String description() default "";
 
     String[] alias() default {};
 
-    boolean nonPlayers() default true;
-
-    boolean players() default true;
+    boolean console() default true;
 
     String[] completionKeys() default {};
 }

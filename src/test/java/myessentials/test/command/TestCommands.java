@@ -16,7 +16,8 @@ public class TestCommands {
 
     @Command(
             name="test",
-            permission="myessentials.test")
+            permission="myessentials.test",
+            syntax = "/test <command>")
     public static void testCommand(ICommandSender sender, List<String> args) {
 
     }
@@ -24,7 +25,8 @@ public class TestCommands {
     @Command(
             name="sub",
             permission="myessentials.test.sub",
-            parentName = "myessentials.test")
+            parentName = "myessentials.test",
+            syntax = "/test sub")
     public static void testSubCommand(ICommandSender server, List<String> args) {
 
     }

@@ -1,11 +1,8 @@
 package myessentials.command;
 
-import myessentials.MyEssentialsCore;
-import myessentials.command.annotation.Command;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,61 +10,40 @@ import java.util.List;
  * Command model which instantiates all base commands that need to be registered to Minecraft
  */
 public class CommandModel extends CommandBase {
-    /**
-     * The Command annotation which holds information about the node's position.
-     */
-    private final Command commandAnnot;
 
-    public CommandModel(Command cmd, Method method) {
-        this.commandAnnot = cmd;
+    private CommandTree commandTree;
+
+    public CommandModel(CommandTree commandTree) {
+        this.commandTree = commandTree;
     }
 
     @Override
     public List getCommandAliases() {
-        return Arrays.asList(commandAnnot.alias());
+        return Arrays.asList(commandTree.getRoot().getAnnotation().alias());
     }
 
-    public String getPermissionNode() {
-        return commandAnnot.permission();
-    }
-
-    public boolean canConsoleUseCommand() {
-        return commandAnnot.nonPlayers();
-    }
-
-    public boolean canRConUseCommand() {
-        return commandAnnot.nonPlayers();
-    }
-
-    public boolean canCommandBlockUseCommand() {
-        return commandAnnot.nonPlayers();
-    }
-
+    @Override
     public String getCommandName() {
-        return commandAnnot.name();
+        return commandTree.getRoot().getAnnotation().name();
     }
 
     public String getCommandUsage(ICommandSender sender) {
-        return "/" + commandAnnot.name() + " " + commandAnnot.syntax();
+        return commandTree.getRoot().getAnnotation().syntax();
     }
 
     /**
      * Processes the command by calling the method that was linked to it.
      */
-    @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
-
-        CommandManagerNew.getTree(commandAnnot.permission()).commandCall(sender, Arrays.asList(args));
+        commandTree.commandCall(sender, Arrays.asList(args));
     }
 
-    @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Override
     public List addTabCompletionOptions(ICommandSender sender, String[] args) {
-        CommandTree tree = CommandManagerNew.getTree(commandAnnot.permission());
-        CommandTreeNode node = tree.getNodeFromArgs(Arrays.asList(args));
+        CommandTreeNode node = commandTree.getNodeFromArgs(Arrays.asList(args));
 
-        int argumentNumber = tree.getArgumentNumber(Arrays.asList(args));
+        int argumentNumber = commandTree.getArgumentNumber(Arrays.asList(args));
         if(argumentNumber < 0)
             return null;
 

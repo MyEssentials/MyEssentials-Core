@@ -13,5 +13,10 @@ public enum CommandResponse {
     /**
      * Command is not supposed to be called, post-processing by sending the help message.
      */
-    SEND_HELP_MESSAGE
+    SEND_HELP_MESSAGE,
+
+    /**
+     * Command is supposed to be called but the arguments given are invalid or insufficient
+     */
+    SEND_SYNTAX
 }

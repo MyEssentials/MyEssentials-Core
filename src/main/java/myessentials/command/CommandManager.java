@@ -2,302 +2,130 @@ package myessentials.command;
 
 import cpw.mods.fml.common.Loader;
 import myessentials.Localization;
-import myessentials.chat.HelpMenu;
+import myessentials.MyEssentialsCore;
 import myessentials.command.annotation.Command;
 import myessentials.command.registrar.BukkitCommandRegistrar;
-import myessentials.command.registrar.ICommandRegistrar;
-import myessentials.utils.ChatUtils;
-import myessentials.utils.ClassUtils;
-import myessentials.MyEssentialsCore;
 import myessentials.command.registrar.ForgeEssentialsCommandRegistrar;
+import myessentials.command.registrar.ICommandRegistrar;
 import myessentials.command.registrar.VanillaCommandRegistrar;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommand;
+import myessentials.exception.CommandException;
+import myessentials.utils.ClassUtils;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.server.CommandBlockLogic;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.rcon.RConConsoleSource;
-import net.minecraft.server.MinecraftServer;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class CommandManager {
 
-
     /**
      * Registrar used to register any commands. Offers compatibility for Bukkit and ForgeEssentials
      */
-    public static final ICommandRegistrar registrar = makeRegistrar();
-    /**
-     * Map with the permission node as key and method as value.
-     */
-    public static final Map<String, Method> commandList = new HashMap<String, Method>();
-    /**
-     * Map with the permission node as key and name as value
-     */
-    public static final Map<String, String> commandNames = new HashMap<String, String>();
-    /**
-     * Map with the permission node as key and permission node of parent as value
-     */
-    public static final Map<String, String> commandParents = new HashMap<String, String>();
-    /**
-     * Map with the permission node as key and an array, that represents an ordered list of completion keys that will be used, as value
-     */
-    public static final Map<String, String[]> commandCompletionKeys = new HashMap<String, String[]>();
-    /**
-     * Map with the permission node as key and first check method as value
-     */
-    public static final Map<String, Method> firstPermissionBreaches = new HashMap<String, Method>();
-    /**
-     * Map with the completion as key and a list of available completions as value
-     */
-    public static final Map<String, List<String>> completionMap = new HashMap<String, List<String>>();
+    private static final ICommandRegistrar registrar = makeRegistrar();
 
-    private static HelpMenu helpMenu;
+    private static final List<CommandTree> commandTrees = new ArrayList<CommandTree>();
+
+    public static final String ROOT_PERM_NODE = "ROOT";
 
     private CommandManager() {
     }
 
     /**
-     * Registers all commands that are static and have the @Command or @Command annotation on it.
+     * It is enforced that the class has to contain ONE root command .
      */
-    public static void registerCommands(Class clazz) {
-        registerCommands(clazz, null);
-    }
+    public static void registerCommands(Class clazz, String rootPerm, Localization local) {
+        CommandTreeNode root = null;
+        CommandTree commandTree = rootPerm == null ? null : getTree(rootPerm);
 
-    /**
-     * Registers all commands that are static and have the @Command or @Command annotation on it.
-     */
-    public static void registerCommands(Object obj) {
-        registerCommands(obj.getClass(), null);
-    }
+        Map<Command, Method> nodes = new HashMap<Command, Method>();
 
-    /**
-     * Registers all commands that are static and have the @Command or @Command annotation on it
-     * and can add a custom permission check , if none is added it will use the default per-player permission system
-     */
-    public static void registerCommands(Object commandObj, Method firstPermissionBreach) {
-        registerCommands(commandObj.getClass(), firstPermissionBreach);
-    }
-
-    /**
-     * Registers all commands that are static and have the @Command or @Command annotation on it
-     * and can add a custom permission check , if none is added it will use the default per-player permission system
-     */
-    public static void registerCommands(Class clazz, Method firstPermissionBreach) {
-        for (final Method m : clazz.getDeclaredMethods()) {
-            if(m.isAnnotationPresent(Command.class)) {
-                final Command cmd = m.getAnnotation(Command.class);
-                if(hasSubCommand(cmd.name(), cmd.parentName()))
-                    throw new CommandException("Sub-command with name " + cmd.name() + " and parent " + cmd.parentName() + " is registered twice!");
-
-                if(cmd.parentName().equals("ROOT"))
-                    registerCommand(new CommandModel(cmd, m), cmd.permission());
-
-                commandList.put(cmd.permission(), m);
-                commandNames.put(cmd.permission(), cmd.name());
-                commandParents.put(cmd.permission(), cmd.parentName());
-                commandCompletionKeys.put(cmd.permission(), cmd.completionKeys());
-                if (checkPermissionBreachMethod(firstPermissionBreach)) {
-                    firstPermissionBreaches.put(cmd.permission(), firstPermissionBreach);
-                }
-            }
-        }
-    }
-
-    public static void registerCommand(ICommand command, String permNode) {
-        if (command == null)
-            return;
-
-        registrar.registerCommand(command, permNode, false);
-    }
-
-    /**
-     * Command call on the method with the permission node specified
-     */
-    public static void commandCall(String permission, ICommandSender sender, List<String> args) {
-        Method m = commandList.get(permission);
-        if(m == null) {
-            MyEssentialsCore.instance.LOG.error("Command with permission node " + permission + " does not exist. Aborting call.");
-            return;
-        }
-
-        // Check if sender is allowed to use this command
-        Command cmdAnnot = commandList.get(permission).getAnnotation(Command.class);
-
-        if(cmdAnnot != null &&
-                ((!cmdAnnot.players() && sender instanceof EntityPlayer) ||
-                (!cmdAnnot.nonPlayers() && sender instanceof MinecraftServer) ||
-                (!cmdAnnot.nonPlayers() && sender instanceof RConConsoleSource) ||
-                (!cmdAnnot.nonPlayers() && sender instanceof CommandBlockLogic))) {
-            throw new CommandException("commands.generic.permission");
-        }
-
-
-        // Check if the player has access to the command using the firstpermissionbreach method first
-        Method permMethod = firstPermissionBreaches.get(permission);
-        if(permMethod != null) {
-            Boolean result = true;
-            try {
-                result = (Boolean)permMethod.invoke(null, permission, sender);
-            } catch (Exception e) {
-                MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(e));
-            }
-            if(!result) {
-                // If the first permission breach did not allow the method to be called then call is aborted
-                throw new CommandException("commands.generic.permission");
-            }
-        }
-
-        try {
-            try {
-                m.invoke(null, sender, args);
-            } catch (IllegalArgumentException e) {
-                // If it doesn't have 2 args then it might require the subcommands
-                m.invoke(null, sender, args, getSubCommandsList(permission));
-            }
-        } catch (InvocationTargetException e) {
-            // Forced, since the functions are only gonna throw that... I think
-            // TODO: Maybe have a list of all types of exceptions that could be thrown?
-            if(e.getCause() instanceof RuntimeException)
-                throw (RuntimeException) e.getCause();
-            else
-                MyEssentialsCore.instance.LOG.info(ExceptionUtils.getStackTrace(e));
-        } catch (Exception e2) {
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(e2));
-        }
-    }
-
-    /**
-     * Gets the subCommands from a method with the @Command or @Command annotation
-     */
-    @SuppressWarnings("unchecked")
-    public static List<String> getSubCommandsList(String permission) {
-        List<String> subCommands = new ArrayList<String>();
-
-        for(String s : commandParents.keySet()) {
-            if(commandParents.get(s).equals(permission)) {
-                subCommands.add(s);
-            }
-        }
-
-        return subCommands;
-    }
-
-    /**
-     * Returns the parent's permission node or null if annotation not found
-     */
-    public static String getParentPermNode(String childPermNode) {
-        Method m = commandList.get(childPermNode);
-        if(m.isAnnotationPresent(Command.class)) {
-            return m.getAnnotation(Command.class).parentName();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Gets the tab completion list for the specified arguments and the BASE permission node (from the base command)
-     */
-    public static List<String> getTabCompletionList(ICommandSender sender, List<String> args, String permission) {
-        String perm = getPermissionNodeFromArgs(args.subList(0, args.size() - 1), permission);
-        if("".equals(commandCompletionKeys.get(perm)[0])) {
-            List<String> subCommands = new ArrayList<String>();
-            for(String p : CommandManager.getSubCommandsList(perm)) {
-                subCommands.add(CommandManager.commandNames.get(p));
-            }
-            List<String> completion = new ArrayList<String>();
-            for(String p : subCommands) {
-                if(p.toLowerCase().startsWith(args.get(args.size() - 1).toLowerCase())) {
-                    completion.add(p);
-                }
-            }
-            return completion;
-        } else {
-            int argNumber = 0;
-            for(int i = args.size() - 1; i >= 0; i--) {
-                if(!isArgumentCommand(args, i, permission)) {
-                    argNumber++;
+        for (final Method method : clazz.getDeclaredMethods()) {
+            if(method.isAnnotationPresent(Command.class)) {
+                if(isMethodValid(method)) {
+                    Command command = method.getAnnotation(Command.class);
+                    if (command.parentName().equals(ROOT_PERM_NODE)) {
+                        if (commandTree == null) {
+                            root = new CommandTreeNode(command, method);
+                        } else {
+                            throw new CommandException("Class " + clazz.getName() + " has more than one root command.");
+                        }
+                    } else {
+                        nodes.put(command, method);
+                    }
                 } else {
-                    break;
-                }
-            }
-            // Because reasons
-            argNumber--;
-            List<String> completion = new ArrayList<String>();
-
-            // Check if people try to tab on something that doesn't have any more arguments
-            if(commandCompletionKeys.get(perm).length <= argNumber)
-                return completion;
-
-            for(String p : completionMap.get(commandCompletionKeys.get(perm)[argNumber])) {
-                if(p.toLowerCase().startsWith(args.get(args.size() - 1).toLowerCase())) {
-                    completion.add(p);
-                }
-            }
-            return completion;
-        }
-    }
-
-    /**
-     * Gets the permission node for the actual arguments, returns back base permission node if nothing found
-     */
-    public static String getPermissionNodeFromArgs(List<String> args, String permissionBase) {
-        // If no arguments then it's gonna return the given perm
-        Iterator<String> it = args.iterator();
-        String baseNode = permissionBase;
-        while(it.hasNext()) {
-            String subName = it.next();
-            for(String perm : getSubCommandsList(baseNode)) {
-                if(commandNames.get(perm).equals(subName)) {
-                    baseNode = perm;
-                    break;
+                    MyEssentialsCore.instance.LOG.error("Method " + method.getName() + " from class " + clazz.getName() + " is not valid for command usage");
                 }
             }
         }
-        return baseNode;
+
+        if(commandTree == null) {
+            if (root == null) {
+                throw new CommandException("Class " + clazz.getName() + " has no root command.");
+            } else {
+                commandTree = new CommandTree(root, local);
+                commandTrees.add(commandTree);
+            }
+        }
+
+        registrar.registerCommand(new CommandModel(commandTree), commandTree.getRoot().getAnnotation().permission(), false);
+
+        constructTree(commandTree.getRoot(), nodes);
+
+        for(Map.Entry<Command, Method> entry : nodes.entrySet()) {
+            MyEssentialsCore.instance.LOG.error("Missing parent: " + entry.getKey().permission() + " |<-| " + entry.getKey().parentName());
+        }
     }
 
-    /**
-     * Checks if the argument is an actual command rather than a parameter
-     */
-    @SuppressWarnings("RedundantIfStatement")
-    public static boolean isArgumentCommand(List<String> args, int argNumber, String permission) {
-        if(!commandNames.values().contains(args.get(argNumber))) {
-            return false;
-        }
-        // If the command node found on the argument specified and the one behind is the same then it can't be a command
-        if(getPermissionNodeFromArgs(args.subList(0, argNumber + 1), permission)
-                .equals(getPermissionNodeFromArgs(args.subList(0, argNumber), permission))) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Gets the node of a with name subCommand and parent's node.
-     */
-    public static String getSubCommandNode(String subCommand, String node) {
-        for(String s : getSubCommandsList(node)) {
-            if (commandNames.get(s).equals(subCommand))
-                return s;
+    public static CommandTree getTree(String basePerm) {
+        for(CommandTree tree : commandTrees) {
+            if(tree.getRoot().getAnnotation().permission().equals(basePerm))
+                return tree;
         }
         return null;
     }
 
-    /**
-     * Checks if the command with name subCommand exists as a child command of the node
-     */
-    public static boolean hasSubCommand(String subCommand, String node) {
-        for(String s : getSubCommandsList(node)) {
-            if(commandNames.get(s).equals(subCommand))
-                return true;
+    private static CommandTreeNode findNode(CommandTreeNode root, String perm) {
+        if(root.getAnnotation().permission().equals(perm))
+            return root;
+
+        for(CommandTreeNode child : root.getChildren()) {
+            CommandTreeNode foundNode = findNode(child, perm);
+            if(foundNode != null)
+                return foundNode;
         }
-        return false;
+        return null;
+    }
+
+    private static void constructTree(CommandTreeNode root, Map<Command, Method> nodes) {
+        int currentNodeNumber;
+        do {
+            currentNodeNumber = nodes.size();
+            for (Iterator<Map.Entry<Command, Method>> it = nodes.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry<Command, Method> entry = it.next();
+
+                CommandTreeNode parent = findNode(root, entry.getKey().parentName());
+
+                if (parent != null) {
+                    parent.addChild(new CommandTreeNode(parent, entry.getKey(), entry.getValue()));
+                    if(!root.getLocal().hasLocalization(entry.getKey().permission() + ".help")) {
+                        MyEssentialsCore.instance.LOG.error("Missing help: " + entry.getKey().permission() + ".help");
+                    }
+                    it.remove();
+                }
+            }
+        } while(currentNodeNumber != nodes.size());
+    }
+
+    private static boolean isMethodValid(Method method) {
+        if(!method.getReturnType().equals(CommandResponse.class))
+            return false;
+
+        if(method.getParameterTypes().length != 2)
+            return false;
+
+        if(!(method.getParameterTypes()[0].equals(ICommandSender.class) && method.getParameterTypes()[1].equals(List.class)))
+            return false;
+
+        return true;
     }
 
     private static ICommandRegistrar makeRegistrar() {
@@ -308,77 +136,5 @@ public class CommandManager {
         } else { // Finally revert to Vanilla (Ew, Vanilla Minecraft)
             return new VanillaCommandRegistrar();
         }
-    }
-
-    /**
-     * Checks if the permission method sent is actually valid
-     */
-    private static boolean checkPermissionBreachMethod(Method method) {
-        return method != null && Modifier.isStatic(method.getModifiers());
-    }
-
-    /**
-     * Calls the method to which the set of arguments corresponds to.
-     */
-    public static boolean callSubFunctions(ICommandSender sender, List<String> args, String callersPermNode, Localization local) {
-        List<String> subCommands = getSubCommandsList(callersPermNode);
-        if (!args.isEmpty()) {
-            for (String s : subCommands) {
-                String name = commandNames.get(s);
-                // Checking if name corresponds and if parent's
-                if (name.equals(args.get(0)) && getParentPermNode(s).equals(callersPermNode)) {
-                    commandCall(s, sender, args.subList(1, args.size()));
-                    return true;
-                }
-            }
-        }
-
-        sendHelpMessage(sender, callersPermNode, local);
-        return false;
-    }
-
-    /**
-     * Sends the help message for the permission node.
-     */
-    public static void sendHelpMessage(ICommandSender sender, String sendHelpNode, Localization local) {
-        ChatUtils.sendChat(sender, getCommandLineFromNode(sendHelpNode));
-
-        List<String> scList = getSubCommandsList(sendHelpNode);
-        if (scList == null || scList.isEmpty()) {
-            ChatUtils.sendChat(sender, "   " + local.getLocalization(sendHelpNode + ".help"));
-        } else {
-            List<String> nameList = new ArrayList<String>();
-            for(String s : scList) {
-                nameList.add(commandNames.get(s));
-            }
-            Collections.sort(nameList);
-            for (String s : nameList) {
-                ChatUtils.sendChat(sender, "   " + s + ": " + local.getLocalization(getSubCommandNode(s, sendHelpNode) + ".help"));
-            }
-        }
-    }
-
-    public static void constructHelpMenu(String name) {
-        helpMenu = new HelpMenu(name);
-
-    }
-
-    /**
-     * It will construct and return the command line, that a player needs to execute, to call the method linked to the sent permNode.
-     */
-    public static String getCommandLineFromNode(String permNode) {
-        Stack<String> commandStack = new Stack<String>();
-        String currentNode = permNode;
-        while(currentNode != null) {
-            commandStack.push(commandNames.get(currentNode));
-            currentNode = commandParents.get(currentNode);
-        }
-
-        String command = "/";
-        while(!commandStack.isEmpty()) {
-            command += commandStack.pop() + " ";
-        }
-
-        return command;
     }
 }
