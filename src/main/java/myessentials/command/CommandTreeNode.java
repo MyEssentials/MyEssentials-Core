@@ -130,6 +130,9 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
         for(CommandTreeNode child : getChildren()) {
             if(child.getAnnotation().name().equals(name))
                 return child;
+            for(String alias : child.getAnnotation().alias())
+                if(alias.equals(name))
+                    return child;
         }
         return null;
     }
@@ -154,11 +157,16 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
     }
 
     public Localization getLocal() {
+        return getCommandTree().getLocal();
+    }
+
+    public CommandTree getCommandTree() {
         CommandTreeNode node = this;
 
         while(node.getParent() != null) {
             node = node.getParent();
         }
-        return CommandManager.getTree(node.getAnnotation().permission()).getLocal();
+
+        return CommandManager.getTree(node.getAnnotation().permission());
     }
 }
