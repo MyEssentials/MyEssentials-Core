@@ -26,6 +26,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * All utilities that are exclusively for EntityPlayerMP or EntityPlayer go here.
@@ -274,5 +275,16 @@ public class PlayerUtils {
         }
         Vec3 vec31 = vec3.addVector((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
         return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public static EntityPlayer getPlayerFromUUID(UUID uuid) {
+        for(EntityPlayer player : (List<EntityPlayer>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+            if(player.getUniqueID().equals(uuid)) {
+                return player;
+            }
+        }
+        return null;
     }
 }
