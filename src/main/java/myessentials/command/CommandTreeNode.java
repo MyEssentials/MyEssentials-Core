@@ -51,13 +51,9 @@ public class CommandTreeNode extends TreeNode<CommandTreeNode> {
     }
 
     public void commandCall(ICommandSender sender, List<String> args) {
-        if (commandAnnot != null &&
-                ((!commandAnnot.console() && sender instanceof MinecraftServer) ||
-                 (!commandAnnot.console() && sender instanceof RConConsoleSource) ||
-                 (!commandAnnot.console() && sender instanceof CommandBlockLogic))) {
+        if(!commandAnnot.console() && (sender instanceof MinecraftServer || sender instanceof RConConsoleSource || sender instanceof CommandBlockLogic)) {
             throw new CommandException("commands.generic.permission");
         }
-
 
         /*
         // Check if the player has access to the command using the firstpermissionbreach method first
