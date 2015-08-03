@@ -65,12 +65,16 @@ minecraft {
 // Setup Deps
 dependencies {
     testCompile "junit:junit:4.11"
+
+    // Minecraft related deps
+    compile "org.bukkit:bukkit:1.7.9-R0.2"
     compile "org.spongepowered:mixin:0.4.4-SNAPSHOT"
-    compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
+    compile "com.sk89q.worldedit:worldedit-forge-mc1.7.10:6.0.2-SNAPSHOT:dev"
     compile "com.forgeessentials:forgeessentials:1.4.0-SNAPSHOT"
 
-    // Deps for Bukkit/Cauldron compat
-    compile "org.bukkit:bukkit:1.7.9-R0.2"
+    // Other deps
+    compile "org.beanshell:bsh:2.0b5"
+    compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
 }
 
 // Process Resources, injecting version numbers in
