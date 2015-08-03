@@ -70,7 +70,7 @@ dependencies {
     compile "org.bukkit:bukkit:1.7.9-R0.2"
     compile "org.spongepowered:mixin:0.4.4-SNAPSHOT"
     compile "com.sk89q.worldedit:worldedit-forge-mc1.7.10:6.0.2-SNAPSHOT:dev"
-    compile "com.forgeessentials:forgeessentials:1.4.0-SNAPSHOT"
+    compile "com.forgeessentials:forgeessentials:1.4-SNAPSHOT"
 
     // Other deps
     compile "org.beanshell:bsh:2.0b5"
