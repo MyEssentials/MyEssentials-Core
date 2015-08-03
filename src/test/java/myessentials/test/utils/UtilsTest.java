@@ -51,13 +51,13 @@ public class UtilsTest {
     @Test
     public void shouldTransformWorldCoordsIntoChunkCoords() throws Exception {
         List<ChunkPos> expectedValues = new ArrayList<ChunkPos>();
-        expectedValues.add(new ChunkPos(0, 0));
-        expectedValues.add(new ChunkPos(0, 1));
-        expectedValues.add(new ChunkPos(0, 2));
-        expectedValues.add(new ChunkPos(0, 3));
-        expectedValues.add(new ChunkPos(0, 4));
+        expectedValues.add(new ChunkPos(0, 0, 0));
+        expectedValues.add(new ChunkPos(0, 0, 1));
+        expectedValues.add(new ChunkPos(0, 0, 2));
+        expectedValues.add(new ChunkPos(0, 0, 3));
+        expectedValues.add(new ChunkPos(0, 0, 4));
 
-        List<ChunkPos> chunks = WorldUtils.getChunksInBox(10, 10, 10, 64);
+        List<ChunkPos> chunks = WorldUtils.getChunksInBox(0, 10, 10, 10, 64);
         Assert.assertEquals(expectedValues.size(), chunks.size());
         for(int i = 0; i < expectedValues.size(); i++) {
             Assert.assertEquals(expectedValues.get(i).getX(), chunks.get(i).getX());

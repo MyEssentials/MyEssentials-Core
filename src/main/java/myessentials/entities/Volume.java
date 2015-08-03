@@ -40,4 +40,9 @@ public class Volume {
     public int getMaxZ() {
         return maxZ;
     }
+
+    @Override
+    public String toString() {
+        return "Volume(minX: " + minX + ", minY: " + minY + ", minZ: " + minZ + " | maxX: " + maxX + ", maxY: " + maxY + ", maxZ: " + maxZ + ")";
+    }
 }

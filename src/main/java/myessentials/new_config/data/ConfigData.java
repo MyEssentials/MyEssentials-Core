@@ -2,14 +2,25 @@ package myessentials.new_config.data;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
+import myessentials.new_config.IConfigBackend;
 
 import java.util.Map;
 
 public class ConfigData {
     private final ImmutableMap<String, ConfigGroupData> configGroups;
+    private final IConfigBackend backend;
 
-    public ConfigData(Map<String, ConfigGroupData> configGroups) {
+    public ConfigData(Map<String, ConfigGroupData> configGroups, IConfigBackend backend) {
         this.configGroups = ImmutableMap.copyOf(configGroups);
+        this.backend = backend;
+    }
+
+    public void load() {
+        backend.load(this);
+    }
+
+    public void save() {
+        backend.save(this);
     }
 
     public ConfigGroupData getConfigGroup(String name) {
