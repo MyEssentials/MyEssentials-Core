@@ -3,6 +3,7 @@ package myessentials.entities;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Container<T> {
@@ -11,6 +12,10 @@ public class Container<T> {
 
     public void add(T item) {
         items.add(item);
+    }
+
+    public void add(Collection<T> items) {
+        this.items.addAll(items);
     }
 
     public void remove(T item) {

@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * An abstract class for all JSON configs.
  */
-public abstract class JSONConfig<T> {
+public abstract class JSONConfig<Wrapper> {
 
     /**
      * The path to the file used.
@@ -39,7 +39,7 @@ public abstract class JSONConfig<T> {
         if(!parent.exists() && !parent.mkdirs()){
             throw new IllegalStateException("Couldn't create dir: " + parent);
         }
-        List<T> items = new ArrayList<T>();
+        List<Wrapper> items = new ArrayList<Wrapper>();
         if(!file.exists() || file.isDirectory())
             create(items);
         else {
@@ -50,7 +50,7 @@ public abstract class JSONConfig<T> {
     /**
      * Creates the file if it doesn't exist with the initial given items
      */
-    protected void create(List<T> initialItems) {
+    protected void create(List<Wrapper> initialItems) {
         try {
             Writer writer = new FileWriter(path);
             gson.toJson(initialItems, gsonType, writer);
@@ -65,7 +65,7 @@ public abstract class JSONConfig<T> {
     /**
      * Writes the given list to the file, completely overwriting it
      */
-    public void write(List<T> items) {
+    public void write(List<Wrapper> items) {
         try {
             Writer writer = new FileWriter(path);
             gson.toJson(items, gsonType, writer);
@@ -80,8 +80,8 @@ public abstract class JSONConfig<T> {
     /**
      * Reads and returns the validated items.
      */
-    protected List<T> read() {
-        List<T> items = new ArrayList<T>();
+    protected List<Wrapper> read() {
+        List<Wrapper> items = new ArrayList<Wrapper>();
 
         try {
             Reader reader = new FileReader(path);
@@ -102,7 +102,7 @@ public abstract class JSONConfig<T> {
     /**
      * Checks for validity and modifies the given list so that is valid.
      */
-    protected boolean validate(List<T> items) {
+    protected boolean validate(List<Wrapper> items) {
         return true;
     }
 }
