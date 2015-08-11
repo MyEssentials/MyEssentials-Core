@@ -15,7 +15,9 @@ public class Container<T> {
     }
 
     public void add(Collection<T> items) {
-        this.items.addAll(items);
+        if(items != null) {
+            this.items.addAll(items);
+        }
     }
 
     public void remove(T item) {

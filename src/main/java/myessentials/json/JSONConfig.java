@@ -19,7 +19,7 @@ public abstract class JSONConfig<Wrapper> {
      * The path to the file used.
      */
     protected final String path, name;
-    protected final Gson gson;
+    protected Gson gson;
     protected Type gsonType;
 
 
