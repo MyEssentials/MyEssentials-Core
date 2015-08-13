@@ -70,7 +70,7 @@ dependencies {
     compile "org.bukkit:bukkit:1.7.9-R0.2"
     compile "org.spongepowered:mixin:0.4.4-SNAPSHOT"
     compile "com.sk89q.worldedit:worldedit-forge-mc1.7.10:6.0.2-SNAPSHOT:dev"
-    compile "com.forgeessentials:forgeessentials:1.4.0-SNAPSHOT"
+    compile "com.forgeessentials:forgeessentials:1.4.1-SNAPSHOT:dev"
 
     // Other deps
     compile "org.beanshell:bsh:2.0b5"
@@ -109,10 +109,4 @@ curse {
     projectId = config.project_id
     changelog = "" // TODO Add changelog support
     releaseType = config.build_type.equals('a') ? "alpha" : (config.build_type.equals('b') ? "beta" : "release")
-}
-
-// Only allow if built by Travis-CI
-if (System.env.CURSEFORGEKEY != null && System.env.TRAVIS == "true" && System.env.TRAVIS_PULL_REQUEST == "false" && (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty())) {
-    tasks.build.dependsOn("curse")
-    tasks.assemble.dependsOn("curse")
 }
