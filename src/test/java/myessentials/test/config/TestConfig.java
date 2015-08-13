@@ -1,11 +1,12 @@
 package myessentials.test.config;
 
 import myessentials.new_config.Config;
+import myessentials.new_config.data.ConfigData;
 
 @Config
 public class TestConfig {
     @Config.Instance
-    public static TestConfig Data;
+    public static ConfigData Data;
 
     @Config.Group(name = "TypeTest")
     public static class TypeTestGroup {
