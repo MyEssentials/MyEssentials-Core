@@ -81,6 +81,7 @@ public class JsonConfigBackend implements IConfigBackend {
             for (int i=0; i<jsonArray.size(); i++) {
                 objArr[i] = getValue(jsonArray.get(i), type.getComponentType());
             }
+            return objArr;
         } else if (element.isJsonPrimitive()) {
             JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
             if (Boolean.class.isAssignableFrom(type)) {
