@@ -1,5 +1,6 @@
 package myessentials.utils;
 
+import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import myessentials.MyEssentialsCore;
@@ -286,5 +287,10 @@ public class PlayerUtils {
             }
         }
         return null;
+    }
+
+    public static UUID getUUIDFromUsername(String username) {
+        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
+        return profile == null ? null : profile.getId();
     }
 }
