@@ -10,10 +10,6 @@ public class ColorUtils {
     public static final String colorPlayer = EnumChatFormatting.WHITE.toString();
     public static final String colorOwner = EnumChatFormatting.RED.toString();
 
-    public static final String colorRankMayor = EnumChatFormatting.RED.toString();
-    public static final String colorRankDefault = EnumChatFormatting.GREEN.toString();
-    public static final String colorRankOther = EnumChatFormatting.WHITE.toString();
-
     public static final String colorTown = EnumChatFormatting.GOLD.toString();
     public static final String colorSelectedTown = EnumChatFormatting.GREEN.toString();
 
