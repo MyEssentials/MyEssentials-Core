@@ -50,7 +50,7 @@ public abstract class JSONConfig<Wrapper> {
     /**
      * Creates the file if it doesn't exist with the initial given items
      */
-    protected void create(List<Wrapper> initialItems) {
+    public void create(List<Wrapper> initialItems) {
         try {
             Writer writer = new FileWriter(path);
             gson.toJson(initialItems, gsonType, writer);
@@ -80,7 +80,7 @@ public abstract class JSONConfig<Wrapper> {
     /**
      * Reads and returns the validated items.
      */
-    protected List<Wrapper> read() {
+    public List<Wrapper> read() {
         List<Wrapper> items = new ArrayList<Wrapper>();
 
         try {
@@ -102,7 +102,11 @@ public abstract class JSONConfig<Wrapper> {
     /**
      * Checks for validity and modifies the given list so that is valid.
      */
-    protected boolean validate(List<Wrapper> items) {
+    public boolean validate(List<Wrapper> items) {
         return true;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }
