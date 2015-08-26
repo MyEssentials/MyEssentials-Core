@@ -227,31 +227,41 @@ public class PlayerUtils {
     }
 
 
-    /**
-     * Returns whether or not a player is OP.
-     */
-    @SuppressWarnings("unchecked")
     public static boolean isOp(EntityPlayer player) {
-        if (player == null)
+        if (player.getGameProfile() == null) {
             return false;
+        }
 
-        if (player.getGameProfile() == null)
+        return isOp(player.getGameProfile());
+    }
+
+    public static boolean isOp(UUID uuid) {
+        GameProfile gameProfile = MinecraftServer.getServer().func_152358_ax().func_152652_a(uuid);
+        if(gameProfile == null) {
             return false;
+        }
 
+        return isOp(gameProfile);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static boolean isOp(GameProfile gameProfile) {
         UserListOps ops = MinecraftServer.getServer().getConfigurationManager().func_152603_m();
         try {
             Class clazz = Class.forName("net.minecraft.server.management.UserList");
             Method method = clazz.getDeclaredMethod("func_152692_d", Object.class);
             method.setAccessible(true);
-            return (Boolean) method.invoke(ops, player.getGameProfile());
+            return (Boolean) method.invoke(ops, gameProfile);
         } catch (Exception e) {
             for (Method mt : UserList.class.getMethods()) {
                 MyEssentialsCore.instance.LOG.info(mt.getName());
             }
             MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(e));
         }
+
         return false;
     }
+
 
     /**
      * Gets the position at which the player is looking
