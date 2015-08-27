@@ -27,6 +27,7 @@ public class ColorUtils {
     public static final String colorGroupType = EnumChatFormatting.BLUE.toString();
     public static final String colorGroupText = EnumChatFormatting.GRAY.toString();
     public static final String colorGroupParents = EnumChatFormatting.WHITE.toString();
+    public static final String colorGroup = EnumChatFormatting.BLUE.toString();
 
     //public static final String paranthColor = EnumChatFormatting.GOLD.toString();
 }

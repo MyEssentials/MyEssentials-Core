@@ -303,4 +303,9 @@ public class PlayerUtils {
         GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
         return profile == null ? null : profile.getId();
     }
+
+    public static String getUsernameFromUUID(UUID uuid) {
+        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152652_a(uuid);
+        return profile == null ? null : profile.getName();
+    }
 }
