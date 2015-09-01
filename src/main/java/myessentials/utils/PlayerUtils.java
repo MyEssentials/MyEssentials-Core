@@ -293,7 +293,7 @@ public class PlayerUtils {
     @SuppressWarnings("unchecked")
     public static EntityPlayer getPlayerFromUUID(UUID uuid) {
         for(EntityPlayer player : (List<EntityPlayer>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
-            if(player.getUniqueID().equals(uuid)) {
+            if(player.getGameProfile().getId().equals(uuid)) {
                 return player;
             }
         }
