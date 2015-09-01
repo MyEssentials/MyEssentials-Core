@@ -26,6 +26,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -307,5 +308,9 @@ public class PlayerUtils {
     public static String getUsernameFromUUID(UUID uuid) {
         GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152652_a(uuid);
         return profile == null ? null : profile.getName();
+    }
+
+    public static List<String> getAllUsernames() {
+        return Arrays.asList(MinecraftServer.getServer().func_152358_ax().func_152654_a());
     }
 }

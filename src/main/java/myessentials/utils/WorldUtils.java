@@ -3,8 +3,8 @@ package myessentials.utils;
 import myessentials.entities.ChunkPos;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,7 @@ public class WorldUtils {
      * Returns the first block from top to bottom that is considered not opaque
      */
     public static int getMaxHeightWithSolid(int dim, int x, int z) {
-        World world = DimensionManager.getWorld(dim);
+        World world = MinecraftServer.getServer().worldServerForDimension(dim);
         int y = world.getActualHeight();
         while(!world.getBlock(x, y, z).getMaterial().isOpaque() && y > 0)
             y--;
