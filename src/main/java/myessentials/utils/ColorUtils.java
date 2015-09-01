@@ -13,6 +13,8 @@ public class ColorUtils {
     public static final String colorTown = EnumChatFormatting.GOLD.toString();
     public static final String colorSelectedTown = EnumChatFormatting.GREEN.toString();
 
+    public static final String colorInfoText = EnumChatFormatting.GRAY.toString();
+
     public static final String colorFlag = EnumChatFormatting.GRAY.toString();
     public static final String colorValueConst = EnumChatFormatting.RED.toString();
     public static final String colorValueVar = EnumChatFormatting.GREEN.toString();
