@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class Localization {
     public static final Map<Character, String> colorMap = new HashMap<Character, String>();
-    public static final String defaultLocalization = "en_US.lang";
+    public static final String defaultLocalization = "en_US";
 
     static {
         colorMap.put('0', "BLACK");
@@ -36,23 +36,29 @@ public class Localization {
     private Map<String, String> localizations = new HashMap<String, String>();
     private Reader reader = null;
 
-    public Localization(String path) {
+    public Localization(String filePath, String lang, String classPath, Class clazz) {
         try {
-            InputStream is;
+            InputStream is = null;
 
-            File file = new File(path);
-            if (file.exists()) {
-                is = new FileInputStream(file);
-                reader = new InputStreamReader(is);
+            if(filePath != null) {
+                File file = new File(filePath + lang + ".lang");
+                if (file.exists() && !file.isDirectory()) {
+                    is = new FileInputStream(file);
+                }
             }
-        } catch (Exception ex) {
-            MyEssentialsCore.instance.LOG.error("Failed to load localization for the path given " + path);
-            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
-    }
+            if (is == null) {
+                is = clazz.getResourceAsStream(classPath + lang + ".lang");
+            }
+            if (is == null) {
+                is = clazz.getResourceAsStream(classPath + defaultLocalization + ".lang");
+                MyEssentialsCore.instance.LOG.warn("Reverting to en_US.lang because {} does not exist!", lang + ".lang");
+            }
 
-    public Localization(Reader reader) {
-        this.reader = reader;
+            reader = new InputStreamReader(is);
+            load();
+        } catch (Exception ex) {
+            MyEssentialsCore.instance.LOG.warn("Failed to load localization for class " + clazz.getName() + "!", ex);
+        }
     }
 
     /**

@@ -16,12 +16,7 @@ public class LocalizationTest {
 
     @BeforeClass
     public static void setup() {
-        local = new Localization(new InputStreamReader(LocalizationTest.class.getClassLoader().getResourceAsStream("test.lang")));
-    }
-
-    @Before
-    public void shouldLoadLocalization() throws Exception {
-        local.load();
+        local = new Localization("", "test", "/myessentials/localization/", LocalizationTest.class);
     }
 
     @Test
