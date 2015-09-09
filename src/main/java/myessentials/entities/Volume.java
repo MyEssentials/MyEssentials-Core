@@ -1,5 +1,7 @@
 package myessentials.entities;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
 /**
  * A rectangular shaped volume.
  */
@@ -39,6 +41,56 @@ public class Volume {
 
     public int getMaxZ() {
         return maxZ;
+    }
+
+    public Volume translate(ForgeDirection direction) {
+        Volume volume = this;
+        switch (direction) {
+            case DOWN:
+                volume = new Volume(volume.getMinX(), -volume.getMaxZ(), volume.getMinY(), volume.getMaxX(), volume.getMinZ(), volume.getMaxY());
+                break;
+            case UP:
+                volume = new Volume(volume.getMinX(), volume.getMinZ(), volume.getMinY(), volume.getMaxX(), volume.getMaxZ(), volume.getMaxY());
+                break;
+            case NORTH:
+                volume = new Volume(volume.getMinX(), volume.getMinY(), - volume.getMaxZ(), volume.getMaxX(), volume.getMaxY(), volume.getMinZ());
+                break;
+            case WEST:
+                volume = new Volume(- volume.getMaxZ(), volume.getMinY(), volume.getMinX(), volume.getMinZ(), volume.getMaxY(), volume.getMaxX());
+                break;
+            case EAST:
+                volume = new Volume(volume.getMinZ(), volume.getMinY(), volume.getMinX(), volume.getMaxZ(), volume.getMaxY(), volume.getMaxX());
+                break;
+            case SOUTH:
+                // The translation on South is already the correct one.
+                break;
+            case UNKNOWN:
+                break;
+        }
+        return volume;
+    }
+
+    public Volume intersect(Volume other) {
+        if (other.getMaxX() >= minX && other.getMinX() <= maxX &&
+                other.getMaxY() >= minY && other.getMinY() <= maxY &&
+                other.getMaxZ() >= minZ && other.getMinZ() <= maxZ) {
+
+            int x1, y1, z1, x2, y2, z2;
+
+            x1 = (minX < other.getMinX()) ? other.getMinX() : minX;
+            y1 = (minY < other.getMinY()) ? other.getMinY() : minY;
+            z1 = (minZ < other.getMinZ()) ? other.getMinZ() : minZ;
+            x2 = (maxX > other.getMaxX()) ? other.getMaxX() : maxX;
+            y2 = (maxY > other.getMaxY()) ? other.getMaxY() : maxY;
+            z2= (maxZ > other.getMaxZ()) ? other.getMaxZ() : maxZ;
+
+            return new Volume(x1, y1, z1, x2, y2, z2);
+        }
+        return null;
+    }
+
+    public int getVolumeAmount() {
+        return (maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1);
     }
 
     @Override
