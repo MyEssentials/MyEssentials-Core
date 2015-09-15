@@ -1,6 +1,9 @@
 package myessentials.entities;
 
+import com.google.gson.*;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.lang.reflect.Type;
 
 /**
  * A rectangular shaped volume.
@@ -96,5 +99,26 @@ public class Volume {
     @Override
     public String toString() {
         return "Volume(minX: " + minX + ", minY: " + minY + ", minZ: " + minZ + " | maxX: " + maxX + ", maxY: " + maxY + ", maxZ: " + maxZ + ")";
+    }
+
+    public static class Serializer implements JsonSerializer<Volume>, JsonDeserializer<Volume> {
+        @Override
+        public JsonElement serialize(Volume volume, Type typeOfSrc, JsonSerializationContext context) {
+            JsonArray json = new JsonArray();
+            json.add(new JsonPrimitive(volume.getMinX()));
+            json.add(new JsonPrimitive(volume.getMinY()));
+            json.add(new JsonPrimitive(volume.getMinZ()));
+            json.add(new JsonPrimitive(volume.getMaxX()));
+            json.add(new JsonPrimitive(volume.getMaxY()));
+            json.add(new JsonPrimitive(volume.getMaxZ()));
+            return json;
+        }
+
+        @Override
+        public Volume deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonArray jsonArray = json.getAsJsonArray();
+            return new Volume(jsonArray.get(0).getAsInt(), jsonArray.get(1).getAsInt(), jsonArray.get(2).getAsInt(),
+                    jsonArray.get(3).getAsInt(), jsonArray.get(4).getAsInt(), jsonArray.get(5).getAsInt());
+        }
     }
 }
