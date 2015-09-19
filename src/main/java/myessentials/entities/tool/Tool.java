@@ -17,7 +17,7 @@ public abstract class Tool {
     /**
      * Every tool starts with this string. Allows easy checks for invalid tools.
      */
-    public static final String TOOL_IDENTIFIER = EnumChatFormatting.BLUE.toString();
+    public static final String IDENTIFIER = EnumChatFormatting.BLUE.toString();
 
     protected EntityPlayer owner;
 
@@ -28,7 +28,7 @@ public abstract class Tool {
 
     protected Tool(EntityPlayer owner, String toolName) {
         this.owner = owner;
-        this.toolName = TOOL_IDENTIFIER + toolName;
+        this.toolName = IDENTIFIER + toolName;
     }
 
     public abstract void onItemUse(BlockPos bp, int face);

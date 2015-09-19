@@ -36,5 +36,14 @@ public class BlockPos {
     public String toString() {
         return "BlockPos(x: " + x + ", y: " + y + ", z: " + z + " | dim: " + dim + ")";
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if(other instanceof BlockPos) {
+            BlockPos otherBP = (BlockPos) other;
+            return otherBP.dim == dim && otherBP.x == x && otherBP.y == y && otherBP.z == z;
+        }
+        return super.equals(other);
+    }
 }
 

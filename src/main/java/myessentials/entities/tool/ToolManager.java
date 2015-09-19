@@ -91,7 +91,7 @@ public class ToolManager {
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent ev) {
         for(int i = 0; i < ev.player.inventory.getSizeInventory(); i++) {
             ItemStack stack = ev.player.inventory.getStackInSlot(i);
-            if(stack == null || !stack.getDisplayName().startsWith(Tool.TOOL_IDENTIFIER)) {
+            if(stack == null || !stack.getDisplayName().startsWith(Tool.IDENTIFIER)) {
                 continue;
             }
 

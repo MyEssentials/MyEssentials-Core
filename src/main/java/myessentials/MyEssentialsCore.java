@@ -6,6 +6,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import myessentials.config.ConfigProcessor;
+import myessentials.entities.sign.SignManager;
 import myessentials.entities.tool.ToolManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -22,7 +23,7 @@ public class MyEssentialsCore {
     public Configuration config;
 
     @EventHandler
-    public void preinit(FMLPreInitializationEvent ev) {
+    public void preInit(FMLPreInitializationEvent ev) {
         LOG = ev.getModLog();
 
         // Load Configs
@@ -36,5 +37,8 @@ public class MyEssentialsCore {
 
         FMLCommonHandler.instance().bus().register(ToolManager.instance);
         MinecraftForge.EVENT_BUS.register(ToolManager.instance);
+
+        FMLCommonHandler.instance().bus().register(SignManager.instance);
+        MinecraftForge.EVENT_BUS.register(SignManager.instance);
     }
 }
