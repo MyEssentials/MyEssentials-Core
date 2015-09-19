@@ -12,14 +12,7 @@ import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 
 public class PlayerTracker {
 
-    private static PlayerTracker instance;
-
-    public static PlayerTracker getInstance() {
-        if(instance == null) {
-            instance = new PlayerTracker();
-        }
-        return instance;
-    }
+    public static final PlayerTracker instance = new PlayerTracker();
 
 
     @SuppressWarnings("UnnecessaryReturnStatement")

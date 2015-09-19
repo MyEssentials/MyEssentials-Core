@@ -71,6 +71,7 @@ dependencies {
     compile "org.spongepowered:mixin:0.4.4-SNAPSHOT"
     compile "com.sk89q.worldedit:worldedit-forge-mc1.7.10:6.0.2-SNAPSHOT:dev"
     compile "com.forgeessentials:forgeessentials:1.4.1-SNAPSHOT:dev"
+    //compile "info.servertools.permission:ServerTools-PERMISSION:1.7.10-2.2.1.14:deobf"
 
     // Other deps
     compile "org.beanshell:bsh:2.0b5"
