@@ -12,13 +12,16 @@ public abstract class DatasourceSQL {
 
     protected Logger LOG;
 
-    protected String prefix;
+    protected String prefix = "";
     protected BridgeSQL bridge;
     protected Schema schema;
 
-    public DatasourceSQL(Schema schema) {
+    public DatasourceSQL(Logger log, Schema schema) {
+        this.LOG = log;
         this.schema = schema;
         this.bridge = schema.bridge;
+        loadAll();
+        checkAll();
     }
 
     public abstract boolean loadAll();
