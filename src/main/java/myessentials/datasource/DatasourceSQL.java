@@ -19,7 +19,6 @@ public abstract class DatasourceSQL {
     public DatasourceSQL(Logger log, Schema schema) {
         this.LOG = log;
         this.schema = schema;
-        this.bridge = schema.bridge;
         loadAll();
         checkAll();
     }

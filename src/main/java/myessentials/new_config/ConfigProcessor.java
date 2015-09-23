@@ -1,5 +1,6 @@
 package myessentials.new_config;
 
+import myessentials.MyEssentialsCore;
 import myessentials.new_config.backends.ForgeConfigBackend;
 import myessentials.new_config.backends.JsonConfigBackend;
 import myessentials.new_config.data.ConfigGroupData;
@@ -13,15 +14,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ConfigProcessor {
-    public static ConfigData load(Class<?> clazz, Configuration config) {
-        return load(clazz, new ForgeConfigBackend(config));
+    public static ConfigData load(Class<?> clazz, Object instance, Configuration config) {
+        return load(clazz, instance, new ForgeConfigBackend(config));
     }
 
-    public static ConfigData load(Class<?> clazz, File configFile) {
-        return load(clazz, new JsonConfigBackend(configFile));
+    public static ConfigData load(Class<?> clazz, Object instance, File configFile) {
+        return load(clazz, instance, new JsonConfigBackend(configFile));
     }
 
-    public static ConfigData load(Class<?> clazz, IConfigBackend backend) {
+    public static ConfigData load(Class<?> clazz, Object instance, IConfigBackend backend) {
         Map<String, ConfigGroupData> groups = genGroups(clazz, null, backend);
         ConfigData cfgData = new ConfigData(groups, backend);
         cfgData.load();
@@ -29,7 +30,7 @@ public class ConfigProcessor {
             Config.Instance instAnnot = clazz.getAnnotation(Config.Instance.class);
             if (instAnnot == null || !ConfigData.class.isAssignableFrom(f.getClass())) continue;
             try {
-                f.set(null, cfgData);
+                f.set(instance, cfgData);
             } catch (IllegalAccessException e) {
                 // TODO Handle this exception nicely?
             }

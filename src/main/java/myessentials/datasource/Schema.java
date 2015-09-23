@@ -7,15 +7,9 @@ import java.util.List;
 
 public abstract class Schema {
 
-    protected BridgeSQL bridge;
     protected List<DBUpdate> updates = new ArrayList<DBUpdate>();
 
-    public Schema(BridgeSQL bridge) {
-        this.bridge = bridge;
-        initializeUpdates();
-    }
-
-    public abstract void initializeUpdates();
+    public abstract void initializeUpdates(BridgeSQL bridge);
 
     public class DBUpdate {
         /**

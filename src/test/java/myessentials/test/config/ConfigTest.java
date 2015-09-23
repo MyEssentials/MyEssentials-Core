@@ -17,11 +17,13 @@ public class ConfigTest {
 
 //    @Before
     public void setup() {
+        /*
         try {
             ConfigProcessor.load(TestConfig.class, new File(ConfigTest.class.getClassLoader().getResource("test_config.json").toURI()));
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+        */
     }
 
 //    @Test

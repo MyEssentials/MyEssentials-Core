@@ -2,6 +2,7 @@ package myessentials.datasource.bridge;
 
 import com.mysql.jdbc.Driver;
 import myessentials.new_config.Config;
+import myessentials.new_config.ConfigProcessor;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -23,7 +24,9 @@ public class BridgeMySQL extends BridgeSQL {
     private String database = "mytown";
 
     public BridgeMySQL(Configuration config) {
-        super(config);
+        ConfigProcessor.load(getClass(), this, config);
+        initConnection();
+        initProperties();
     }
 
     @Override

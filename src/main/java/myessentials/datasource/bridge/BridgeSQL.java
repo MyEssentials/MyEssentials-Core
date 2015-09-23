@@ -1,7 +1,6 @@
 package myessentials.datasource.bridge;
 
 import myessentials.new_config.Config;
-import net.minecraftforge.common.config.Configuration;
 
 import java.sql.Connection;
 import java.util.Properties;
@@ -14,8 +13,7 @@ public abstract class BridgeSQL extends Bridge {
     @Config.Property(name = "prefix", comment = "User defined properties to be passed to the connection.\nFormat: key=value;key=value...")
     public String[] userProperties = {};
 
-    public BridgeSQL(Configuration config) {
-        super(config);
+    public BridgeSQL() {
         initProperties();
         initConnection();
     }
