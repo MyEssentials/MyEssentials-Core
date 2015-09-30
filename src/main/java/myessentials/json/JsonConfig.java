@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * An abstract class for all JSON configs.
  */
-public abstract class JSONConfig<Wrapper> {
+public abstract class JsonConfig<T, L extends List<T>> {
 
     /**
      * The path to the file used.
@@ -23,24 +23,29 @@ public abstract class JSONConfig<Wrapper> {
     protected Type gsonType;
 
 
-    public JSONConfig(String path, String name) {
+    public JsonConfig(String path, String name) {
         this.path = path;
         this.name = name;
         gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
+    protected abstract L newList();
+
+    public void init() {
+        init(newList());
+    }
+
     /**
      * Initializes everything.
      */
-    public void init() {
+    public void init(L items) {
         File file = new File(path);
 
         File parent = file.getParentFile();
-        if(!parent.exists() && !parent.mkdirs()){
+        if (!parent.exists() && !parent.mkdirs()) {
             throw new IllegalStateException("Couldn't create dir: " + parent);
         }
-        List<Wrapper> items = new ArrayList<Wrapper>();
-        if(!file.exists() || file.isDirectory())
+        if (!file.exists() || file.isDirectory())
             create(items);
         else {
             read();
@@ -50,7 +55,7 @@ public abstract class JSONConfig<Wrapper> {
     /**
      * Creates the file if it doesn't exist with the initial given items
      */
-    public void create(List<Wrapper> initialItems) {
+    public void create(L initialItems) {
         try {
             Writer writer = new FileWriter(path);
             gson.toJson(initialItems, gsonType, writer);
@@ -65,7 +70,7 @@ public abstract class JSONConfig<Wrapper> {
     /**
      * Writes the given list to the file, completely overwriting it
      */
-    public void write(List<Wrapper> items) {
+    public void write(L items) {
         try {
             Writer writer = new FileWriter(path);
             gson.toJson(items, gsonType, writer);
@@ -80,8 +85,8 @@ public abstract class JSONConfig<Wrapper> {
     /**
      * Reads and returns the validated items.
      */
-    public List<Wrapper> read() {
-        List<Wrapper> items = new ArrayList<Wrapper>();
+    public L read() {
+        L items = null;
 
         try {
             Reader reader = new FileReader(path);
@@ -93,8 +98,9 @@ public abstract class JSONConfig<Wrapper> {
             MyEssentialsCore.instance.LOG.error("Failed to read from " + name + " file!");
         }
 
-        if(!validate(items))
+        if (!validate(items)) {
             write(items);
+        }
 
         return items;
     }
@@ -102,7 +108,7 @@ public abstract class JSONConfig<Wrapper> {
     /**
      * Checks for validity and modifies the given list so that is valid.
      */
-    public boolean validate(List<Wrapper> items) {
+    public boolean validate(L items) {
         return true;
     }
 

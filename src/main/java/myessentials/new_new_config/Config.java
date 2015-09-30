@@ -4,6 +4,7 @@ import myessentials.new_new_config.backend.ConfigBackend;
 import myessentials.new_new_config.backend.ForgeConfigBackend;
 import myessentials.new_new_config.backend.JsonConfigBackend;
 import myessentials.new_new_config.data.ConfigProperty;
+import myessentials.new_new_config.data.ConfigPropertyContainer;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
@@ -28,7 +29,7 @@ public class Config {
     }
 
     private List<ConfigProperty> getProperties(Object instance) throws IllegalAccessException {
-        ConfigPropertyContainer properties = new ArrayList<ConfigProperty>();
+        ConfigPropertyContainer properties = new ConfigPropertyContainer();
         for (Field field : instance.getClass().getFields()) {
             if (field.isAnnotationPresent(ConfigField.class)) {
                 field.setAccessible(true);

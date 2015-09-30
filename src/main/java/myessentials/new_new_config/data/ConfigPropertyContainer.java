@@ -44,7 +44,7 @@ public class ConfigPropertyContainer extends ArrayList<ConfigProperty> {
                 if (property.annotation.group() == null) {
                     json.add(property.annotation.name(), getElement(property));
                 } else if (!json.has(property.annotation.group())) {
-                    json.add(property.annotation.name(), getGroup(property.annotation.group()));
+                    json.add(property.annotation.name(), getGroup(property.annotation.group(), container));
                 }
             }
             return json;
@@ -78,10 +78,10 @@ public class ConfigPropertyContainer extends ArrayList<ConfigProperty> {
             return json;
         }
 
-        private JsonObject getGroup(String groupName) {
+        private JsonObject getGroup(String groupName, ConfigPropertyContainer container) {
             JsonObject json = new JsonObject();
-            ConfigPropertyContainer container = getAllFromGroup(groupName);
-            for (ConfigProperty property : container) {
+            ConfigPropertyContainer groupContainer = container.getAllFromGroup(groupName);
+            for (ConfigProperty property : groupContainer) {
                 json.add(property.annotation.name(), getElement(property));
             }
             return json;
