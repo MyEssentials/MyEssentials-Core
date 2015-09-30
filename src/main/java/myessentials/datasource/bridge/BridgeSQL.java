@@ -7,10 +7,14 @@ import java.util.Properties;
 
 public abstract class BridgeSQL extends Bridge {
 
-    @Config.Property(name = "prefix", comment = "The prefix of each of the tables. The format will be: <prefix>[tableName]")
+    @Config.Property(
+            name = "prefix",
+            comment = "The prefix of each of the tables. The format will be: <prefix>[tableName]")
     public String prefix = "";
 
-    @Config.Property(name = "prefix", comment = "User defined properties to be passed to the connection.\nFormat: key=value;key=value...")
+    @Config.Property(
+            name = "prefix",
+            comment = "User defined properties to be passed to the connection.\nFormat: key=value;key=value...")
     public String[] userProperties = {};
 
     public BridgeSQL() {
@@ -24,6 +28,7 @@ public abstract class BridgeSQL extends Bridge {
     protected String autoIncrement;
 
     protected abstract void initConnection();
+
     protected abstract void initProperties();
 
     public Connection getConnection() {
