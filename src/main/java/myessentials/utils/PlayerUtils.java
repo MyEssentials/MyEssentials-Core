@@ -167,6 +167,27 @@ public class PlayerUtils {
         }
     }
 
+    /**
+     * Gives the player an ItemStack
+     */
+    public static void giveItemStackToPlayer(EntityPlayer player, ItemStack itemStack) {
+        int i = -1;
+        for (int j = 0; j < player.inventory.mainInventory.length; j++) {
+            if (player.inventory.mainInventory[j] == null) {
+                i = j;
+                break;
+            }
+        }
+        if (i != -1) {
+            player.inventory.mainInventory[i] = itemStack;
+            // get the actual inventory Slot:
+            Slot slot = player.openContainer.getSlotFromInventory(player.inventory, i);
+            // send S2FPacketSetSlot to the player with the new / changed stack (or null)
+            ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, slot.slotNumber, player.inventory.mainInventory[i]));
+        } else {
+            WorldUtils.dropAsEntity(player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ, itemStack);
+        }
+    }
 
     /**
      * Gets the first occurrence of the item from a player's inventory.
