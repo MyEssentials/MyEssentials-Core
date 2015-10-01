@@ -106,38 +106,57 @@ public class PlayerUtils {
      * Gives the amount of items specified.
      */
     public static void giveItemToPlayer(EntityPlayer player, Item item, int amount, int meta) {
-        giveItemToPlayer(player, new ItemStack(item, 1, meta), amount);
-    }
-
-    /**
-     * Gives the amount of items specified.
-     */
-    public static void giveItemToPlayer(EntityPlayer player, ItemStack itemStack, int amount) {
-        for (int left = amount; left > 0; left -= 64) {
+        int left = amount;
+        // While there are items left...
+        while (left > 0) {
             int i = -1;
+            // Find a matching ItemStacks that can be added to
             for (int j = 0; j < player.inventory.mainInventory.length; j++) {
-                if (player.inventory.mainInventory[j] != null && player.inventory.mainInventory[j].getItem() == itemStack.getItem()
-                        && player.inventory.mainInventory[j].getItemDamage() == itemStack.getItemDamage()
-                        && player.inventory.mainInventory[j].stackSize + itemStack.stackSize <= 64) {
+                if (player.inventory.mainInventory[j] != null && player.inventory.mainInventory[j].getItem() == item
+                        && player.inventory.mainInventory[j].getItemDamage() == meta
+                        && player.inventory.mainInventory[j].stackSize < 64) {
                     i = j;
                     break;
                 }
             }
             if (i == -1) {
+                // No matching ItemStacks that can be filled, look for empty slots
                 for (int j = 0; j < player.inventory.mainInventory.length; j++) {
                     if (player.inventory.mainInventory[j] == null) {
                         i = j;
                         break;
                     }
                 }
-                if (i != -1)
-                    player.inventory.mainInventory[i] = itemStack;
+                if (i != -1) {
+                    if (left > 64) {
+                        player.inventory.mainInventory[i] = new ItemStack(item, 64, meta);
+                        left -= 64;
+                    } else {
+                        player.inventory.mainInventory[i] = new ItemStack(item, left, meta);
+                        left = 0;
+                    }
+                }
             } else {
-                player.inventory.mainInventory[i].stackSize += amount;
+                // Add what we can can to fill the ItemStack
+                if (player.inventory.mainInventory[i].stackSize + left > 64) {
+                    left -= (64 - player.inventory.mainInventory[i].stackSize);
+                    player.inventory.mainInventory[i].stackSize = 64;
+                } else {
+                    player.inventory.mainInventory[i].stackSize += left;
+                    left = 0;
+                }
             }
 
             if (i == -1) {
                 // Drop it on the ground if it fails to add to the inventory
+                ItemStack itemStack;
+                if (left > 64) {
+                    itemStack = new ItemStack(item, 64, meta);
+                    left -= 64;
+                } else {
+                    itemStack = new ItemStack(item, left, meta);
+                    left = 0;
+                }
                 WorldUtils.dropAsEntity(player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ, itemStack);
             } else {
                 // get the actual inventory Slot:
