@@ -1,6 +1,9 @@
 package myessentials.datasource;
 
 import myessentials.datasource.bridge.BridgeSQL;
+import myessentials.simple_config.ConfigProperty;
+import myessentials.simple_config.ConfigTemplate;
+import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Logger;
 
@@ -16,9 +19,17 @@ public abstract class DatasourceSQL {
     protected BridgeSQL bridge;
     protected Schema schema;
 
-    public DatasourceSQL(Logger log, Schema schema) {
+    public ConfigProperty<String> databaseType = new ConfigProperty<String>(
+            "type", "datasource",
+            "Specifies the database engine that is being used.",
+            "SQLite");
+
+    public DatasourceSQL(Logger log, ConfigTemplate config, Schema schema) {
         this.LOG = log;
         this.schema = schema;
+        config.addBinding(databaseType);
+        config.reload();
+        LOG.info(databaseType);
         loadAll();
         checkAll();
     }

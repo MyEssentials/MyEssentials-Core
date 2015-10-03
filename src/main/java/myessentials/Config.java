@@ -1,16 +1,20 @@
 package myessentials;
 
-import myessentials.config.ConfigProperty;
+import myessentials.simple_config.ConfigProperty;
+import myessentials.simple_config.ConfigTemplate;
 
 @SuppressWarnings({"squid:S1444"}) // Suppresses SonarQube warnings to mark fields in Config as final.
-public class Config {
+public class Config extends ConfigTemplate {
 
-    @ConfigProperty(category = "general", comment = "Allows toggling maintenance mode")
-    public static boolean maintenanceMode = false;
+    public static final Config instance = new Config();
 
-    @ConfigProperty(category = "general", comment = "Custom message to display when in maintenance mode")
-    public static String maintenanceModeMessage = "Server is in maintenance mode currently. Please come back later.";
+    public ConfigProperty<Boolean> maintenanceMode = new ConfigProperty<Boolean>(
+            "maintenanceMode", "general",
+            "Allows toggling maintenance mode",
+            false);
 
-    private Config() {
-    }
+    public ConfigProperty<String> maintenanceModeMessage = new ConfigProperty<String>(
+            "maintenanceModeMessage", "general",
+            "Custom message to display when in maintenance mode",
+            "Server is in maintenance mode currently. Please come back later.");
 }

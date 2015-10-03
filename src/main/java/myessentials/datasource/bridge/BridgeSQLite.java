@@ -1,9 +1,6 @@
 package myessentials.datasource.bridge;
 
-import myessentials.config.ConfigProperty;
 import myessentials.new_config.Config;
-import myessentials.new_config.ConfigProcessor;
-import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.sqlite.JDBC;
 
@@ -12,11 +9,9 @@ import java.sql.SQLException;
 
 public class BridgeSQLite extends BridgeSQL {
 
-    @Config.Property(comment = "The database file path. Used by SQLite")
     public String dbPath = "/media/afterwind/Windows/Users/Sergiu/Documents/GitHub/MyTown2/run/config/MyTown/data.db";
 
-    public BridgeSQLite(Configuration config) {
-        ConfigProcessor.load(getClass(), this, config);
+    public BridgeSQLite() {
         initConnection();
         initProperties();
     }
