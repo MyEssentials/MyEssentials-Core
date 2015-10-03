@@ -50,7 +50,7 @@ public abstract class Tool {
             lore.appendTag(new NBTTagString(s));
         }
         itemStack.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
-        PlayerUtils.giveItemToPlayer(owner, itemStack, 1);
+        PlayerUtils.giveItemStackToPlayer(owner, itemStack);
         //owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.gained"));
     }
 
