@@ -3,7 +3,6 @@ package myessentials;
 import myessentials.simple_config.ConfigProperty;
 import myessentials.simple_config.ConfigTemplate;
 
-@SuppressWarnings({"squid:S1444"}) // Suppresses SonarQube warnings to mark fields in Config as final.
 public class Config extends ConfigTemplate {
 
     public static final Config instance = new Config();

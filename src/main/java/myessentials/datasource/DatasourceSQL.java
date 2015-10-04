@@ -1,9 +1,11 @@
 package myessentials.datasource;
 
+import myessentials.MyEssentialsCore;
+import myessentials.datasource.bridge.BridgeMySQL;
 import myessentials.datasource.bridge.BridgeSQL;
+import myessentials.datasource.bridge.BridgeSQLite;
 import myessentials.simple_config.ConfigProperty;
 import myessentials.simple_config.ConfigTemplate;
-import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Logger;
 
@@ -27,9 +29,14 @@ public abstract class DatasourceSQL {
     public DatasourceSQL(Logger log, ConfigTemplate config, Schema schema) {
         this.LOG = log;
         this.schema = schema;
-        config.addBinding(databaseType);
-        config.reload();
-        LOG.info(databaseType);
+        loadConfig(config);
+        schema.initializeUpdates(bridge);
+        try {
+            doUpdates();
+        } catch (SQLException ex) {
+            LOG.error("Failed to run database updates!");
+            LOG.error(ExceptionUtils.getStackTrace(ex));
+        }
         loadAll();
         checkAll();
     }
@@ -37,6 +44,26 @@ public abstract class DatasourceSQL {
     public abstract boolean loadAll();
 
     public abstract boolean checkAll();
+
+    public boolean stop() {
+        try {
+            bridge.getConnection().close();
+            return true;
+        } catch (SQLException e) {
+            MyEssentialsCore.instance.LOG.error("Failed to close connection to database.");
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(e));
+            return false;
+        }
+    }
+
+    private void loadConfig(ConfigTemplate config) {
+        config.addBinding(databaseType, true);
+        if (databaseType.get().equalsIgnoreCase("sqlite")) {
+            bridge = new BridgeSQLite(config);
+        } else if (databaseType.get().equalsIgnoreCase("mysql")) {
+            bridge = new BridgeMySQL(config);
+        }
+    }
 
     protected boolean hasTable(String tableName) {
         try {
@@ -72,7 +99,7 @@ public abstract class DatasourceSQL {
         }
 
         for (Schema.DBUpdate update : schema.updates) {
-            if (ids.contains(update.statement)) {
+            if (ids.contains(update.id)) {
                 continue; // Skip if update is already done
             }
 
@@ -92,5 +119,9 @@ public abstract class DatasourceSQL {
                 throw e; // Throws back up to force safemode
             }
         }
+    }
+
+    public BridgeSQL getBridge() {
+        return this.bridge;
     }
 }

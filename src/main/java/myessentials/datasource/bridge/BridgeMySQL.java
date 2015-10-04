@@ -1,8 +1,9 @@
 package myessentials.datasource.bridge;
 
 import com.mysql.jdbc.Driver;
-import myessentials.new_config.Config;
-import net.minecraftforge.common.config.Configuration;
+import myessentials.MyEssentialsCore;
+import myessentials.simple_config.ConfigProperty;
+import myessentials.simple_config.ConfigTemplate;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.sql.DriverManager;
@@ -10,21 +11,34 @@ import java.sql.SQLException;
 
 public class BridgeMySQL extends BridgeSQL {
 
-    @Config.Property(name = "username", comment = "Username to use when connecting")
-    private String username = "";
+    public ConfigProperty<String> username = new ConfigProperty<String>(
+            "username", "datasource",
+            "Username to use when connecting",
+            "");
 
-    @Config.Property(name = "password", comment = "Password to use when connecting")
-    private String password = "";
+    public ConfigProperty<String> password = new ConfigProperty<String>(
+            "password", "datasource",
+            "Password to use when connecting",
+            "");
 
-    @Config.Property(name = "host", comment = "Hostname:Port of the database")
-    private String host = "localhost";
+    public ConfigProperty<String> host = new ConfigProperty<String>(
+            "host", "datasource",
+            "Hostname (format: 'host:port') to use when connecting",
+            "localhost");
 
-    @Config.Property(name = "database", comment = "The database name")
-    private String database = "mytown";
+    public ConfigProperty<String> database = new ConfigProperty<String>(
+            "database", "datasource",
+            "The database name",
+            "mytown");
 
-    public BridgeMySQL() {
-        initConnection();
+    public BridgeMySQL(ConfigTemplate config) {
+        config.addBinding(username);
+        config.addBinding(password);
+        config.addBinding(host);
+        config.addBinding(database, true);
+
         initProperties();
+        initConnection();
     }
 
     @Override
@@ -44,7 +58,8 @@ public class BridgeMySQL extends BridgeSQL {
         try {
             DriverManager.registerDriver(new Driver());
         } catch (SQLException ex) {
-            LOG.error("Failed to register driver for MySQL database.", ex);
+            MyEssentialsCore.instance.LOG.error("Failed to register driver for MySQL database.", ex);
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
         }
 
         try {
@@ -57,8 +72,8 @@ public class BridgeMySQL extends BridgeSQL {
 
             conn = DriverManager.getConnection(dsn, properties);
         } catch (SQLException ex) {
-            LOG.error("Failed to get SQL connection! {}", dsn);
-            LOG.error(ExceptionUtils.getStackTrace(ex));
+            MyEssentialsCore.instance.LOG.error("Failed to get SQL connection! {}", dsn);
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
         }
     }
 }

@@ -9,8 +9,6 @@ public abstract class BridgeSQL extends Bridge {
     public String[] userProperties = {};
 
     public BridgeSQL() {
-        initProperties();
-        initConnection();
     }
 
     protected Properties properties = new Properties();

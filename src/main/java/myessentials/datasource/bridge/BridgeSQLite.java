@@ -1,29 +1,44 @@
 package myessentials.datasource.bridge;
 
-import myessentials.new_config.Config;
+import myessentials.Constants;
+import myessentials.MyEssentialsCore;
+import myessentials.simple_config.ConfigProperty;
+import myessentials.simple_config.ConfigTemplate;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.sqlite.JDBC;
 
+import java.io.File;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class BridgeSQLite extends BridgeSQL {
 
-    public String dbPath = "/media/afterwind/Windows/Users/Sergiu/Documents/GitHub/MyTown2/run/config/MyTown/data.db";
+    public ConfigProperty<String> dbPath = new ConfigProperty<String>(
+            "path", "datasource",
+            "The path to the database file.",
+            "");
 
-    public BridgeSQLite() {
-        initConnection();
+
+    public BridgeSQLite(ConfigTemplate config) {
+        dbPath.set(Constants.DATABASE_FOLDER + config.getModID() + "/data.db");
+        config.addBinding(dbPath, true);
         initProperties();
+        initConnection();
     }
 
     @Override
     protected void initConnection() {
-        this.dsn = "jdbc:sqlite:" + "/media/afterwind/Windows/Users/Sergiu/Documents/GitHub/MyTown2/run/config/MyTown/data.db";
+        File file = new File(dbPath.get());
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+
+        this.dsn = "jdbc:sqlite:" + dbPath.get();
 
         try {
             DriverManager.registerDriver(new JDBC());
         } catch (SQLException ex) {
-            LOG.error("Failed to register driver for SQLite database.", ex);
+            MyEssentialsCore.instance.LOG.error("Failed to register driver for SQLite database.", ex);
         }
 
         try {
@@ -36,8 +51,8 @@ public class BridgeSQLite extends BridgeSQL {
 
             conn = DriverManager.getConnection(dsn, properties);
         } catch (SQLException ex) {
-            LOG.error("Failed to get SQL connection! {}", dsn);
-            LOG.error(ExceptionUtils.getStackTrace(ex));
+            MyEssentialsCore.instance.LOG.error("Failed to get SQL connection! {}", dsn);
+            MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
         }
     }
 

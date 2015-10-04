@@ -20,9 +20,10 @@ public class MyEssentialsCore {
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
         LOG = ev.getModLog();
-
+        Constants.CONFIG_FOLDER = ev.getModConfigurationDirectory().getPath() + "/MyEssentials-Core/";
+        Constants.DATABASE_FOLDER = ev.getModConfigurationDirectory().getParent() + "/databases/";
         // Load Configs
-        Config.instance.init(ev.getModConfigurationDirectory() + "/MyTown/Core.cfg");
+        Config.instance.init(Constants.CONFIG_FOLDER + "/Core.cfg", "MyEssentials-Core");
 
         // Register handlers/trackers
         FMLCommonHandler.instance().bus().register(PlayerTracker.instance);
