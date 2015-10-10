@@ -2,8 +2,8 @@ package myessentials.datasource.bridge;
 
 import com.mysql.jdbc.Driver;
 import myessentials.MyEssentialsCore;
-import myessentials.simple_config.ConfigProperty;
-import myessentials.simple_config.ConfigTemplate;
+import myessentials.config.ConfigProperty;
+import myessentials.config.ConfigTemplate;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.sql.DriverManager;

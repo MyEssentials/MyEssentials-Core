@@ -1,4 +1,4 @@
-package myessentials.simple_config;
+package myessentials.config;
 
 public class ConfigExample extends ConfigTemplate {
 

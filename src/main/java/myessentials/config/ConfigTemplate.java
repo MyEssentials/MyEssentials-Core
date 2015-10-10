@@ -1,4 +1,4 @@
-package myessentials.simple_config;
+package myessentials.config;
 
 import myessentials.MyEssentialsCore;
 import net.minecraftforge.common.config.ConfigCategory;

@@ -1,7 +1,7 @@
 package myessentials;
 
-import myessentials.simple_config.ConfigProperty;
-import myessentials.simple_config.ConfigTemplate;
+import myessentials.config.ConfigProperty;
+import myessentials.config.ConfigTemplate;
 
 public class Config extends ConfigTemplate {
 

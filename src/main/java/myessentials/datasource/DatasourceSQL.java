@@ -4,8 +4,8 @@ import myessentials.MyEssentialsCore;
 import myessentials.datasource.bridge.BridgeMySQL;
 import myessentials.datasource.bridge.BridgeSQL;
 import myessentials.datasource.bridge.BridgeSQLite;
-import myessentials.simple_config.ConfigProperty;
-import myessentials.simple_config.ConfigTemplate;
+import myessentials.config.ConfigProperty;
+import myessentials.config.ConfigTemplate;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Logger;
 
