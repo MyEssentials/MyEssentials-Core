@@ -1,6 +1,7 @@
 package myessentials.entities;
 
 import com.google.gson.*;
+import myessentials.json.SerializerTemplate;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.lang.reflect.Type;
@@ -101,7 +102,13 @@ public class Volume {
         return "Volume(minX: " + minX + ", minY: " + minY + ", minZ: " + minZ + " | maxX: " + maxX + ", maxY: " + maxY + ", maxZ: " + maxZ + ")";
     }
 
-    public static class Serializer implements JsonSerializer<Volume>, JsonDeserializer<Volume> {
+    public static class Serializer extends SerializerTemplate<Volume> {
+
+        @Override
+        public void register(GsonBuilder builder) {
+            builder.registerTypeAdapter(Volume.class, this);
+        }
+
         @Override
         public JsonElement serialize(Volume volume, Type typeOfSrc, JsonSerializationContext context) {
             JsonArray json = new JsonArray();
