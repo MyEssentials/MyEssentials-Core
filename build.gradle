@@ -89,7 +89,7 @@ processResources {
     inputs.property "reflectasm_version", config.reflectasm_version
     
     from(sourceSets.main.resources.srcDirs) {
-        //include '*.info'
+        include '*.info'
         expand 'mod_version': project.version, 'minecraft_version': project.minecraft.version, 'reflectasm_version': config.reflectasm_version
     }
     //from(sourceSets.main.resources.srcDirs) {
