@@ -45,11 +45,10 @@ public abstract class JsonConfig<T, L extends List<T>> {
         if (!parent.exists() && !parent.mkdirs()) {
             throw new IllegalStateException("Couldn't create dir: " + parent);
         }
-        if (!file.exists() || file.isDirectory())
+        if (!file.exists() || file.isDirectory()) {
             create(items);
-        else {
-            read();
         }
+        read();
     }
 
     /**
