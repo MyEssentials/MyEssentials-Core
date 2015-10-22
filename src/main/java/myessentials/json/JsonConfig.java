@@ -47,8 +47,9 @@ public abstract class JsonConfig<T, L extends List<T>> {
         }
         if (!file.exists() || file.isDirectory()) {
             create(items);
+        } else {
+            read();
         }
-        read();
     }
 
     /**
