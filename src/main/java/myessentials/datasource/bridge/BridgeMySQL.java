@@ -53,7 +53,7 @@ public class BridgeMySQL extends BridgeSQL {
 
     @Override
     protected void initConnection() {
-        this.dsn = "jdbc:mysql://" + host + "/" + database;
+        this.dsn = "jdbc:mysql://" + host.value + "/" + database.value;
 
         try {
             DriverManager.registerDriver(new Driver());
