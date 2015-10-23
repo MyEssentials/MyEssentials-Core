@@ -46,14 +46,14 @@ public class BridgeMySQL extends BridgeSQL {
         autoIncrement = "AUTO_INCREMENT";
 
         properties.put("autoReconnect", "true");
-        properties.put("user", username);
-        properties.put("password", password);
+        properties.put("user", username.get());
+        properties.put("password", password.get());
         properties.put("relaxAutoCommit", "true");
     }
 
     @Override
     protected void initConnection() {
-        this.dsn = "jdbc:mysql://" + host.value + "/" + database.value;
+        this.dsn = "jdbc:mysql://" + host.get() + "/" + database.get();
 
         try {
             DriverManager.registerDriver(new Driver());
