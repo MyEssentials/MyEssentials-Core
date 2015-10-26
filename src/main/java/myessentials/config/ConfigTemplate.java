@@ -11,6 +11,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Config class which contains most of the basic functionality needed in a config.
+ * All the fields of the type ConfigProperty inside the extended class are automatically added to the loading list.
+ * Other ConfigProperties can be added externally.
+ */
 public abstract class ConfigTemplate {
 
     protected String modID;
@@ -40,10 +45,17 @@ public abstract class ConfigTemplate {
         return this.modID;
     }
 
+    /**
+     * Adds a ConfigProperty instance which can then be loaded/saved in the config.
+     */
     public void addBinding(ConfigProperty property) {
         addBinding(property, false);
     }
 
+    /**
+     * Adds a ConfigProperty instance which can then be loaded/saved in the config.
+     * It will automatically reload if specified.
+     */
     public void addBinding(ConfigProperty property, boolean reload) {
         this.properties.add(property);
         if (reload) {
@@ -51,20 +63,11 @@ public abstract class ConfigTemplate {
         }
     }
 
-    public void bind() {
-        for (Field field : getClass().getDeclaredFields()) {
-            if (field.getType().isAssignableFrom(ConfigProperty.class)) {
-                try {
-                    properties.add((ConfigProperty)field.get(this));
-                } catch (IllegalAccessException ex) {
-                    MyEssentialsCore.instance.LOG.error("Failed to access " + field.getName() + " while binding to config " + config.getConfigFile().getName());
-                    MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-                }
-            }
-        }
-    }
-
+    /**
+     * Loads the config file from the hard drive
+     */
     public void reload() {
+        config.load();
         for (ConfigProperty property : properties) {
             ConfigCategory category = config.getCategory(property.category);
             Property forgeProp;
@@ -78,6 +81,19 @@ public abstract class ConfigTemplate {
             setProperty(property, forgeProp);
         }
         config.save();
+    }
+
+    private void bind() {
+        for (Field field : getClass().getDeclaredFields()) {
+            if (field.getType().isAssignableFrom(ConfigProperty.class)) {
+                try {
+                    properties.add((ConfigProperty)field.get(this));
+                } catch (IllegalAccessException ex) {
+                    MyEssentialsCore.instance.LOG.error("Failed to access " + field.getName() + " while binding to config " + config.getConfigFile().getName());
+                    MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
+                }
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")

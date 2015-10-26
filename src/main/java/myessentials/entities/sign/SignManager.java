@@ -5,6 +5,9 @@ import myessentials.entities.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
+/**
+ * If a sign is created, registering it here will route all the needed event interactions to it.
+ */
 public class SignManager {
 
     public static final SignManager instance = new SignManager();

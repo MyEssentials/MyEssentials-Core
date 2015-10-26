@@ -13,6 +13,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Datasource class which contains most functionality needed for a database connection.
+ * Database connection initialization is done on instantiation.
+ * Extend this and add all the load/save methods you want right in the extended class.
+ */
 public abstract class DatasourceSQL {
 
     protected Logger LOG;

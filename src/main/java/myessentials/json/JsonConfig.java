@@ -12,6 +12,8 @@ import java.util.List;
 
 /**
  * An abstract class for all JSON configs.
+ * Instantiating the gson and gsonType is needed.
+ * Methods are usually overriden but called inside their overriden method.
  */
 public abstract class JsonConfig<T, L extends List<T>> {
 
@@ -22,11 +24,9 @@ public abstract class JsonConfig<T, L extends List<T>> {
     protected Gson gson;
     protected Type gsonType;
 
-
     public JsonConfig(String path, String name) {
         this.path = path;
         this.name = name;
-        gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
     protected abstract L newList();

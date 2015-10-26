@@ -5,6 +5,10 @@ import net.minecraftforge.common.config.Property;
 
 import java.util.Map;
 
+/**
+ * This acts as a wrapper around any of the basic types of data.
+ * Used for loading from or into the config file.
+ */
 public class ConfigProperty<T> {
 
     private T value;
@@ -21,10 +25,16 @@ public class ConfigProperty<T> {
         this.value = defaultValue;
     }
 
+    /**
+     * Sets the value inside the property
+     */
     public void set(T value) {
         this.value = value;
     }
 
+    /**
+     * Returns the value retained inside the property
+     */
     public T get() {
         return value;
     }

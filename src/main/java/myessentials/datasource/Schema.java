@@ -5,6 +5,11 @@ import myessentials.datasource.bridge.BridgeSQL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Retains information about the changes that have occured in the database to support backwards compatibility.
+ * Extend this and add to it all the DBUpdates you want.
+ * This has been isolated because of the amount of lines the updates can have.
+ */
 public abstract class Schema {
 
     protected List<DBUpdate> updates = new ArrayList<DBUpdate>();

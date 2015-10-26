@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * If a tool is created, registering it here will route all the needed events to it.
+ */
 public class ToolManager {
 
     public static final ToolManager instance = new ToolManager();
