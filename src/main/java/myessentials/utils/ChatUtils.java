@@ -1,6 +1,7 @@
 package myessentials.utils;
 
 import myessentials.Localization;
+import myessentials.MyEssentialsCore;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
 
@@ -20,12 +21,17 @@ public class ChatUtils {
     public static void sendChat(ICommandSender sender, String msg, Object... args) {
         if (sender == null) return;
         String[] lines;
-        if(args == null)
+        if(args == null) {
             lines = msg.split("\\\\n");
-        else
+        } else {
             lines = String.format(msg, args).split("\\\\n");
-        for (String line : lines) {
-            sender.addChatMessage(new ChatComponentText(line));
+        }
+        try {
+            for (String line : lines) {
+                sender.addChatMessage(new ChatComponentText(line));
+            }
+        } catch (Exception ex) {
+            MyEssentialsCore.instance.LOG.error("Failed to send chat message! Message: {}", msg);
         }
     }
 
