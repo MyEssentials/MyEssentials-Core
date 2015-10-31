@@ -29,8 +29,6 @@ public abstract class Sign {
 
     protected abstract String[] getText();
 
-    protected abstract boolean isValid();
-
     public void onShiftRightClick(EntityPlayer player) {
     }
 
@@ -80,12 +78,7 @@ public abstract class Sign {
     public static class Container extends ArrayList<Sign> {
         @Override
         public boolean add(Sign sign) {
-            if(sign.isValid()) {
-                return super.add(sign);
-            } else {
-                MyEssentialsCore.instance.LOG.error("Failed to validate a special sign at location ({}, {}, {}; DIM: {})", sign.bp.getX(), sign.bp.getY(), sign.bp.getZ(), sign.bp.getDim());
-                return false;
-            }
+            return super.add(sign);
         }
 
         public Sign get(BlockPos bp) {
