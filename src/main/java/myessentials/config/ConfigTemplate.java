@@ -73,11 +73,11 @@ public abstract class ConfigTemplate {
             Property forgeProp;
             if (!category.containsKey(property.name)) {
                 forgeProp = new Property(property.name, property.get().toString(), property.getType());
-                forgeProp.comment = property.comment;
                 category.put(property.name, forgeProp);
             } else {
                 forgeProp = category.get(property.name);
             }
+            forgeProp.comment = property.comment;
             setProperty(property, forgeProp);
         }
         config.save();
