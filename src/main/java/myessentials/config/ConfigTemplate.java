@@ -124,4 +124,3 @@ public abstract class ConfigTemplate {
         }
     }
 }
-
