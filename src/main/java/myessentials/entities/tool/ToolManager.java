@@ -25,7 +25,7 @@ public class ToolManager {
 
     public boolean register(Tool tool) {
         for(Tool t : tools) {
-            if(t.owner == tool.owner) {
+            if(t.owner == tool.owner && t.getItemStack() != null) {
                 ChatUtils.sendChat(t.owner, "You already have a tool!");
                 return false;
             }
