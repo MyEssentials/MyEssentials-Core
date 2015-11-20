@@ -77,6 +77,7 @@ public abstract class ConfigTemplate {
                 category.put(property.name, forgeProp);
             } else {
                 forgeProp = category.get(property.name);
+                forgeProp.comment = property.comment;
             }
             setProperty(property, forgeProp);
         }
@@ -123,4 +124,3 @@ public abstract class ConfigTemplate {
         }
     }
 }
-
