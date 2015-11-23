@@ -12,6 +12,7 @@ import java.util.Map;
  * For autodownloading stuff.
  * This is really unoriginal, mostly ripped off FML, credits to cpw and chicken-bones.
  */
+@IFMLLoadingPlugin.SortingIndex(1001)
 public class DepLoader implements IFMLLoadingPlugin, IFMLCallHook {
     @Override
     public Void call() throws Exception {
@@ -24,7 +25,9 @@ public class DepLoader implements IFMLLoadingPlugin, IFMLCallHook {
 
     @Override
     public String[] getASMTransformerClass() {
-        return null;
+        return new String[]{
+                "myessentials.classtransformers.BlockFarmlandTransformer"
+        };
     }
 
     @Override
