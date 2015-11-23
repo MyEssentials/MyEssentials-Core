@@ -1,9 +1,10 @@
 package myessentials.entities.sign;
 
-import myessentials.MyEssentialsCore;
 import myessentials.entities.BlockPos;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
@@ -23,7 +24,15 @@ public abstract class Sign {
 
     public static final String IDENTIFIER = EnumChatFormatting.DARK_BLUE.toString();
 
+    public final SignType signType;
+
+    protected NBTBase data;
+
     protected BlockPos bp;
+
+    protected Sign(SignType signType) {
+        this.signType = signType;
+    }
 
     public abstract void onRightClick(EntityPlayer player);
 
@@ -51,6 +60,12 @@ public abstract class Sign {
             te.signText[i] = text[i] == null ? "" : text[i];
         }
 
+        NBTTagCompound rootTag = new NBTTagCompound();
+        rootTag.setString("Type", signType.getTypeID());
+        if(data != null)
+            rootTag.setTag("Value", data);
+        SignClassTransformer.setMyEssentialsDataValue(te, rootTag);
+
         return te;
     }
 
@@ -72,7 +87,6 @@ public abstract class Sign {
         World world = MinecraftServer.getServer().worldServerForDimension(bp.getDim());
         world.removeTileEntity(bp.getX(), bp.getY(), bp.getZ());
         world.setBlock(bp.getX(), bp.getY(), bp.getZ(), Blocks.air);
-        SignManager.instance.signs.remove(this);
     }
 
     public static class Container extends ArrayList<Sign> {
