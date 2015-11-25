@@ -3,7 +3,6 @@ package myessentials;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.IFMLCallHook;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
-import myessentials.entities.sign.SignClassTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
 import java.io.File;
@@ -27,7 +26,7 @@ public class DepLoader implements IFMLLoadingPlugin, IFMLCallHook {
     @Override
     public String[] getASMTransformerClass() {
         return new String[]{
-                SignClassTransformer.class.getName()
+                "myessentials.classtransformers.SignClassTransformer"
         };
     }
 

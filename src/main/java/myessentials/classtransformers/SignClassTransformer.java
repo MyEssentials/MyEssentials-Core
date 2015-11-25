@@ -1,4 +1,4 @@
-package myessentials.entities.sign;
+package myessentials.classtransformers;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -151,7 +151,7 @@ public class SignClassTransformer implements IClassTransformer {
         public void visitInsn(int opcode) {
             // If the current instruction is return
             if(opcode == Opcodes.RETURN) {
-                // Add: myessentials.entities.sign.SignClassTransformer.<localMethodName>(this, arg1);
+                // Add: myessentials.classtransformers.SignClassTransformer.<localMethodName>(this, arg1);
                 // before the return statement
                 super.visitVarInsn(Opcodes.ALOAD, 0);
                 super.visitVarInsn(Opcodes.ALOAD, 1);

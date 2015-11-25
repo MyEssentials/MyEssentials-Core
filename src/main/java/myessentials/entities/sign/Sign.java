@@ -1,5 +1,6 @@
 package myessentials.entities.sign;
 
+import myessentials.classtransformers.SignClassTransformer;
 import myessentials.entities.BlockPos;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;

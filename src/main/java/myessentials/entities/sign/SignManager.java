@@ -1,6 +1,7 @@
 package myessentials.entities.sign;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import myessentials.classtransformers.SignClassTransformer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
