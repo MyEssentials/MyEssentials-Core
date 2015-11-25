@@ -27,4 +27,6 @@ public abstract class SignType {
     public void register() {
         SignManager.instance.signTypes.put(getTypeID(), this);
     }
+
+    public abstract boolean isTileValid(TileEntitySign te);
 }
