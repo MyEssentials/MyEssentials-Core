@@ -40,7 +40,7 @@ public class EntityFireballTransformer implements IClassTransformer {
 
         @Override
         public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-            if (!patched && opcode == Opcodes.INVOKEVIRTUAL && owner.equals("net/minecraft/entity/projectile/EntityFireball") && name.equals("onImpact")) {
+            if (!patched && opcode == Opcodes.INVOKEVIRTUAL && owner.equals("net/minecraft/entity/projectile/EntityFireball") && (name.equals("func_70227_a") || name.equals("onImpact"))) {
                 super.visitMethodInsn(Opcodes.INVOKESTATIC, "myessentials/event/ProjectileImpactEvent", "fireEvent", "(Lnet/minecraft/entity/projectile/EntityFireball;Lnet/minecraft/util/MovingObjectPosition;)Z", false);
                 Label elseLabel = new Label();
                 super.visitJumpInsn(Opcodes.IFEQ, elseLabel);
