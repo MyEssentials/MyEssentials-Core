@@ -21,6 +21,7 @@ import org.objectweb.asm.commons.GeneratorAdapter;
 public class BlockFireTransformer implements IClassTransformer {
 
     private class BlockFireGeneratorAdapter extends GeneratorAdapter {
+        boolean kcauldronDetected = false;
         private String methodTransformed;
 
         protected BlockFireGeneratorAdapter(MethodVisitor mv, int access, String name, String desc) {
@@ -30,21 +31,31 @@ public class BlockFireTransformer implements IClassTransformer {
 
         @Override
         public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-            boolean replaced = false;
-
-            if (opcode == Opcodes.INVOKEVIRTUAL && owner.equals("net/minecraft/world/World")) {
+            if ((methodTransformed.equals("func_149674_a") || methodTransformed.equals("updateTick")) && !kcauldronDetected && opcode == Opcodes.INVOKEVIRTUAL) {
+                if (owner.equals("net/minecraft/world/World") && name.equals("func_147465_d") || name.equals("setBlock")) {
+                    super.visitMethodInsn(Opcodes.INVOKESTATIC, "myessentials/event/ModifyBlockEvent", "checkAndSetBlock", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;II)Z", false);
+                    return;
+                } else if (owner.equals("org/bukkit/event/block/BlockIgniteEvent") && name.equals("isCancelled")) {
+                    super.visitMethodInsn(opcode, owner, name, desc, itf);
+                    super.visitVarInsn(Opcodes.ALOAD, 1);
+                    super.visitVarInsn(Opcodes.ILOAD, 10);
+                    super.visitVarInsn(Opcodes.ILOAD, 12);
+                    super.visitVarInsn(Opcodes.ILOAD, 11);
+                    super.visitMethodInsn(Opcodes.INVOKESTATIC, "myessentials/event/ModifyBlockEvent", "checkFlagAndBlock", "(ZLnet/minecraft/world/World;III)Z", false);
+                    kcauldronDetected = true;
+                    return;
+                }
+            } else if (methodTransformed.equals("tryCatchFire") && opcode == Opcodes.INVOKEVIRTUAL && owner.equals("net/minecraft/world/World")) {
                 if (name.equals("func_147465_d") || name.equals("setBlock")) {
                     super.visitMethodInsn(Opcodes.INVOKESTATIC, "myessentials/event/ModifyBlockEvent", "checkAndSetBlock", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;II)Z", false);
-                    replaced = true;
-                } else if (methodTransformed.equals("tryCatchFire") && (equals("func_147468_f") || name.equals("setBlockToAir"))) {
+                    return;
+                } else if (name.equals("func_147468_f") || name.equals("setBlockToAir")) {
                     super.visitMethodInsn(Opcodes.INVOKESTATIC, "myessentials/event/ModifyBlockEvent", "checkAndSetBlockToAir", "(Lnet/minecraft/world/World;III)Z", false);
-                    replaced = true;
+                    return;
                 }
             }
 
-            if (!replaced) {
-                super.visitMethodInsn(opcode, owner, name, desc, itf);
-            }
+            super.visitMethodInsn(opcode, owner, name, desc, itf);
         }
     }
 

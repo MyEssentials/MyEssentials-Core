@@ -40,4 +40,12 @@ public class ModifyBlockEvent extends Event
         }
         return false;
     }
+
+    @SuppressWarnings("unused")
+    public static boolean checkFlagAndBlock(boolean isCanceled, World world, int x, int y, int z) {
+        if (!isCanceled) {
+            isCanceled = MinecraftForge.EVENT_BUS.post(new ModifyBlockEvent(world, x, y, z));
+        }
+        return isCanceled;
+    }
 }
