@@ -1,56 +1,48 @@
 package myessentials.classtransformers;
 
-import java.util.Random;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.IProjectile;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.world.World;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.GeneratorAdapter;
 
 /**
- * Patches BlockFire to add a hook for the {@link myessentials.event.FireSpreadEvent}.
+ * Patches BlockFire to add a hook for the {@link myessentials.event.ModifyBlockEvent}.
  * <br/>
- * The final code would be:
- * <pre><code>public class BlockFire extends Block {
- *         // ... original fields and methods
- *         public void updateTick(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_) {
- *             // ... original code
- *             if(FireSpreadEvent.fireEvent(i1, k1, j1, this, k2, 3)) {
- *               p_149674_1_.setBlock(i1, k1, j1, this, k2, 3);
- *             }
- *             // ... original code
- *         }
- *         // ... original methods
- *     }
- * </code></pre>
+ * For the method updateTick and tryCatchFire:
+ * <pre><code>world.setBlock(x, y, z, block, meta, flags) is replaced by
+ * ModifyBlockEvent.checkAndSetBlock(world, x, y, z, block, meta, flags)</code></pre>
+ *
+ * For the method tryCatchFire:
+ *  <pre><code>world.setBlockToAir(x, y, z) is replaced by
+ *  ModifyBlockEvent.checkAndSetBlockToAir(world, x, y, z)</code></pre>
+ *
  */
 public class BlockFireTransformer implements IClassTransformer {
 
-    /**
-     * Generates code on the first frame that comes after the first RETURN.<br>
-     * The code that is generated is:
-     * <pre><code>if(FireSpreadEvent.fireEvent(i1, k1, j1, this, k2, 3)) p_149674_1_.setBlock(i1, k1, j1, this, k2, 3);</code></pre>
-     */
     private class BlockFireGeneratorAdapter extends GeneratorAdapter {
-        boolean patched = false;
+        private String methodTransformed;
 
         protected BlockFireGeneratorAdapter(MethodVisitor mv, int access, String name, String desc) {
             super(Opcodes.ASM4, mv, access, name, desc);
+            this.methodTransformed = name;
         }
 
         @Override
         public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-            if (!patched && opcode == Opcodes.INVOKEVIRTUAL && owner.equals("net/minecraft/world/World") && (name.equals("func_147465_d") || name.equals("setBlock"))) {
-                super.visitMethodInsn(Opcodes.INVOKESTATIC, "myessentials/event/FireSpreadEvent", "checkAndSetFire", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;II)Z", false);
-                patched = true;
-            } else {
+            boolean replaced = false;
+
+            if (opcode == Opcodes.INVOKEVIRTUAL && owner.equals("net/minecraft/world/World")) {
+                if (name.equals("func_147465_d") || name.equals("setBlock")) {
+                    super.visitMethodInsn(Opcodes.INVOKESTATIC, "myessentials/event/ModifyBlockEvent", "checkAndSetBlock", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;II)Z", false);
+                    replaced = true;
+                } else if (methodTransformed.equals("tryCatchFire") && (equals("func_147468_f") || name.equals("setBlockToAir"))) {
+                    super.visitMethodInsn(Opcodes.INVOKESTATIC, "myessentials/event/ModifyBlockEvent", "checkAndSetBlockToAir", "(Lnet/minecraft/world/World;III)Z", false);
+                    replaced = true;
+                }
+            }
+
+            if (!replaced) {
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
             }
         }
