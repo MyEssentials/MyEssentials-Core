@@ -67,8 +67,9 @@ public class BlockFireTransformer implements IClassTransformer {
                 public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
                     MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
 
-                    if("func_149674_a".equals(name) || "updateTick".equals(name))
+                    if("func_149674_a".equals(name) || "updateTick".equals(name) || "tryCatchFire".equals(name)) {
                         return new BlockFireGeneratorAdapter(methodVisitor, access, name, desc);
+                    }
 
                     return methodVisitor;
                 }
@@ -77,30 +78,6 @@ public class BlockFireTransformer implements IClassTransformer {
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
 
             bytes = writer.toByteArray();
-
-            // This is NOT NEEDED, I'm dumping the class for testing proposes since this is an example mod
-            // This will save the modified class to a file, so you can decompile it to compare with the original version
-            FileOutputStream fos = null;
-            try
-            {
-                fos = new FileOutputStream(srgName+".class");
-                fos.write(bytes);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            finally
-            {
-                if(fos != null)
-                    try
-                    {
-                        fos.close();
-                    } catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-            }
         }
 
         return bytes;
