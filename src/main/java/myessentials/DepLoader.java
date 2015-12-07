@@ -29,6 +29,7 @@ public class DepLoader implements IFMLLoadingPlugin, IFMLCallHook {
             "myessentials.classtransformers.AE2PlaceTransformer",
             "myessentials.classtransformers.BlockFarmlandTransformer",
             "myessentials.classtransformers.BlockFireTransformer",
+            "myessentials.classtransformers.BlockTaintFibersTransformer",
             "myessentials.classtransformers.EntityFireballTransformer",
             "myessentials.classtransformers.EntityThrowableTransformer",
             "myessentials.classtransformers.SignClassTransformer"
