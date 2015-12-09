@@ -1,20 +1,18 @@
 package myessentials.test.datasource;
 
 import junit.framework.Assert;
-import metest.MinecraftRunner;
 import myessentials.test.MECTest;
 import myessentials.test.TestConfig;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@RunWith(MinecraftRunner.class)
+//@RunWith(MinecraftRunner.class)
 public class DatasourceTest extends MECTest {
 
     public static List<String> blockNames = new ArrayList<String>();

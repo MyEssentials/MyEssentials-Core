@@ -1,23 +1,18 @@
 package myessentials.test.economy;
 
-import com.mojang.authlib.GameProfile;
-import metest.MinecraftRunner;
 import myessentials.economy.Economy;
 import myessentials.test.MECTest;
+import myessentials.test.TestUtils;
 import myessentials.utils.PlayerUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.FakePlayer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import java.util.UUID;
-
-@RunWith(MinecraftRunner.class)
-public class EconomyTest extends MECTest {
+//@RunWith(MinecraftRunner.class)
+public class EconomyItemTest extends MECTest {
 
     private Economy economy;
     private EntityPlayerMP player;
@@ -25,14 +20,7 @@ public class EconomyTest extends MECTest {
     @Before
     public void shouldInitEcon() {
         economy = new Economy("minecraft:diamond");
-        //player = server.getConfigurationManager().createPlayerForUser(new GameProfile(UUID.randomUUID(), "HmmmTasty"));
-        //player = new EntityPlayerMP(server, server.worldServerForDimension(0), new GameProfile(UUID.randomUUID(), "HmmmTasty"), new ItemInWorldManager(server.worldServerForDimension(0)));
-        player = new FakePlayer(server.worldServerForDimension(0), new GameProfile(UUID.randomUUID(), "HmmmTasty"));
-    }
-
-    @Test
-    public void shouldProvideProperName() {
-        Assert.assertEquals("Diamonds", economy.getCurrency(65));
+        player = TestUtils.createFakePlayer(server);
     }
 
     @Test

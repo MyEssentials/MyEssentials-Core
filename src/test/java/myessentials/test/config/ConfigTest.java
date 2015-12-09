@@ -2,16 +2,14 @@ package myessentials.test.config;
 
 
 import junit.framework.Assert;
-import metest.MinecraftRunner;
 import myessentials.config.ConfigProperty;
 import myessentials.test.MECTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.File;
 
-@RunWith(MinecraftRunner.class)
+//@RunWith(MinecraftRunner.class)
 public class ConfigTest extends MECTest {
 
     private FakeConfig config;
@@ -40,5 +38,13 @@ public class ConfigTest extends MECTest {
         config.addBinding(prop, true);
         // REF: Add a resource folder to include premade config for loading
         Assert.assertEquals("ConfigProperty should not have changed after reloading", prop.get(), "BETTER");
+        Assert.assertTrue("ConfigProperty should have loaded into memory", config.getProperties().contains(prop));
     }
+
+    @Test
+    public void shouldLoadInstanceProperties() {
+        Assert.assertTrue("Instance ConfigProperty has not loaded", config.getProperties().contains(config.instanceProp));
+    }
+
+
 }
