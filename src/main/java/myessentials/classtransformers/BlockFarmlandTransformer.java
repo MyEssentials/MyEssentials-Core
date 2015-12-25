@@ -26,13 +26,13 @@ import org.objectweb.asm.commons.GeneratorAdapter;
 public class BlockFarmlandTransformer implements IClassTransformer {
 
     /**
-     * Generates code before the first ALOAD 1 that comes after the first RETURN.<br>
+     * Generates code on the first frame that comes after the first RETURN.<br>
      * The code that is generated is:
      * <pre><code>if(BlockTrampleEvent.fireEvent(entity, this, x, y, z)) return;</code></pre>
      */
     private class FarmlandGeneratorAdapter extends GeneratorAdapter {
         boolean patched = false;
-        boolean waitingALoad1 = false;
+        boolean waitingNextFrame = false;
 
         protected FarmlandGeneratorAdapter(MethodVisitor mv, int access, String name, String desc) {
             super(Opcodes.ASM4, mv, access, name, desc);
@@ -42,13 +42,15 @@ public class BlockFarmlandTransformer implements IClassTransformer {
         public void visitInsn(int opcode) {
             super.visitInsn(opcode);
             if(!patched && opcode == Opcodes.RETURN) {
-                waitingALoad1 = true;
+                waitingNextFrame = true;
             }
         }
 
         @Override
-        public void visitVarInsn(int opcode, int var) {
-            if(!patched && waitingALoad1 && opcode == Opcodes.ALOAD && var == 1) {
+        public void visitFrame(int type, int nLocal, Object[] local, int nStack, Object[] stack) {
+            super.visitFrame(type, nLocal, local, nStack, stack);
+
+            if(!patched && waitingNextFrame) {
                 super.visitVarInsn(Opcodes.ALOAD, 5);
                 super.visitVarInsn(Opcodes.ALOAD, 0);
                 super.visitVarInsn(Opcodes.ILOAD, 2);
@@ -62,8 +64,6 @@ public class BlockFarmlandTransformer implements IClassTransformer {
                 super.visitLabel(elseLabel);
                 patched = true;
             }
-
-            super.visitVarInsn(opcode, var);
         }
     }
 

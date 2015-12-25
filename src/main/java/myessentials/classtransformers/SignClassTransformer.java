@@ -156,7 +156,7 @@ public class SignClassTransformer implements IClassTransformer {
                 super.visitVarInsn(Opcodes.ALOAD, 0);
                 super.visitVarInsn(Opcodes.ALOAD, 1);
                 super.visitMethodInsn(Opcodes.INVOKESTATIC,
-                        "myessentials/entities/sign/SignClassTransformer", localMethodName, "(Ljava/lang/Object;Lnet/minecraft/nbt/NBTTagCompound;)V", false);
+                        "myessentials/classtransformers/SignClassTransformer", localMethodName, "(Ljava/lang/Object;Lnet/minecraft/nbt/NBTTagCompound;)V", false);
             }
 
             // Add the current instruction
