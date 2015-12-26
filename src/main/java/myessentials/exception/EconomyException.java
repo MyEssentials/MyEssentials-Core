@@ -8,4 +8,7 @@ public class EconomyException extends RuntimeException {
         super(message);
     }
 
+    public EconomyException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
