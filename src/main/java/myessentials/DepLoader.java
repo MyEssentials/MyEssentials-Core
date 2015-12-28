@@ -27,6 +27,7 @@ public class DepLoader implements IFMLLoadingPlugin, IFMLCallHook {
     public String[] getASMTransformerClass() {
         return new String[] {
             "myessentials.classtransformers.AE2PlaceTransformer",
+            "myessentials.classtransformers.AE2NetworkToolTransformer",
             "myessentials.classtransformers.BlockFarmlandTransformer",
             "myessentials.classtransformers.BlockFireTransformer",
             "myessentials.classtransformers.BlockTaintFibersTransformer",
