@@ -13,6 +13,8 @@ import myessentials.test.entities.VolumeTest;
 import myessentials.test.entities.sign.SignTest;
 import myessentials.test.entities.tool.ToolTest;
 import myessentials.test.json.JsonConfigTest;
+import myessentials.test.json.SerializerTest;
+import myessentials.test.utils.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -31,7 +33,14 @@ import org.junit.runners.Suite;
         TreeTest.class,
         VolumeTest.class,
         JsonMessageBuilderTest.class,
-        JsonConfigTest.class
+        JsonConfigTest.class,
+        SerializerTest.class,
+        ClassUtilsTest.class,
+        ItemUtilsTest.class,
+        MathUtilsTest.class,
+        PlayerUtilsTest.class,
+        StringUtilsTest.class,
+        WorldUtilsTest.class
 
 })
 

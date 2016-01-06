@@ -98,6 +98,15 @@ public class Volume {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Volume) {
+            Volume other = (Volume)obj;
+            return other.minX == minX && other.minY == minY && other.minZ == minZ && other.maxX == maxX && other.maxY == maxY && other.maxZ == maxZ;
+        }
+        return super.equals(obj);
+    }
+
+    @Override
     public String toString() {
         return "Volume(minX: " + minX + ", minY: " + minY + ", minZ: " + minZ + " | maxX: " + maxX + ", maxY: " + maxY + ", maxZ: " + maxZ + ")";
     }

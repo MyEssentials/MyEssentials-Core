@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HelpMenu {
+    // REF: This should be moved somewhere else, or refactored to not be only for commands
     private static final JsonMessageBuilder messageBuilder = new JsonMessageBuilder();
 
     private int maxPageLines = 9;
