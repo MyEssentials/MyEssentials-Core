@@ -1,6 +1,7 @@
 package myessentials.test;
 
 import metest.BaseSuite;
+import myessentials.test.chat.JsonMessageBuilderTest;
 import myessentials.test.config.ConfigTest;
 import myessentials.test.datasource.DatasourceTest;
 import myessentials.test.economy.EconomyForgeEssentialsTest;
@@ -11,6 +12,7 @@ import myessentials.test.entities.TreeTest;
 import myessentials.test.entities.VolumeTest;
 import myessentials.test.entities.sign.SignTest;
 import myessentials.test.entities.tool.ToolTest;
+import myessentials.test.json.JsonConfigTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -27,7 +29,9 @@ import org.junit.runners.Suite;
         ChunkPosTest.class,
         EntityPosTest.class,
         TreeTest.class,
-        VolumeTest.class
+        VolumeTest.class,
+        JsonMessageBuilderTest.class,
+        JsonConfigTest.class
 
 })
 
