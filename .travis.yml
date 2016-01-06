@@ -30,4 +30,7 @@ deploy:
       tags: true
       repo: MyEssentials/MyEssentials-Core
       all_branches: true
-    
+before_install:
+  - pip install codecov
+after_success:
+  - codecov 
