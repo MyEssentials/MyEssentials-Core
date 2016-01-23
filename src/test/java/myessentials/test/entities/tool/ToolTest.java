@@ -1,9 +1,9 @@
 package myessentials.test.entities.tool;
 
 import junit.framework.Assert;
+import metest.TestPlayer;
 import myessentials.entities.tool.ToolManager;
 import myessentials.test.MECTest;
-import myessentials.test.TestUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.MinecraftForge;
@@ -17,7 +17,7 @@ public class ToolTest extends MECTest {
 
     @Before
     public void initTool() {
-        player = TestUtils.createFakePlayer(server);
+        player = new TestPlayer(server, "Tool Tester");
         server.worldServerForDimension(0).setBlock(21, 200, 21, Blocks.stone);
     }
 

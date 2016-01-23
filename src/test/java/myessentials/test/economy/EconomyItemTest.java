@@ -1,8 +1,8 @@
 package myessentials.test.economy;
 
+import metest.TestPlayer;
 import myessentials.economy.Economy;
 import myessentials.test.MECTest;
-import myessentials.test.TestUtils;
 import myessentials.utils.PlayerUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -20,7 +20,7 @@ public class EconomyItemTest extends MECTest {
     @Before
     public void shouldInitEcon() {
         economy = new Economy("minecraft:diamond");
-        player = TestUtils.createFakePlayer(server);
+        player = new TestPlayer(server, "Economy Tester");
     }
 
     @Test
