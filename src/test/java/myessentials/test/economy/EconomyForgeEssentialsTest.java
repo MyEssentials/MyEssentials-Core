@@ -1,6 +1,6 @@
 package myessentials.test.economy;
 
-import metest.TestPlayer;
+import metest.api.TestPlayer;
 import myessentials.economy.Economy;
 import myessentials.economy.IEconManager;
 import myessentials.test.MECTest;

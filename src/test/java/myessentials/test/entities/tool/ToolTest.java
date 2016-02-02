@@ -1,7 +1,7 @@
 package myessentials.test.entities.tool;
 
 import junit.framework.Assert;
-import metest.TestPlayer;
+import metest.api.TestPlayer;
 import myessentials.entities.tool.ToolManager;
 import myessentials.test.MECTest;
 import net.minecraft.entity.player.EntityPlayerMP;

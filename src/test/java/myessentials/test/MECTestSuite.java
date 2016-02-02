@@ -1,6 +1,6 @@
 package myessentials.test;
 
-import metest.BaseSuite;
+import metest.api.BaseSuite;
 import myessentials.test.chat.JsonMessageBuilderTest;
 import myessentials.test.config.ConfigTest;
 import myessentials.test.datasource.DatasourceTest;
