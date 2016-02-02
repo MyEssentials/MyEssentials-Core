@@ -1,7 +1,7 @@
 package myessentials.test.entities;
 
 import junit.framework.Assert;
-import myessentials.entities.ChunkPos;
+import myessentials.entities.api.ChunkPos;
 import myessentials.test.MECTest;
 import org.junit.Test;
 

@@ -2,7 +2,7 @@ package myessentials.test.json;
 
 
 import junit.framework.Assert;
-import myessentials.entities.Volume;
+import myessentials.entities.api.Volume;
 import myessentials.test.MECTest;
 import org.junit.Before;
 import org.junit.Test;

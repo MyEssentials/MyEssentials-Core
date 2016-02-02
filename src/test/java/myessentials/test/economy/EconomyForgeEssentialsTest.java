@@ -1,8 +1,8 @@
 package myessentials.test.economy;
 
 import metest.api.TestPlayer;
-import myessentials.economy.Economy;
-import myessentials.economy.IEconManager;
+import myessentials.economy.api.Economy;
+import myessentials.economy.api.IEconManager;
 import myessentials.test.MECTest;
 import net.minecraft.entity.player.EntityPlayerMP;
 import org.junit.Assert;

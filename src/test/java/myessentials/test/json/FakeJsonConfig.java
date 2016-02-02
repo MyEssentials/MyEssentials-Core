@@ -2,8 +2,8 @@ package myessentials.test.json;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import myessentials.entities.Volume;
-import myessentials.json.JsonConfig;
+import myessentials.entities.api.Volume;
+import myessentials.json.api.JsonConfig;
 
 import java.util.ArrayList;
 import java.util.List;

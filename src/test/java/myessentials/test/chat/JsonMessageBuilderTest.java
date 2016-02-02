@@ -3,7 +3,7 @@ package myessentials.test.chat;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import junit.framework.Assert;
-import myessentials.chat.JsonMessageBuilder;
+import myessentials.chat.api.JsonMessageBuilder;
 import myessentials.test.MECTest;
 import net.minecraft.util.EnumChatFormatting;
 import org.junit.Test;

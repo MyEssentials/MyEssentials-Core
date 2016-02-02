@@ -1,7 +1,7 @@
 package myessentials.test.economy;
 
 import metest.api.TestPlayer;
-import myessentials.economy.Economy;
+import myessentials.economy.api.Economy;
 import myessentials.test.MECTest;
 import myessentials.utils.PlayerUtils;
 import net.minecraft.entity.player.EntityPlayerMP;

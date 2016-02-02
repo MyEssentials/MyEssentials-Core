@@ -1,7 +1,7 @@
 package myessentials.test.entities.tool;
 
-import myessentials.entities.BlockPos;
-import myessentials.entities.tool.Tool;
+import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.tool.Tool;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class FakeTool extends Tool {

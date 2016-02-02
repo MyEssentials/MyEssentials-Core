@@ -1,6 +1,6 @@
 package myessentials.test.utils;
 
-import myessentials.entities.ChunkPos;
+import myessentials.entities.api.ChunkPos;
 import myessentials.test.MECTest;
 import myessentials.utils.WorldUtils;
 import net.minecraft.init.Blocks;
