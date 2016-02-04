@@ -1,11 +1,11 @@
 package myessentials.utils;
 
-import myessentials.Localization;
 import myessentials.MyEssentialsCore;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +27,18 @@ public class ChatUtils {
         for(EnumChatFormatting formatting: EnumChatFormatting.values()) {
             formattingMap.put(formatting.getFormattingCode(), formatting);
         }
+    }
+
+
+
+    public static void sendChat(ICommandSender sender, IChatComponent message) {
+
+        sender.addChatMessage(message);
+
+    }
+
+    public static void sendChat2(ICommandSender sender, String message, Object... args) {
+
     }
 
     /**
@@ -88,14 +100,6 @@ public class ChatUtils {
         }
 
         return base;
-    }
-
-    /**
-     * Sends a localized msg to sender
-     * @see ChatUtils#sendChat(net.minecraft.command.ICommandSender, String, Object...)
-     */
-    public static void sendLocalizedChat(ICommandSender sender, Localization local, String key, Object... args) {
-        ChatUtils.sendChat(sender, local.getLocalization(key), args);
     }
 
     /**

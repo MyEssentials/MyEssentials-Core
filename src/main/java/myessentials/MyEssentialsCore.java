@@ -19,6 +19,7 @@ public class MyEssentialsCore {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
+
         LOG = ev.getModLog();
         Constants.CONFIG_FOLDER = ev.getModConfigurationDirectory().getPath() + "/MyEssentials-Core/";
         Constants.DATABASE_FOLDER = ev.getModConfigurationDirectory().getParent() + "/databases/";
