@@ -1,7 +1,7 @@
 package myessentials.test.datasource;
 
-import myessentials.datasource.Schema;
-import myessentials.datasource.bridge.BridgeSQL;
+import myessentials.datasource.api.Schema;
+import myessentials.datasource.api.bridge.BridgeSQL;
 
 public class FakeSchema extends Schema {
 

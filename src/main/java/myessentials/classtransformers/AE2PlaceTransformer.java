@@ -5,7 +5,7 @@ import org.objectweb.asm.*;
 import org.objectweb.asm.commons.GeneratorAdapter;
 
 /**
- * Patches PacketPartPlacement to add a hook for the {@link myessentials.event.AE2PlaceEvent}.
+ * Patches PacketPartPlacement to add a hook for the {@link myessentials.event.AE2PartPlaceEvent}.
  * <br/>
  * The final code would be:
  * <pre><code>

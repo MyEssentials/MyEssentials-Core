@@ -1,6 +1,6 @@
 package myessentials.utils;
 
-import myessentials.entities.ChunkPos;
+import myessentials.entities.api.ChunkPos;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;

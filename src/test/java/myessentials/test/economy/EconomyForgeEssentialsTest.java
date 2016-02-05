@@ -1,9 +1,9 @@
 package myessentials.test.economy;
 
-import myessentials.economy.Economy;
-import myessentials.economy.IEconManager;
+import metest.api.TestPlayer;
+import myessentials.economy.api.Economy;
+import myessentials.economy.api.IEconManager;
 import myessentials.test.MECTest;
-import myessentials.test.TestUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,7 +18,7 @@ public class EconomyForgeEssentialsTest extends MECTest {
 
     @Before
     public void shouldInitEconomy() {
-        player = TestUtils.createFakePlayer(server);
+        player = new TestPlayer(server, "ForgeEssentials Economy Tester");
         economy = new Economy("$ForgeEssentials");
         manager = economy.economyManagerForUUID(player.getPersistentID());
     }

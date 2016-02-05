@@ -1,7 +1,7 @@
 package myessentials.test.entities.sign;
 
-import myessentials.entities.sign.Sign;
-import myessentials.entities.sign.SignType;
+import myessentials.entities.api.sign.Sign;
+import myessentials.entities.api.sign.SignType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;

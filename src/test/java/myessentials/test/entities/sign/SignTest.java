@@ -1,9 +1,9 @@
 package myessentials.test.entities.sign;
 
 import junit.framework.Assert;
-import myessentials.entities.BlockPos;
+import metest.api.TestPlayer;
+import myessentials.entities.api.BlockPos;
 import myessentials.test.MECTest;
-import myessentials.test.TestUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.MinecraftForge;
@@ -17,7 +17,7 @@ public class SignTest extends MECTest {
 
     @Before
     public void init() {
-        player = TestUtils.createFakePlayer(server);
+        player = new TestPlayer(server, "Sign Tester");
         server.worldServerForDimension(0).setBlock(20, 199, 20, Blocks.stone);
     }
 

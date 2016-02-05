@@ -2,7 +2,7 @@ package myessentials.test.config;
 
 
 import junit.framework.Assert;
-import myessentials.config.ConfigProperty;
+import myessentials.config.api.ConfigProperty;
 import myessentials.test.MECTest;
 import org.junit.Before;
 import org.junit.Test;

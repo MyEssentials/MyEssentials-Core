@@ -1,7 +1,7 @@
 package myessentials.test;
 
-import metest.BaseTest;
-import metest.Constants;
+import metest.api.BaseTest;
+import metest.core.Constants;
 import org.junit.Before;
 
 public class MECTest extends BaseTest {

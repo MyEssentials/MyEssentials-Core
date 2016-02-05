@@ -1,8 +1,8 @@
 package myessentials.test.datasource;
 
-import myessentials.config.ConfigTemplate;
-import myessentials.datasource.DatasourceSQL;
-import myessentials.datasource.Schema;
+import myessentials.config.api.ConfigTemplate;
+import myessentials.datasource.api.DatasourceSQL;
+import myessentials.datasource.api.Schema;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Logger;
 

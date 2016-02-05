@@ -1,0 +1,17 @@
+[
+	{
+		"repo": "http://central.maven.org/maven2/com/esotericsoftware/reflectasm/reflectasm/	${reflectasm_version}/",
+		"file": "reflectasm-${reflectasm_version}.jar",
+		"class": "com.esotericsoftware.reflectasm.AccessClassLoader"
+	},
+	{
+		"repo": "http://central.maven.org/maven2/mysql/mysql-connector-java/${mysql_version}/",
+		"file": "mysql-connector-java-3.8.5-pre1.jar",
+		"class": "com.mysql.jdbc.Driver"
+	},
+	{
+		"repo": "http://central.maven.org/maven2/org/xerial/sqlite-jdbc/${sqlite_version}/",
+		"file": "sqlite-jdbc-5.1.32.jar",
+		"class": "org.sqlite.JDBC"
+	}
+]

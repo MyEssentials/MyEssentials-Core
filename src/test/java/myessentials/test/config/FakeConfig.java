@@ -1,7 +1,7 @@
 package myessentials.test.config;
 
-import myessentials.config.ConfigProperty;
-import myessentials.config.ConfigTemplate;
+import myessentials.config.api.ConfigProperty;
+import myessentials.config.api.ConfigTemplate;
 
 import java.util.List;
 

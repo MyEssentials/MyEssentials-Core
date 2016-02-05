@@ -5,8 +5,8 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import myessentials.entities.sign.SignManager;
-import myessentials.entities.tool.ToolManager;
+import myessentials.entities.api.sign.SignManager;
+import myessentials.entities.api.tool.ToolManager;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Logger;
 
