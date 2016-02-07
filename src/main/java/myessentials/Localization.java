@@ -1,5 +1,6 @@
 package myessentials;
 
+import myessentials.utils.ColorUtils;
 import net.minecraft.util.EnumChatFormatting;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -11,27 +12,7 @@ import java.util.Map;
  * Loads and handles Localization files
  */
 public class Localization {
-    public static final Map<Character, String> colorMap = new HashMap<Character, String>();
     public static final String defaultLocalization = "en_US";
-
-    static {
-        colorMap.put('0', "BLACK");
-        colorMap.put('1', "DARK_BLUE");
-        colorMap.put('2', "DARK_GREEN");
-        colorMap.put('3', "DARK_AQUA");
-        colorMap.put('4', "DARK_RED");
-        colorMap.put('5', "DARK_PURPLE");
-        colorMap.put('6', "GOLD");
-        colorMap.put('7', "GRAY");
-        colorMap.put('8', "DARK_GRAY");
-        colorMap.put('9', "BLUE");
-        colorMap.put('a', "GREEN");
-        colorMap.put('b', "AQUA");
-        colorMap.put('c', "RED");
-        colorMap.put('d', "LIGHT_PURPLE");
-        colorMap.put('e', "YELLOW");
-        colorMap.put('f', "WHITE");
-    }
 
     private Map<String, String> localizations = new HashMap<String, String>();
     private Reader reader = null;
@@ -90,17 +71,6 @@ public class Localization {
     private String getLocalizationFromKey(String key) {
         String localized = localizations.get(key);
 
-        if(localized != null) {
-            for(int i = 0; i < localized.length(); i++) {
-                if(localized.charAt(i) == '&') {
-                    if(colorMap.get(localized.charAt(i+1)) != null && EnumChatFormatting.valueOf(colorMap.get(localized.charAt(i+1))) != null) {
-                        localized = localized.substring(0, i) + EnumChatFormatting.valueOf(colorMap.get(localized.charAt(i + 1))) + localized.substring(i + 2);
-                    } else {
-                        localized = localized.substring(0, i) + localized.substring(i+2);
-                    }
-                }
-            }
-        }
 
         return localized == null ? key : localized;
     }

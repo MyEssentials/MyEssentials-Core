@@ -1,6 +1,7 @@
 package myessentials.test;
 
 import metest.api.BaseSuite;
+import myessentials.test.chat.ChatComponentFormattedTest;
 import myessentials.test.chat.JsonMessageBuilderTest;
 import myessentials.test.config.ConfigTest;
 import myessentials.test.datasource.DatasourceTest;
@@ -37,7 +38,9 @@ import org.junit.runners.Suite;
         MathUtilsTest.class,
         PlayerUtilsTest.class,
         StringUtilsTest.class,
-        WorldUtilsTest.class
+        WorldUtilsTest.class,
+        ChatComponentFormattedTest.class
+
 
 })
 
