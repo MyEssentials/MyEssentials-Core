@@ -1,7 +1,10 @@
 package myessentials;
 
+import myessentials.chat.api.ChatComponentFormatted;
 import myessentials.utils.ColorUtils;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.*;
@@ -68,22 +71,9 @@ public class Localization {
         }
     }
 
-    private String getLocalizationFromKey(String key) {
+    public IChatComponent getLocalization(String key, Object... args) {
         String localized = localizations.get(key);
-
-
-        return localized == null ? key : localized;
-    }
-
-    /**
-     * Returns the localized version of the given unlocalized key
-     */
-    public String getLocalization(String key, Object... args) {
-        if (args.length > 0) {
-            return String.format(getLocalizationFromKey(key), args);
-        }
-        else
-            return getLocalizationFromKey(key);
+        return localized == null ? new ChatComponentText(key) : new ChatComponentFormatted(localized, args);
     }
 
     public boolean hasLocalization(String key) {
