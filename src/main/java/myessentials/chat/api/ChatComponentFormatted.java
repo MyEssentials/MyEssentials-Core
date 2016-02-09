@@ -12,7 +12,7 @@ public class ChatComponentFormatted extends ChatComponentStyle {
 
     public ChatComponentFormatted(String format, Object... args) {
 
-        String[] components = StringUtils.split(format, "[]");
+        String[] components = StringUtils.split(format, "{}");
         int argNumber = 0;
 
         for (String component : components) {
