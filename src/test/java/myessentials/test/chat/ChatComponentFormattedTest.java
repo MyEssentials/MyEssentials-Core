@@ -37,7 +37,7 @@ public class ChatComponentFormattedTest extends MECTest {
     @Test
     public void shouldCreateMessageFromArguments() {
 
-        ChatComponentFormatted message = new ChatComponentFormatted("[%s][%s]", new MockArgument(5), new MockArgument(20));
+        ChatComponentFormatted message = new ChatComponentFormatted("{%s}{%s}", new MockArgument(5), new MockArgument(20));
         Assert.assertEquals("Message did not get created properly", "520", message.getUnformattedText());
 
     }
@@ -45,7 +45,7 @@ public class ChatComponentFormattedTest extends MECTest {
     @Test
     public void shouldCreateMessageFromStringArguments() {
 
-        ChatComponentFormatted message = new ChatComponentFormatted("[|%s][|%s]", 5 + "", 20 + "");
+        ChatComponentFormatted message = new ChatComponentFormatted("{|%s}{|%s}", 5 + "", 20 + "");
         Assert.assertEquals("Message did not get created properly", "520", message.getUnformattedText());
 
     }
@@ -53,7 +53,7 @@ public class ChatComponentFormattedTest extends MECTest {
     @Test
     public void shouldCreateMessageFromStringWithProperStyle() {
 
-        ChatComponentFormatted message = new ChatComponentFormatted("[1|%s][2l|%s]", 5 + "", 20 + "");
+        ChatComponentFormatted message = new ChatComponentFormatted("{1|%s}{2l|%s}", 5 + "", 20 + "");
         Assert.assertEquals("Message did not get created properly", "520", message.getUnformattedText());
         Assert.assertEquals("Color was not the correct one for the first argument", EnumChatFormatting.DARK_BLUE, ((IChatComponent) message.getSiblings().get(0)).getChatStyle().getColor());
         Assert.assertEquals("Color was not the correct one for the second argument", EnumChatFormatting.DARK_GREEN, ((IChatComponent) message.getSiblings().get(1)).getChatStyle().getColor());
@@ -66,6 +66,14 @@ public class ChatComponentFormattedTest extends MECTest {
 
         ChatComponentFormatted message = new ChatComponentFormatted("%s%s", new MockArgument(5), new MockArgument(10));
         Assert.assertEquals("Message did not get created properly", "510", message.getUnformattedText());
+
+    }
+
+    @Test
+    public void shouldCreateMessageWithComponentArguments() {
+
+        ChatComponentFormatted message = new ChatComponentFormatted("{%s}{%s}", new MockArgument(120), new ChatComponentText("420"));
+        Assert.assertEquals("Message did not get created properly", "120420", message.getUnformattedText());
 
     }
 

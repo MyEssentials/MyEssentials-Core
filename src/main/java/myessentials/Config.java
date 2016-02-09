@@ -19,6 +19,6 @@ public class Config extends ConfigTemplate {
 
     public ConfigProperty<String> localization = new ConfigProperty<String>(
             "localization", "general",
-            "Localization used for the mod",
+            "Localization file without file extension.\\nLoaded from config/MyTown/localization/ first, then from the jar, then finally will fallback to en_US if needed.",
             "en_US");
 }
