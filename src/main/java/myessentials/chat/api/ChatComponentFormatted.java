@@ -8,6 +8,20 @@ import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * An IChatComponent that converts a format to a set of IChatComponents
+ *
+ * Each of the parenthesis pairs represent an IChatComponent with its
+ * own ChatStyle (color, bold, underlined, etc.)
+ *
+ * Example: {2|Entity number }{%s}{2| is the }{7l| %s}
+ * This format will create the following IChatComponents:
+ *  - "Entity number "; with DARK_GREEN color
+ *  - %s; one of the parameters sent by the caller (as IChatComponent or
+ *                      IChatFormat, since it's missing the "|" style delimiter character
+ *  - " is the "; with DARK_GREEN color
+ *  - %s; one of the parameters sent by the caller (as String since it HAS "|" style delimiter character)
+ */
 public class ChatComponentFormatted extends ChatComponentStyle {
 
     public ChatComponentFormatted(String format, Object... args) {

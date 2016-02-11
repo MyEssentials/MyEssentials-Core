@@ -6,6 +6,10 @@ import net.minecraft.util.IChatComponent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A multi-page IChatComponent container.
+ * Used for sending large amount of lines to a player.
+ */
 public class ChatComponentMultiPage extends ChatComponentContainer {
 
     private int maxComponentsPerPage = 10;
