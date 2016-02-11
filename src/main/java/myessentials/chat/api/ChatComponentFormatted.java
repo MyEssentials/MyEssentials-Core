@@ -34,6 +34,8 @@ public class ChatComponentFormatted extends ChatComponentStyle {
                     IChatComponent formattedArgument = ((IChatFormat) args[argNumber++]).toChatMessage();
                     //this.text += formattedArgument.getUnformattedText();
                     this.appendSibling(formattedArgument);
+                } else if (args[argNumber] instanceof IChatComponent) {
+                    this.appendSibling((IChatComponent) args[argNumber++]);
                 } else {
                     throw new FormatException("Argument at position " + argNumber + " does not implement IChatFormat interface");
                 }
