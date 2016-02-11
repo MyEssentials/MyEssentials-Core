@@ -45,4 +45,14 @@ public class EntityPos implements IChatFormat {
     public IChatComponent toChatMessage() {
         return MyEssentialsCore.instance.LOCAL.getLocalization("myessentials.format.entitypos", x, y, z, dim);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EntityPos) {
+            EntityPos other = (EntityPos) obj;
+            return other.x == x && other.y == y && other.z == z && other.dim == dim;
+        } else {
+            return super.equals(obj);
+        }
+    }
 }

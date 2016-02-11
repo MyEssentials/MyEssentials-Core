@@ -36,7 +36,7 @@ public class TreeTest extends MECTest {
         Assert.assertTrue("Failed to get parent from a node with parent", nodeChild1.getParent().equals(nodeRoot));
         Assert.assertTrue("Failed to get parent from a node with parent", nodeChild2.getParent().equals(nodeRoot));
         Assert.assertTrue("Failed to get parent from a node with parent", nodeChild3.getParent().equals(nodeRoot));
-        Assert.assertTrue("Failed to get parent from a node with parent", nodeChild21.getParent().equals(nodeChild21));
+        Assert.assertTrue("Failed to get parent from a node with parent", nodeChild21.getParent().equals(nodeChild2));
     }
 
 }

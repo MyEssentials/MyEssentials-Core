@@ -3,7 +3,7 @@ package myessentials.entities.api;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TreeNode<T> {
+public class TreeNode<T extends TreeNode> {
 
     protected T parent;
     protected List<T> children = new ArrayList<T>();
@@ -22,6 +22,7 @@ public class TreeNode<T> {
 
     public void addChild(T child) {
         children.add(child);
+        child.parent = this;
     }
 
 

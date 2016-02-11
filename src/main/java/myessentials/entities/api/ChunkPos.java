@@ -39,4 +39,14 @@ public class ChunkPos implements IChatFormat {
     public IChatComponent toChatMessage() {
         return MyEssentialsCore.instance.LOCAL.getLocalization("myessentials.format.chunkpos", x, z, dim);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ChunkPos) {
+            ChunkPos other = (ChunkPos) obj;
+            return other.x == x && other.z == z && other.dim == dim;
+        } else {
+            return super.equals(obj);
+        }
+    }
 }
