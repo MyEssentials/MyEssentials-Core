@@ -27,7 +27,12 @@ public class ItemUtils {
     public static ItemStack itemStackFromName(String itemName) {
         String[] split = itemName.split(":");
 
-        return new ItemStack(GameRegistry.findItem(split[0], split[1]), 1, split.length > 2 ? Integer.parseInt(split[2]) : 0);
+        Item item = GameRegistry.findItem(split[0], split[1]);
+        if (item == null) {
+            return null;
+        }
+
+        return new ItemStack(item, 1, split.length > 2 ? Integer.parseInt(split[2]) : 0);
     }
 
     /**

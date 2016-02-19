@@ -1,9 +1,13 @@
 package myessentials.entities.api;
 
+import myessentials.MyEssentialsCore;
+import myessentials.chat.api.IChatFormat;
+import net.minecraft.util.IChatComponent;
+
 /**
  * Helper class for storing position of a chunk
  */
-public class ChunkPos {
+public class ChunkPos implements IChatFormat {
     private final int dim;
     private final int x;
     private final int z;
@@ -28,6 +32,21 @@ public class ChunkPos {
 
     @Override
     public String toString() {
-        return "ChunkPos(x: " + x + ", z: " + z + " | Dim: " + dim + ")";
+        return toChatMessage().getUnformattedText();
+    }
+
+    @Override
+    public IChatComponent toChatMessage() {
+        return MyEssentialsCore.instance.LOCAL.getLocalization("myessentials.format.chunkpos", x, z, dim);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ChunkPos) {
+            ChunkPos other = (ChunkPos) obj;
+            return other.x == x && other.z == z && other.dim == dim;
+        } else {
+            return super.equals(obj);
+        }
     }
 }

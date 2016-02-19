@@ -1,0 +1,4 @@
+myessentials.format.volume={7|(}{9|%s}{7|, }{9|%s}{7|, }{9|%s}{7|) -> (}{9|%s}{7|, }{9|%s}{7|, }{9|%s}{7|) }
+myessentials.format.blockpos={7|(}{9|%s}{7|, }{9|%s}{7|, }{9|%s}{7|)}
+myessentials.format.chunkpos={7|(}{9|%s}{7|, }{9|%s}{7|)}
+myessentials.format.list.header={6|--------[[}{%s}{6|]]--------}

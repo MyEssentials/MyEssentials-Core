@@ -22,8 +22,6 @@ public class ItemUtilsTest extends MECTest {
     @Test
     public void shouldGetItemStackFromName() {
 
-        String ident = GameRegistry.findUniqueIdentifierFor(Items.diamond).toString();
-
         ItemStack stack = ItemUtils.itemStackFromName("minecraft:dye:1");
         Assert.assertEquals("ItemStack should be found in the current registry", Items.dye, stack.getItem());
         Assert.assertEquals("ItemStack should have been created with the given meta", 1, stack.getItemDamage());

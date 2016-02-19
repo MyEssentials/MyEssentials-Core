@@ -1,9 +1,13 @@
 package myessentials.entities.api;
 
+import myessentials.MyEssentialsCore;
+import myessentials.chat.api.IChatFormat;
+import net.minecraft.util.IChatComponent;
+
 /**
  * Helper class for storing position of an entity
  */
-public class EntityPos {
+public class EntityPos implements IChatFormat {
     private final int dim;
     private final double x;
     private final double y;
@@ -34,6 +38,21 @@ public class EntityPos {
 
     @Override
     public String toString() {
-        return "EntityPos(x: " + x + ", y: " + y + ", z: " + z + " | dim: " + dim + ")";
+        return toChatMessage().getUnformattedText();
+    }
+
+    @Override
+    public IChatComponent toChatMessage() {
+        return MyEssentialsCore.instance.LOCAL.getLocalization("myessentials.format.entitypos", x, y, z, dim);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EntityPos) {
+            EntityPos other = (EntityPos) obj;
+            return other.x == x && other.y == y && other.z == z && other.dim == dim;
+        } else {
+            return super.equals(obj);
+        }
     }
 }

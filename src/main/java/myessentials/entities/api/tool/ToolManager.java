@@ -7,6 +7,7 @@ import myessentials.utils.ChatUtils;
 import myessentials.utils.PlayerUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 
@@ -26,7 +27,7 @@ public class ToolManager {
     public boolean register(Tool tool) {
         for(Tool t : tools) {
             if(t.owner == tool.owner && t.getItemStack() != null) {
-                ChatUtils.sendChat(t.owner, "You already have a tool!");
+                t.owner.addChatMessage(new ChatComponentText("You already have a tool!"));
                 return false;
             }
         }

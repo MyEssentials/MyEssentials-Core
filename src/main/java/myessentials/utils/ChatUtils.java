@@ -9,7 +9,6 @@ import net.minecraft.util.IChatComponent;
 
 import java.util.HashMap;
 import java.util.Map;
-
 /**
  * Useful methods for Chat
  */
@@ -20,6 +19,7 @@ public class ChatUtils {
     }
 
     /**
+<<<<<<< HEAD
      * Maps chat formatting by it's code
      */
     private static final Map<Character, EnumChatFormatting> formattingMap = new HashMap<Character, EnumChatFormatting>(22);

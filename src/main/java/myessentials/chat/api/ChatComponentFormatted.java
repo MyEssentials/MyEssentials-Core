@@ -1,91 +1,105 @@
 package myessentials.chat.api;
 
+import myessentials.exception.FormatException;
 import myessentials.utils.ColorUtils;
-import net.minecraft.util.ChatComponentStyle;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
+import org.apache.commons.lang.StringUtils;
 
-public class ChatComponentFormatted extends ChatComponentStyle {
+/**
+ * An IChatComponent that converts a format to a set of IChatComponents
+ *
+ * Each of the parenthesis pairs represent an IChatComponent with its
+ * own ChatStyle (color, bold, underlined, etc.)
+ *
+ * Example: {2|Entity number }{%s}{2| is the }{7l| %s}
+ * This format will create the following IChatComponents:
+ *  - "Entity number "; with DARK_GREEN color
+ *  - %s; one of the parameters sent by the caller (as IChatComponent or
+ *                      IChatFormat, since it's missing the "|" style delimiter character
+ *  - " is the "; with DARK_GREEN color
+ *  - %s; one of the parameters sent by the caller (as String since it HAS "|" style delimiter character)
+ */
+public class ChatComponentFormatted extends ChatComponentText {
 
-    private String text;
+    public ChatComponentFormatted(String format, Object... args) {
+        super("");
 
-    public ChatComponentFormatted(String format, IChatComponent... args) {
-
-        String component = "";
+        String[] components = StringUtils.split(format, "{}");
         int argNumber = 0;
-        this.appendSibling(new ChatComponentText(""));
-        ChatStyle style = new ChatStyle();
-        for (int i = 0; i < format.length(); i++) {
 
-            if (format.charAt(i) == '&') {
+        for (String component : components) {
+            String[] parts = component.split("\\|");
 
-                this.appendSibling(new ChatComponentText(component).setChatStyle(style));
-                style = getStyleAtPosition(component, i);
-                component = "";
-                i++;
-                if (format.charAt(i) == '[') {
-                    while (format.charAt(i) != ']') {
-                        i++;
-                    }
+            if(parts.length == 2) {
+                ChatStyle chatStyle = getStyle(parts[0]);
+
+                String actualText = parts[1];
+                while (actualText.contains("%s")) {
+                    actualText = actualText.replaceFirst("%s", args[argNumber++].toString());
                 }
-            } else if (format.charAt(i) == '%') {
+                //text += actualText;
+                this.appendSibling(new ChatComponentText(actualText).setChatStyle(chatStyle));
 
-                this.appendSibling(args[argNumber++]);
+            } else if (parts.length == 1 && parts[0].equals("%s")) {
 
-                component = "";
-                i++;
-            } else if (i == format.length() - 1) {
-
-                this.appendSibling(new ChatComponentText(component));
+                if (args[argNumber] instanceof IChatFormat) {
+                    IChatComponent formattedArgument = ((IChatFormat) args[argNumber++]).toChatMessage();
+                    //this.text += formattedArgument.getUnformattedText();
+                    this.appendSibling(formattedArgument);
+                } else if (args[argNumber] instanceof IChatComponent) {
+                    this.appendSibling((IChatComponent) args[argNumber++]);
+                } else {
+                    throw new FormatException("Argument at position " + argNumber + " does not implement IChatFormat interface");
+                }
 
             } else {
-                component += format.charAt(i);
+                throw new FormatException("Format " + component + " is not valid. Valid format: [modifiers|text]");
             }
         }
     }
 
-    private ChatStyle getStyleAtPosition(String component, int position) {
+    /**
+     * Converts the modifiers String to a ChatStyle
+     * [modifiers|  some text]
+     *  ^^^^^^^^    ^^^^^^^^^
+     *  STYLE  for  THIS TEXT
+     */
+    private ChatStyle getStyle(String modifiers) {
 
-        ChatStyle style = new ChatStyle();
+        ChatStyle chatStyle = new ChatStyle();
 
-        if (component.charAt(position + 1) == '[') {
-            position++;
-            while (component.charAt(position) != ']') {
-                applyModifier(style, component.charAt(position));
-                position++;
-            }
-
-        } else {
-            applyModifier(style, component.charAt(position + 1));
+        for (char c : modifiers.toCharArray()) {
+            applyModifier(chatStyle, c);
         }
 
-        return style;
+        return chatStyle;
     }
 
-    private void applyModifier(ChatStyle style, char modifier) {
-
+    /**
+     * Applies modifier to the style
+     * Returns whether or not the modifier was valid
+     */
+    private boolean applyModifier(ChatStyle chatStyle, char modifier) {
         if (modifier >= '0' && modifier <= '9' || modifier >= 'a' && modifier <= 'f') {
-            style.setColor(ColorUtils.colorMap.get(modifier));
-        } else {
-            switch (modifier) {
-                case 'k': style.setObfuscated(true); break;
-                case 'l': style.setBold(true); break;
-                case 'm': style.setStrikethrough(true); break;
-                case 'n': style.setUnderlined(true); break;
-                case 'o': style.setItalic(true); break;
-            }
+            chatStyle.setColor(ColorUtils.colorMap.get(modifier));
+            return true;
         }
-
+        switch (modifier) {
+            case 'k': chatStyle.setObfuscated(true); return true;
+            case 'l': chatStyle.setBold(true); return true;
+            case 'm': chatStyle.setStrikethrough(true); return true;
+            case 'n': chatStyle.setUnderlined(true); return true;
+            case 'o': chatStyle.setItalic(true); return true;
+        }
+        return false;
     }
+
+
 
     @Override
     public String getUnformattedTextForChat() {
-        return this.text;
-    }
-
-    @Override
-    public IChatComponent createCopy() {
-        return null;
+        return "";
     }
 }

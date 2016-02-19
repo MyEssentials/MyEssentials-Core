@@ -15,6 +15,7 @@ public class MyEssentialsCore {
     @Instance("MyEssentials-Core")
     public static MyEssentialsCore instance;
 
+    public Localization LOCAL;
     public Logger LOG;
 
     @EventHandler
@@ -25,6 +26,8 @@ public class MyEssentialsCore {
         Constants.DATABASE_FOLDER = ev.getModConfigurationDirectory().getParent() + "/databases/";
         // Load Configs
         Config.instance.init(Constants.CONFIG_FOLDER + "/Core.cfg", "MyEssentials-Core");
+        // REF: The localization can simply take the whole config instance to get the localization needed.
+        LOCAL = new Localization(Constants.CONFIG_FOLDER + "/localization/", Config.instance.localization.get(), "/myessentials/localization/", MyEssentialsCore.class);
 
         // Register handlers/trackers
         FMLCommonHandler.instance().bus().register(PlayerTracker.instance);
