@@ -19,7 +19,6 @@ public class ChatUtils {
     }
 
     /**
-<<<<<<< HEAD
      * Maps chat formatting by it's code
      */
     private static final Map<Character, EnumChatFormatting> formattingMap = new HashMap<Character, EnumChatFormatting>(22);
@@ -28,8 +27,6 @@ public class ChatUtils {
             formattingMap.put(formatting.getFormattingCode(), formatting);
         }
     }
-
-
 
     public static void sendChat(ICommandSender sender, IChatComponent message) {
 

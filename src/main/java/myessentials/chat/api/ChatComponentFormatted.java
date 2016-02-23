@@ -21,13 +21,12 @@ import org.apache.commons.lang.StringUtils;
  *  - " is the "; with DARK_GREEN color
  *  - %s; one of the parameters sent by the caller (as String since it HAS "|" style delimiter character)
  */
-public class ChatComponentFormatted extends ChatComponentText {
+public class ChatComponentFormatted extends ChatComponentList {
 
     public ChatComponentFormatted(String format, Object... args) {
-        super("");
-
         String[] components = StringUtils.split(format, "{}");
         int argNumber = 0;
+        IChatComponent buffer = new ChatComponentList();
 
         for (String component : components) {
             String[] parts = component.split("\\|");
@@ -35,21 +34,34 @@ public class ChatComponentFormatted extends ChatComponentText {
             if(parts.length == 2) {
                 ChatStyle chatStyle = getStyle(parts[0]);
 
+                if (parts[0].contains("b") && buffer.getSiblings().size() > 0) {
+                    // Reset the buffer if the buffer reset modifier is found
+                    this.appendSibling(buffer);
+                    buffer = new ChatComponentList();
+                }
+
                 String actualText = parts[1];
                 while (actualText.contains("%s")) {
                     actualText = actualText.replaceFirst("%s", args[argNumber++].toString());
                 }
-                //text += actualText;
-                this.appendSibling(new ChatComponentText(actualText).setChatStyle(chatStyle));
+                buffer.appendSibling(new ChatComponentText(actualText).setChatStyle(chatStyle));
 
             } else if (parts.length == 1 && parts[0].equals("%s")) {
 
+                // TODO: Instead of %s use other identifiers for lists of elements or container (maybe)
                 if (args[argNumber] instanceof IChatFormat) {
                     IChatComponent formattedArgument = ((IChatFormat) args[argNumber++]).toChatMessage();
-                    //this.text += formattedArgument.getUnformattedText();
-                    this.appendSibling(formattedArgument);
+                    buffer.appendSibling(formattedArgument);
                 } else if (args[argNumber] instanceof IChatComponent) {
-                    this.appendSibling((IChatComponent) args[argNumber++]);
+                    buffer.appendSibling((IChatComponent) args[argNumber++]);
+                } else if (args[argNumber] instanceof ChatComponentContainer) {
+
+                    this.appendSibling(buffer);
+                    buffer = new ChatComponentList();
+                    for (IChatComponent message : (ChatComponentContainer) args[argNumber]) {
+                        this.appendSibling(message);
+                    }
+                    argNumber++;
                 } else {
                     throw new FormatException("Argument at position " + argNumber + " does not implement IChatFormat interface");
                 }
@@ -58,11 +70,12 @@ public class ChatComponentFormatted extends ChatComponentText {
                 throw new FormatException("Format " + component + " is not valid. Valid format: [modifiers|text]");
             }
         }
+        this.appendSibling(buffer);
     }
 
     /**
      * Converts the modifiers String to a ChatStyle
-     * [modifiers|  some text]
+     * {modifiers|  some text}
      *  ^^^^^^^^    ^^^^^^^^^
      *  STYLE  for  THIS TEXT
      */
@@ -94,12 +107,5 @@ public class ChatComponentFormatted extends ChatComponentText {
             case 'o': chatStyle.setItalic(true); return true;
         }
         return false;
-    }
-
-
-
-    @Override
-    public String getUnformattedTextForChat() {
-        return "";
     }
 }
