@@ -34,7 +34,7 @@ public class ChatComponentFormatted extends ChatComponentList {
             if(parts.length == 2) {
                 ChatStyle chatStyle = getStyle(parts[0]);
 
-                if (parts[0].contains("b") && buffer.getSiblings().size() > 0) {
+                if (parts[0].contains("N") && buffer.getSiblings().size() > 0) {
                     // Reset the buffer if the buffer reset modifier is found
                     this.appendSibling(buffer);
                     buffer = new ChatComponentList();
@@ -63,11 +63,11 @@ public class ChatComponentFormatted extends ChatComponentList {
                     }
                     argNumber++;
                 } else {
-                    throw new FormatException("Argument at position " + argNumber + " does not implement IChatFormat interface");
+                    throw new FormatException("Argument at position " + argNumber + " in format " + format + " does not implement IChatFormat interface");
                 }
 
             } else {
-                throw new FormatException("Format " + component + " is not valid. Valid format: [modifiers|text]");
+                throw new FormatException("Format " + format + " is not valid. Valid format: {modifiers|text}");
             }
         }
         this.appendSibling(buffer);
