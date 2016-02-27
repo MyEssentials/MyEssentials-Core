@@ -65,7 +65,8 @@ minecraft {
 // Setup Deps
 dependencies {
     testCompile "junit:junit:4.11"
-    
+    testCompile project(":MyEssentials-TestSuite")    
+
     // Database engines
     compile "org.xerial:sqlite-jdbc:3.8.5-pre1"
     compile "mysql:mysql-connector-java:5.1.32"
@@ -80,8 +81,6 @@ dependencies {
     // Other deps
     compile "org.beanshell:bsh:2.0b5"
     compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
-    
-    testCompile project(":MyEssentials-TestSuite")
 }
 
 // Process Resources, injecting version numbers in
