@@ -89,7 +89,9 @@ public class ChatComponentFormatted extends ChatComponentText {
 
             // Get whatever text is at the end (if its not a variable)
             int lastVarIdx = actualText.lastIndexOf("%s");
-            if (lastVarIdx+2 < actualText.length()) {
+            if (lastVarIdx == -1) {
+                this.appendSibling(new ChatComponentText(actualText));
+            } else if (lastVarIdx+2 < actualText.length()) {
                 this.appendSibling(new ChatComponentText(actualText.substring(lastVarIdx+2)));
             }
 
