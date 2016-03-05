@@ -7,7 +7,7 @@ import net.minecraft.util.IChatComponent;
 /**
  * Helper class for storing position of a chunk
  */
-public class ChunkPos implements IChatFormat {
+public class ChunkPos extends IChatFormat {
     private final int dim;
     private final int x;
     private final int z;
@@ -36,7 +36,7 @@ public class ChunkPos implements IChatFormat {
     }
 
     @Override
-    public IChatComponent toChatMessage() {
+    public IChatComponent toChatMessage(boolean shortened) {
         return MyEssentialsCore.instance.LOCAL.getLocalization("myessentials.format.chunkpos", x, z, dim);
     }
 

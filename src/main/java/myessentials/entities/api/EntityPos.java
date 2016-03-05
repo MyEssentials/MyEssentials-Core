@@ -7,7 +7,7 @@ import net.minecraft.util.IChatComponent;
 /**
  * Helper class for storing position of an entity
  */
-public class EntityPos implements IChatFormat {
+public class EntityPos extends IChatFormat {
     private final int dim;
     private final double x;
     private final double y;
@@ -42,7 +42,7 @@ public class EntityPos implements IChatFormat {
     }
 
     @Override
-    public IChatComponent toChatMessage() {
+    public IChatComponent toChatMessage(boolean shortened) {
         return MyEssentialsCore.instance.LOCAL.getLocalization("myessentials.format.entitypos", x, y, z, dim);
     }
 

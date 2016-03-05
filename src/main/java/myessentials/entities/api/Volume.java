@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 /**
  * A rectangular shaped volume.
  */
-public class Volume implements IChatFormat {
+public class Volume extends IChatFormat {
 
     private final int minX, minY, minZ;
     private final int maxX, maxY, maxZ;
@@ -115,7 +115,7 @@ public class Volume implements IChatFormat {
     }
 
     @Override
-    public IChatComponent toChatMessage() {
+    public IChatComponent toChatMessage(boolean shortened) {
         return MyEssentialsCore.instance.LOCAL.getLocalization("myessentials.format.volume", minX, minY, minZ, maxX, maxY, maxZ);
     }
 

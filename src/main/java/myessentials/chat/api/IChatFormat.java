@@ -6,8 +6,12 @@ import net.minecraft.util.IChatComponent;
 /**
  * Represents an object type that can be converted into a chat message or a part of a chat message
  */
-public interface IChatFormat {
+public abstract class IChatFormat {
 
-    IChatComponent toChatMessage();
+    public abstract IChatComponent toChatMessage(boolean shortened);
+
+    public final IChatComponent toChatMessage() {
+        return toChatMessage(false);
+    }
 
 }

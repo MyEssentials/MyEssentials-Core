@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class ChatComponentFormattedTest extends MECTest {
 
-    private class MockArgument implements IChatFormat {
+    private class MockArgument extends IChatFormat {
 
         private int x;
         public MockArgument(int x) {
@@ -21,7 +21,7 @@ public class ChatComponentFormattedTest extends MECTest {
         }
 
         @Override
-        public IChatComponent toChatMessage() {
+        public IChatComponent toChatMessage(boolean shortened) {
             return new ChatComponentText(x + "");
         }
     }
