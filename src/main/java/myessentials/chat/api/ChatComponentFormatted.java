@@ -7,6 +7,7 @@ import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -133,7 +134,7 @@ public class ChatComponentFormatted extends ChatComponentText {
 
     @Override
     public String getUnformattedTextForChat() {
-        return "";
+        return getUnformattedText();
     }
 
     @Override
