@@ -31,7 +31,7 @@ public class ChatComponentMultiPage extends ChatComponentContainer {
     public List<IChatComponent> getHeader(int page) {
         List<IChatComponent> header = new ArrayList<IChatComponent>();
 
-        header.add(new ChatComponentFormatted("[9| - MEC MultiPage Message - Page %s/%s]", page, getNumberOfPages()));
+        header.add(new ChatComponentFormatted("{9| - MEC MultiPage Message - Page %s/%s}", page, getNumberOfPages()));
 
         return header;
     }
