@@ -83,6 +83,8 @@ public class ChatComponentFormatted extends ChatComponentText {
                         this.appendSibling(new ChatComponentText((String) args[argNumber++]));
                     } else if (args[argNumber] instanceof Number) {
                         this.appendSibling(new ChatComponentText(((Number) args[argNumber++]).toString()));
+                    } else if (args[argNumber] instanceof Boolean) {
+                        this.appendSibling(new ChatComponentText(((Boolean) args[argNumber++]) ? "True" : "False"));
                     } else {
                         throw new FormatException("Argument at position " + argNumber + " (" + args[argNumber].getClass().getName() + ") does not implement IChatFormat interface");
                     }
