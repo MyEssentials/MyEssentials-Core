@@ -1,13 +1,13 @@
 package myessentials.entities.api;
 
 import myessentials.MyEssentialsCore;
-import myessentials.chat.api.IChatFormat;
+import myessentials.chat.api.ChatFormat;
 import net.minecraft.util.IChatComponent;
 
 /**
  * Helper class for storing position of an entity
  */
-public class EntityPos extends IChatFormat {
+public class EntityPos extends ChatFormat {
     private final int dim;
     private final double x;
     private final double y;

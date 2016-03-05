@@ -2,18 +2,17 @@ package myessentials.test.chat;
 
 import junit.framework.Assert;
 import myessentials.chat.api.ChatComponentFormatted;
-import myessentials.chat.api.IChatFormat;
+import myessentials.chat.api.ChatFormat;
 import myessentials.exception.FormatException;
 import myessentials.test.MECTest;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
-import org.hibernate.metamodel.source.annotations.EnumConversionHelper;
 import org.junit.Test;
 
 public class ChatComponentFormattedTest extends MECTest {
 
-    private class MockArgument extends IChatFormat {
+    private class MockArgument extends ChatFormat {
 
         private int x;
         public MockArgument(int x) {
