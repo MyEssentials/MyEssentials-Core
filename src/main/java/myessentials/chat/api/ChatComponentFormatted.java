@@ -31,10 +31,6 @@ public class ChatComponentFormatted extends ChatComponentText {
     // Second group contains ONLY the variable (%s)
     private static Pattern textPattern = Pattern.compile("(.*?)(%s)");
 
-    // Regular expression to handle cases where a variable (%s) is not the last
-    // TODO Find a way to integrate this with the main pattern
-    private static Pattern textPattern2 = Pattern.compile("(.+)(%s)(.+)");
-
     public ChatComponentFormatted(String format, Object... args) {
         super("");
 
@@ -91,10 +87,10 @@ public class ChatComponentFormatted extends ChatComponentText {
                 }
             }
 
-            // Match text at end of string if a variable (%s) is not last
-            Matcher m2 = textPattern2.matcher(actualText);
-            if (m2.find()) {
-                this.appendSibling(new ChatComponentText(m2.group(3)));
+            // Get whatever text is at the end (if its not a variable)
+            int lastVarIdx = actualText.lastIndexOf("%s");
+            if (lastVarIdx+2 < actualText.length()) {
+                this.appendSibling(new ChatComponentText(actualText.substring(lastVarIdx+2)));
             }
 
             // Set chat style
