@@ -75,6 +75,10 @@ public class ChatComponentFormatted extends ChatComponentText {
                         this.appendSibling(formattedArgument);
                     } else if (args[argNumber] instanceof IChatComponent) {
                         this.appendSibling((IChatComponent) args[argNumber++]);
+                    } else if (args[argNumber] instanceof ChatComponentContainer) {
+                        for (IChatComponent chatComponent : (ChatComponentContainer) args[argNumber++]) {
+                            this.appendSibling(chatComponent);
+                        }
                     } else if (args[argNumber] instanceof String) {
                         this.appendSibling(new ChatComponentText((String) args[argNumber++]));
                     } else if (args[argNumber] instanceof Number) {
