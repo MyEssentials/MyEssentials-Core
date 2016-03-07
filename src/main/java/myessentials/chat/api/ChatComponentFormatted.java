@@ -2,10 +2,16 @@ package myessentials.chat.api;
 
 import myessentials.exception.FormatException;
 import myessentials.utils.ColorUtils;
+import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * An IChatComponent that converts a format to a set of IChatComponents
@@ -24,14 +30,17 @@ import org.apache.commons.lang.StringUtils;
 public class ChatComponentFormatted extends ChatComponentList {
 
     public ChatComponentFormatted(String format, Object... args) {
+        this(format, Arrays.asList(args).iterator());
+    }
+
+    public ChatComponentFormatted(String format, Iterator args) {
         String[] components = StringUtils.split(format, "{}");
-        int argNumber = 0;
         IChatComponent buffer = new ChatComponentList();
 
         for (String component : components) {
-            String[] parts = component.split("\\|");
+            String[] parts = component.split("\\|", 2);
 
-            if(parts.length == 2) {
+            if(parts.length >= 2) {
                 ChatStyle chatStyle = getStyle(parts[0]);
 
                 if (parts[0].contains("N") && buffer.getSiblings().size() > 0) {
@@ -40,30 +49,37 @@ public class ChatComponentFormatted extends ChatComponentList {
                     buffer = new ChatComponentList();
                 }
 
-                String actualText = parts[1];
+                String[] textWithHover = parts[1].split(" << ");
+                String actualText = textWithHover[0];
                 while (actualText.contains("%s")) {
-                    actualText = actualText.replaceFirst("%s", args[argNumber++].toString());
+                    actualText = actualText.replaceFirst("%s", args.next().toString());
                 }
-                buffer.appendSibling(new ChatComponentText(actualText).setChatStyle(chatStyle));
+                IChatComponent message = new ChatComponentText(actualText).setChatStyle(chatStyle);
+
+                if (textWithHover.length == 2) {
+                    chatStyle.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentFormatted("{" + textWithHover[1] + "}", args)));
+                }
+
+                buffer.appendSibling(message);
 
             } else if (parts.length == 1 && parts[0].equals("%s")) {
 
                 // TODO: Instead of %s use other identifiers for lists of elements or container (maybe)
-                if (args[argNumber] instanceof IChatFormat) {
-                    IChatComponent formattedArgument = ((IChatFormat) args[argNumber++]).toChatMessage();
+                Object currArg = args.next();
+                if (currArg instanceof IChatFormat) {
+                    IChatComponent formattedArgument = ((IChatFormat) currArg).toChatMessage();
                     buffer.appendSibling(formattedArgument);
-                } else if (args[argNumber] instanceof IChatComponent) {
-                    buffer.appendSibling((IChatComponent) args[argNumber++]);
-                } else if (args[argNumber] instanceof ChatComponentContainer) {
+                } else if (currArg instanceof IChatComponent) {
+                    buffer.appendSibling((IChatComponent) currArg);
+                } else if (currArg instanceof ChatComponentContainer) {
 
                     this.appendSibling(buffer);
                     buffer = new ChatComponentList();
-                    for (IChatComponent message : (ChatComponentContainer) args[argNumber]) {
+                    for (IChatComponent message : (ChatComponentContainer) currArg) {
                         this.appendSibling(message);
                     }
-                    argNumber++;
                 } else {
-                    throw new FormatException("Argument at position " + argNumber + " in format " + format + " does not implement IChatFormat interface");
+                    throw new FormatException("An argument in format " + format + " does not implement IChatFormat interface");
                 }
 
             } else {
@@ -107,5 +123,21 @@ public class ChatComponentFormatted extends ChatComponentList {
             case 'o': chatStyle.setItalic(true); return true;
         }
         return false;
+    }
+
+    /**
+     * Adds a ChatComponentText between all of the siblings
+     * This can be used for easily displaying a onHoverText on multiple lines
+     */
+    public ChatComponentFormatted applyDelimiter(String delimiter) {
+        List<IChatComponent> newSiblings = new ArrayList<IChatComponent>();
+        for (IChatComponent component : (List<IChatComponent>) siblings) {
+            if (newSiblings.size() > 0) {
+                newSiblings.add(new ChatComponentText(delimiter));
+            }
+            newSiblings.add(component);
+        }
+        this.siblings = newSiblings;
+        return this;
     }
 }
