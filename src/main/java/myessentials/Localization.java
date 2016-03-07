@@ -19,8 +19,21 @@ public class Localization {
 
     private Map<String, String> localizations = new HashMap<String, String>();
     private Reader reader = null;
+    private String classPath;
+    private Class clazz;
 
     public Localization(String filePath, String lang, String classPath, Class clazz) {
+        this.classPath = classPath;
+        this.clazz = clazz;
+        reload(filePath, lang);
+    }
+
+    /**
+     * Reload the localization
+     * @param filePath
+     * @param lang
+     */
+    public void reload(String filePath, String lang) {
         try {
             InputStream is = null;
 
