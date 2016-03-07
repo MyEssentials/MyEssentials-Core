@@ -1,8 +1,8 @@
 package myessentials.test.chat;
 
-import junit.framework.Assert;
+import myessentials.chat.api.IChatFormat;
+import org.junit.Assert;
 import myessentials.chat.api.ChatComponentFormatted;
-import myessentials.chat.api.ChatFormat;
 import myessentials.exception.FormatException;
 import myessentials.test.MECTest;
 import net.minecraft.util.ChatComponentText;
@@ -12,7 +12,7 @@ import org.junit.Test;
 
 public class ChatComponentFormattedTest extends MECTest {
 
-    private class MockArgument extends ChatFormat {
+    private class MockArgument implements IChatFormat {
 
         private int x;
         public MockArgument(int x) {
@@ -20,7 +20,7 @@ public class ChatComponentFormattedTest extends MECTest {
         }
 
         @Override
-        public IChatComponent toChatMessage(boolean shortened) {
+        public IChatComponent toChatMessage() {
             return new ChatComponentText(x + "");
         }
     }

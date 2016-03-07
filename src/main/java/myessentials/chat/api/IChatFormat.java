@@ -8,8 +8,6 @@ import net.minecraft.util.IChatComponent;
  */
 public interface IChatFormat {
 
-    IChatComponent toChatMessage(boolean shortened);
-
     IChatComponent toChatMessage();
 
 }

@@ -1,13 +1,13 @@
 package myessentials.entities.api;
 
 import myessentials.MyEssentialsCore;
-import myessentials.chat.api.ChatFormat;
+import myessentials.chat.api.IChatFormat;
 import net.minecraft.util.IChatComponent;
 
 /**
  * Helper class for storing position of a chunk
  */
-public class ChunkPos extends ChatFormat {
+public class ChunkPos implements IChatFormat {
     private final int dim;
     private final int x;
     private final int z;
@@ -36,7 +36,7 @@ public class ChunkPos extends ChatFormat {
     }
 
     @Override
-    public IChatComponent toChatMessage(boolean shortened) {
+    public IChatComponent toChatMessage() {
         return MyEssentialsCore.instance.LOCAL.getLocalization("myessentials.format.chunkpos", x, z, dim);
     }
 
