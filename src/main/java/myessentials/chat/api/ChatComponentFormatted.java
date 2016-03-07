@@ -6,7 +6,7 @@ import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +27,7 @@ import java.util.List;
  *  - " is the "; with DARK_GREEN color
  *  - %s; one of the parameters sent by the caller (as String since it HAS "|" style delimiter character)
  */
+
 public class ChatComponentFormatted extends ChatComponentList {
 
     public ChatComponentFormatted(String format, Object... args) {
@@ -81,7 +82,6 @@ public class ChatComponentFormatted extends ChatComponentList {
                 } else {
                     throw new FormatException("An argument in format " + format + " does not implement IChatFormat interface");
                 }
-
             } else {
                 throw new FormatException("Format " + format + " is not valid. Valid format: {modifiers|text}");
             }

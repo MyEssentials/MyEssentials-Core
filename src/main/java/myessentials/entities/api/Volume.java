@@ -2,7 +2,7 @@ package myessentials.entities.api;
 
 import com.google.gson.*;
 import myessentials.MyEssentialsCore;
-import myessentials.chat.api.IChatFormat;
+import myessentials.chat.api.ChatFormat;
 import myessentials.json.api.SerializerTemplate;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 /**
  * A rectangular shaped volume.
  */
-public class Volume implements IChatFormat {
+public class Volume extends ChatFormat {
 
     private final int minX, minY, minZ;
     private final int maxX, maxY, maxZ;
@@ -115,7 +115,7 @@ public class Volume implements IChatFormat {
     }
 
     @Override
-    public IChatComponent toChatMessage() {
+    public IChatComponent toChatMessage(boolean shortened) {
         return MyEssentialsCore.instance.LOCAL.getLocalization("myessentials.format.volume", minX, minY, minZ, maxX, maxY, maxZ);
     }
 
