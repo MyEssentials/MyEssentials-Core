@@ -39,52 +39,42 @@ public class EntityUtils {
     }
 
     public static String getEntityType(Entity e) {
-        String n = typeCache.get(e.getClass());
-        if (n != null) {
-            return n;
+        String type = typeCache.get(e.getClass());
+        if (type != null) {
+            return type;
         }
 
-        if (e instanceof EntityGolem) {
-            n = "Golem";
+        type = getEntityTypeNonCache(e);
+        typeCache.put(e.getClass(), type);
+        
+        return type;
+    }
+    
+    private static String getEntityTypeNonCache(Entity e) {
+    	if (e instanceof EntityGolem) {
+            return "Golem";
+        } else if (e instanceof IBossDisplayData) {
+        	return "Boss";
+        } else if (e instanceof IAnimals) {
+        	return "Animal";
+        } else if (e instanceof IMob) {
+        	return "Monster";
+        } else if (e instanceof IProjectile) {
+        	return "Projectile";
+        } else if (e instanceof INpc) {
+        	return "NPC";
+        } else if (e instanceof EntityItem) {
+        	return "Item";
+        } else if (e instanceof EntityMob) {
+        	return "Monster";
+        } else if (e instanceof EntityPlayer) {
+        	return "Player";
+        } else if (e instanceof EntityFireball) {
+        	return "Projectile";
+        } else if (e instanceof EntityTNTPrimed) {
+        	return "TNT";
+        } else {
+        	return "Unknown"; // e.getClass().getName();
         }
-
-        if (n == null) {
-            for (Class<?> t : ClassUtils.getAllInterfaces(e.getClass())) {
-                if (t.equals(IBossDisplayData.class)) {
-                    n = "Boss";
-                } else if (t.equals(IAnimals.class)) {
-                    n = "Animal";
-                } else if (t.equals(IMob.class)) {
-                    n = "Monster";
-                } else if (t.equals(IProjectile.class)) {
-                    n = "Projectile";
-                } else if (t.equals(INpc.class)) {
-                    n = "NPC";
-                }
-
-                if (n != null) {
-                    break;
-                }
-            }
-        }
-
-        if (n == null) {
-            if (e instanceof EntityItem) {
-                n = "Item";
-            } else if (e instanceof EntityMob) {
-                n = "Monster";
-            } else if (e instanceof EntityPlayer) {
-                n = "Player";
-            } else if (e instanceof EntityFireball) {
-                n = "Projectile";
-            } else if (e instanceof EntityTNTPrimed) {
-                n = "TNT";
-            } else {
-                n = "Unknown"; // e.getClass().getName();
-            }
-        }
-
-        typeCache.put(e.getClass(), n);
-        return n;
     }
 }
