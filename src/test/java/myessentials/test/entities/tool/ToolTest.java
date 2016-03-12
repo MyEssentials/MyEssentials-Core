@@ -26,7 +26,7 @@ public class ToolTest extends MECTest {
         FakeTool tool = new FakeTool(player);
         // FakePlayer problems
         try {
-            // REF: Giving itemStack on registering is not easy to find out
+            // REF: Method ToolManager.register is calling giveItemStack which should not
             ToolManager.instance.register(tool);
         } catch (NullPointerException ex) {}
         Assert.assertEquals("The item equipped is not the same as the given item", tool.getItemStack(), player.inventory.getCurrentItem());

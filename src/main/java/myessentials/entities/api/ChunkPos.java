@@ -2,6 +2,7 @@ package myessentials.entities.api;
 
 import myessentials.MyEssentialsCore;
 import myessentials.chat.api.IChatFormat;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IChatComponent;
 
 /**
@@ -38,6 +39,13 @@ public class ChunkPos implements IChatFormat {
     @Override
     public IChatComponent toChatMessage() {
         return MyEssentialsCore.instance.LOCAL.getLocalization("myessentials.format.chunkpos", x, z, dim);
+    }
+
+    public NBTTagCompound toNBTTagCompound() {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setInteger("x", x);
+        tag.setInteger("z", z);
+        return tag;
     }
 
     @Override
