@@ -31,11 +31,12 @@ public class ChatComponentMultiPage extends ChatComponentContainer {
     }
 
     public ChatComponentContainer getPage(int page) {
-        return (ChatComponentContainer) this.subList(maxComponentsPerPage * (page - 1), maxComponentsPerPage * page > size() ? size() : maxComponentsPerPage * page);
+        ChatComponentContainer result = new ChatComponentContainer();
+        result.addAll(this.subList(maxComponentsPerPage * (page - 1), maxComponentsPerPage * page > size() ? size() : maxComponentsPerPage * page));
+        return result;
     }
 
     public int getNumberOfPages() {
         return (int) Math.ceil((float)size() / (float)maxComponentsPerPage);
     }
-
 }
