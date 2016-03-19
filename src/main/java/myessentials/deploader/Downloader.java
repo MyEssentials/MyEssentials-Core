@@ -65,7 +65,11 @@ public class Downloader {
         File depFile = new File(destinationFolder, dep.getFile().getFilename());
 
         try {
-            URL depURL = new URL(dep.getUrl() + '/' + dep.getFile().getFilename());
+            String baseURL = dep.getUrl();
+            if (!baseURL.endsWith("/")) {
+                baseURL += "/";
+            }
+            URL depURL = new URL(baseURL + dep.getFile().getFilename());
             System.out.println("Downloading file " + depURL.toString());
             URLConnection connection = depURL.openConnection();
             connection.setConnectTimeout(5000);
