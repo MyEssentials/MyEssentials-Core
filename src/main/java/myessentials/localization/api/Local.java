@@ -78,9 +78,9 @@ public class Local {
         }
     }
 
-    public IChatComponent getLocalization(String key, Object... args) {
+    public ChatComponentFormatted getLocalization(String key, Object... args) {
         String localized = localizations.get(key);
-        return localized == null ? new ChatComponentText(key) : new ChatComponentFormatted(localized, args);
+        return localized == null ? new ChatComponentFormatted("{|" + key + "}") : new ChatComponentFormatted(localized, args);
     }
 
     public boolean hasLocalization(String key) {

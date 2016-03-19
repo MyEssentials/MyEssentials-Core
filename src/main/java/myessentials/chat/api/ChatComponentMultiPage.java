@@ -19,29 +19,24 @@ public class ChatComponentMultiPage extends ChatComponentContainer {
     }
 
     public void sendPage(ICommandSender sender, int page) {
-        for (IChatComponent component : getHeader(page)) {
-            sender.addChatMessage(component);
-        }
-
-        for (IChatComponent component : getPage(page)) {
-            sender.addChatMessage(component);
-        }
+        getHeader(page).send(sender);
+        getPage(page).send(sender);
     }
 
-    public List<IChatComponent> getHeader(int page) {
-        List<IChatComponent> header = new ArrayList<IChatComponent>();
-
+    public ChatComponentContainer getHeader(int page) {
+        ChatComponentContainer header = new ChatComponentContainer();
         header.add(new ChatComponentFormatted("{9| - MEC MultiPage Message - Page %s/%s}", page, getNumberOfPages()));
 
         return header;
     }
 
-    public List<IChatComponent> getPage(int page) {
-        return this.subList(maxComponentsPerPage * (page - 1), maxComponentsPerPage * page > size() ? size() : maxComponentsPerPage * page);
+    public ChatComponentContainer getPage(int page) {
+        ChatComponentContainer result = new ChatComponentContainer();
+        result.addAll(this.subList(maxComponentsPerPage * (page - 1), maxComponentsPerPage * page > size() ? size() : maxComponentsPerPage * page));
+        return result;
     }
 
     public int getNumberOfPages() {
         return (int) Math.ceil((float)size() / (float)maxComponentsPerPage);
     }
-
 }

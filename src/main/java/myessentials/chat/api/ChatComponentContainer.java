@@ -11,7 +11,6 @@ import java.util.ArrayList;
 public class ChatComponentContainer extends ArrayList<IChatComponent> {
     /**
      * Sends all chat components to the sender
-     * @param sender
      */
     public void send(ICommandSender sender) {
         for (IChatComponent component : this) {

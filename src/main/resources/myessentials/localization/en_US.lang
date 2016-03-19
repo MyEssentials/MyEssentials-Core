@@ -2,3 +2,7 @@ myessentials.format.volume={7|(}{9|%s}{7|, }{9|%s}{7|, }{9|%s}{7|) -> (}{9|%s}{7
 myessentials.format.blockpos={7|(}{9|%s}{7|, }{9|%s}{7|, }{9|%s}{7|)}
 myessentials.format.chunkpos={7|(}{9|%s}{7|, }{9|%s}{7|)}
 myessentials.format.list.header={6|--------[[}{%s}{6|]]--------}
+
+myessentials.tool.name={9|TOOL: }{%s}
+myessentials.tool.mode={3|Changed '}{%s}{3|' to %s}
+myessentials.tool.gained={3|You have been given a tool}

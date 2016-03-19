@@ -5,6 +5,7 @@ import myessentials.utils.ColorUtils;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,13 +20,20 @@ import java.util.List;
  * Each of the parenthesis pairs represent an IChatComponent with its
  * own ChatStyle (color, bold, underlined, etc.)
  *
- * Example: {2|Entity number }{%s}{2| is the }{7l| %s}
+ * Example: {2|Entity number }{%s}{2| is the }{7l| %s}{aN|Good bye!}
  * This format will create the following IChatComponents:
- *  - "Entity number "; with DARK_GREEN color
- *  - %s; one of the parameters sent by the caller (as IChatComponent or
- *                      IChatFormat, since it's missing the "|" style delimiter character
- *  - " is the "; with DARK_GREEN color
- *  - %s; one of the parameters sent by the caller (as String since it HAS "|" style delimiter character)
+ *  - "Entity number " ; with DARK_GREEN color
+ *  - %s               ; one of the parameters sent by the caller (as IChatComponent or
+ *                       IChatFormat, since it's missing the "|" style delimiter character
+ *  - " is the "       ; with DARK_GREEN color
+ *  - %s               ; one of the parameters sent by the caller (as String since it HAS "|" style delimiter character)
+ *  - "Good bye!"      ; with GREEN color and on another line. The modifier "N"
+ *                     ; represents a new line BEFORE the component it's in
+ *
+ *  This ChatComponentFormatted will have the following structure:
+ *      - sibling1     ; will be a list of all the elements before the component with
+ *                     ; the "N" modifier in this case the first 3 components
+ *      - sibling2     ; will be a list of the last component until the end
  */
 
 public class ChatComponentFormatted extends ChatComponentList {
@@ -139,5 +147,73 @@ public class ChatComponentFormatted extends ChatComponentList {
         }
         this.siblings = newSiblings;
         return this;
+    }
+
+    /**
+     * Cut down version of the client-side only method for getting formatting code
+     * from the ChatStyle class
+     *
+     * Why is this client side?
+     */
+    private String getFormattingCodeForStyle(ChatStyle style) {
+        StringBuilder stringbuilder = new StringBuilder();
+
+        if (style.getColor() != null)
+        {
+            stringbuilder.append(style.getColor());
+        }
+
+        if (style.getBold())
+        {
+            stringbuilder.append(EnumChatFormatting.BOLD);
+        }
+
+        if (style.getItalic())
+        {
+            stringbuilder.append(EnumChatFormatting.ITALIC);
+        }
+
+        if (style.getUnderlined())
+        {
+            stringbuilder.append(EnumChatFormatting.UNDERLINE);
+        }
+
+        if (style.getObfuscated())
+        {
+            stringbuilder.append(EnumChatFormatting.OBFUSCATED);
+        }
+
+        if (style.getStrikethrough())
+        {
+            stringbuilder.append(EnumChatFormatting.STRIKETHROUGH);
+        }
+
+        return stringbuilder.toString();
+
+    }
+
+    /**
+     * Gets the formatted String for this component.
+     * Example: {3|This is }{1|some text}
+     * Will convert into: \u00a73This is \u00a71some text
+     *                    \u00a7 - this is a unicode character used in Minecraft chat formatting
+     */
+    public String[] getLegacyFormattedText() {
+        String[] result = new String[this.siblings.size()];
+        int k = 0;
+
+        for (IChatComponent component : (List<IChatComponent>) this.getSiblings()) {
+
+            String actualText = "";
+            for (IChatComponent subComponent : (List<IChatComponent>) component.getSiblings()) {
+                actualText += getFormattingCodeForStyle(subComponent.getChatStyle());
+                actualText += subComponent.getUnformattedText();
+                actualText += EnumChatFormatting.RESET;
+            }
+
+            result[k++] = actualText;
+        }
+
+        return result;
     }
 }
