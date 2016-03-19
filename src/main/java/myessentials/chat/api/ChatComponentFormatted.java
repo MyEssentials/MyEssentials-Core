@@ -38,64 +38,77 @@ import java.util.List;
 
 public class ChatComponentFormatted extends ChatComponentList {
 
+    private IChatComponent buffer = new ChatComponentList();
+
     public ChatComponentFormatted(String format, Object... args) {
         this(format, Arrays.asList(args).iterator());
     }
 
     public ChatComponentFormatted(String format, Iterator args) {
         String[] components = StringUtils.split(format, "{}");
-        IChatComponent buffer = new ChatComponentList();
 
         for (String component : components) {
-            String[] parts = component.split("\\|", 2);
-
-            if(parts.length >= 2) {
-                ChatStyle chatStyle = getStyle(parts[0]);
-
-                if (parts[0].contains("N") && buffer.getSiblings().size() > 0) {
-                    // Reset the buffer if the buffer reset modifier is found
-                    this.appendSibling(buffer);
-                    buffer = new ChatComponentList();
-                }
-
-                String[] textWithHover = parts[1].split(" << ");
-                String actualText = textWithHover[0];
-                while (actualText.contains("%s")) {
-                    actualText = actualText.replaceFirst("%s", args.next().toString());
-                }
-                IChatComponent message = new ChatComponentText(actualText).setChatStyle(chatStyle);
-
-                if (textWithHover.length == 2) {
-                    chatStyle.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentFormatted("{" + textWithHover[1] + "}", args)));
-                }
-
-                buffer.appendSibling(message);
-
-            } else if (parts.length == 1 && parts[0].equals("%s")) {
-
-                // TODO: Instead of %s use other identifiers for lists of elements or container (maybe)
-                Object currArg = args.next();
-                if (currArg instanceof IChatFormat) {
-                    IChatComponent formattedArgument = ((IChatFormat) currArg).toChatMessage();
-                    buffer.appendSibling(formattedArgument);
-                } else if (currArg instanceof IChatComponent) {
-                    buffer.appendSibling((IChatComponent) currArg);
-                } else if (currArg instanceof ChatComponentContainer) {
-
-                    this.appendSibling(buffer);
-                    buffer = new ChatComponentList();
-                    for (IChatComponent message : (ChatComponentContainer) currArg) {
-                        this.appendSibling(message);
-                    }
-                } else {
-                    throw new FormatException("An argument in format " + format + " does not implement IChatFormat interface");
-                }
-            } else {
-                throw new FormatException("Format " + format + " is not valid. Valid format: {modifiers|text}");
-            }
+            processComponent(component, args);
         }
         this.appendSibling(buffer);
     }
+
+    private void resetBuffer() {
+        if (buffer.getSiblings().size() != 0) {
+            this.appendSibling(buffer);
+        }
+        buffer = new ChatComponentList();
+    }
+
+    private IChatComponent createComponent(String[] parts, Iterator args) {
+        ChatStyle chatStyle = getStyle(parts[0]);
+        String[] textWithHover = parts[1].split(" << ");
+        String actualText = textWithHover[0];
+
+        while (actualText.contains("%s")) {
+            actualText = actualText.replaceFirst("%s", args.next().toString());
+        }
+        IChatComponent message = new ChatComponentText(actualText).setChatStyle(chatStyle);
+
+        if (textWithHover.length == 2) {
+            IChatComponent hoverText = new ChatComponentFormatted("{" + textWithHover[1] + "}", args);
+            chatStyle.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText));
+        }
+
+        return message;
+    }
+
+    private void addComponent(Iterator args) {
+        // TODO: Instead of %s use other identifiers for lists of elements or container (maybe)
+
+        Object currArg = args.next();
+        if (currArg instanceof IChatFormat) {
+            buffer.appendSibling(((IChatFormat) currArg).toChatMessage());
+        } else if (currArg instanceof IChatComponent) {
+            buffer.appendSibling((IChatComponent) currArg);
+        } else if (currArg instanceof ChatComponentContainer) {
+            resetBuffer();
+            for (IChatComponent message : (ChatComponentContainer) currArg) {
+                this.appendSibling(message);
+            }
+        }
+    }
+
+    private void processComponent(String componentString, Iterator args) {
+        String[] parts = componentString.split("\\|", 2);
+
+        if (parts.length == 2) {
+            if (parts[0].contains("N")) {
+                resetBuffer();
+            }
+            buffer.appendSibling(createComponent(parts, args));
+        } else if (parts.length == 1 && parts[0].equals("%s")){
+            addComponent(args);
+        } else {
+            throw new FormatException("Format " + componentString + " is not valid. Valid format: {modifiers|text}");
+        }
+    }
+
 
     /**
      * Converts the modifiers String to a ChatStyle

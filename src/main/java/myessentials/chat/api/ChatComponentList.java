@@ -12,10 +12,10 @@ public class ChatComponentList extends ChatComponentText {
 
     @Override
     public ChatStyle getChatStyle() {
-        if (this.getSiblings().size() == 1) {
-            return ((IChatComponent) this.getSiblings().get(0)).getChatStyle();
-        } else {
+        //if (this.getSiblings().size() == 1) {
+        //    return ((IChatComponent) this.getSiblings().get(0)).getChatStyle();
+        //} else {
             return super.getChatStyle();
-        }
+        //}
     }
 }
