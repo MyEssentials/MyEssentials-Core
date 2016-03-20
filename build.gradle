@@ -1,0 +1,21 @@
+group 'myessentials'
+version '0.4.0b'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'sponge'
+        url = 'http://repo.spongepowered.org/maven'
+    }
+}
+
+dependencies {
+    testCompile 'junit:junit:4.11'
+
+    compile 'org.spongepowered:spongeapi:4.0.3'
+    
+}
