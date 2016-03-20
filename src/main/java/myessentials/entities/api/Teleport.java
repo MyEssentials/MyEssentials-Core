@@ -1,6 +1,5 @@
-package myessentials.teleport;
+package myessentials.entities.api;
 
-import myessentials.entities.api.EntityPos;
 import myessentials.utils.PlayerUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 
