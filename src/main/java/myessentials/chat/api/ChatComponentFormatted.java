@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  * An IChatComponent that converts a format to a set of IChatComponents
@@ -66,7 +67,7 @@ public class ChatComponentFormatted extends ChatComponentList {
         String actualText = textWithHover[0];
 
         while (actualText.contains("%s")) {
-            actualText = actualText.replaceFirst("%s", args.next().toString());
+            actualText = actualText.replaceFirst("%s", Matcher.quoteReplacement(args.next().toString()));
         }
         IChatComponent message = new ChatComponentText(actualText).setChatStyle(chatStyle);
 
