@@ -1,4 +1,4 @@
-MyEssentials-Core
+MyEssentials-Core [![Travis branch](https://img.shields.io/travis/MyEssentials/MyEssentials-Core/master.svg?maxAge=2592000)](https://github.com/MyEssentials/MyEssentials-Core)
 =================
 
 Adds a bunch of helpers for simplifying mod making.
