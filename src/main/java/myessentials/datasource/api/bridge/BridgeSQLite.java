@@ -2,10 +2,9 @@ package myessentials.datasource.api.bridge;
 
 import myessentials.Constants;
 import myessentials.MyEssentialsCore;
-import myessentials.config.api.ConfigProperty;
-import myessentials.config.api.ConfigTemplate;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.sqlite.JDBC;
 
 import java.io.File;
 import java.sql.DriverManager;
@@ -13,33 +12,38 @@ import java.sql.SQLException;
 
 public class BridgeSQLite extends BridgeSQL {
 
-    public ConfigProperty<String> dbPath = new ConfigProperty<String>(
-            "path", "datasource",
-            "The path to the database file.",
-            "");
+    public String databasePath;
 
+    public BridgeSQLite(CommentedConfigurationNode rootNode) {
+        configure(rootNode);
 
-    public BridgeSQLite(ConfigTemplate config) {
-        dbPath.set(Constants.DATABASE_FOLDER + config.getModID() + "/data.db");
-        config.addBinding(dbPath, true);
         initProperties();
         initConnection();
     }
 
+    private void configure(CommentedConfigurationNode rootNode) {
+        CommentedConfigurationNode databasePathNode = rootNode.getNode("datasource", "path");
+        if (databasePathNode.isVirtual()) {
+            databasePathNode.setValue(Constants.DATABASE_FOLDER + "/data.db")
+                            .setComment("The path to the database file");
+        }
+        databasePath = databasePathNode.getString();
+    }
+
     @Override
     protected void initConnection() {
-        File file = new File(dbPath.get());
+        File file = new File(databasePath);
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
 
-        this.dsn = "jdbc:sqlite:" + dbPath.get();
+        this.dsn = "jdbc:sqlite:" + databasePath;
 
-        try {
+        /*try {
             DriverManager.registerDriver(new JDBC());
         } catch (SQLException ex) {
             MyEssentialsCore.instance.LOG.error("Failed to register driver for SQLite database.", ex);
-        }
+        }*/
 
         try {
             if (conn != null && !conn.isClosed()) {

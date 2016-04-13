@@ -1,10 +1,8 @@
 package myessentials.localization.api;
 
 import myessentials.MyEssentialsCore;
-import myessentials.chat.api.ChatComponentFormatted;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.spongepowered.api.text.Text;
 
 import java.io.*;
 import java.util.HashMap;
@@ -78,9 +76,9 @@ public class Local {
         }
     }
 
-    public ChatComponentFormatted getLocalization(String key, Object... args) {
+    public Text getLocalization(String key, Object... args) {
         String localized = localizations.get(key);
-        return localized == null ? new ChatComponentFormatted("{|" + key + "}") : new ChatComponentFormatted(localized, args);
+        return Text.of(localized);
     }
 
     public boolean hasLocalization(String key) {

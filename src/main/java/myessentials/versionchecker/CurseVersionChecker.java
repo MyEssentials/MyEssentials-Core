@@ -1,9 +1,9 @@
 package myessentials.versionchecker;
 
-import cpw.mods.fml.common.Loader;
 import myessentials.curse.Curse;
 import myessentials.curse.CurseModInfo;
 import myessentials.curse.VersionInfo;
+import org.spongepowered.api.Sponge;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,7 +30,7 @@ public class CurseVersionChecker implements Runnable {
             while (canRun) {
                 Thread.sleep(delay * 1000);
                 CurseModInfo modInfo = Curse.getModInfo(projectid);
-                VersionInfo newest = modInfo.getNewestVersion(Loader.MC_VERSION);
+                VersionInfo newest = modInfo.getNewestVersion(Sponge.getPlatform().getMinecraftVersion().getName());
                 Matcher matcher = versionRegex.matcher(newest.getName());
                 String versionString = matcher.group(2);
                 if (stringToVersion(versionString) > this.currentVersion) {

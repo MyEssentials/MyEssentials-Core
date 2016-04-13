@@ -1,8 +1,7 @@
 package myessentials.localization.api;
 
-import myessentials.chat.api.ChatComponentFormatted;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.util.IChatComponent;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.text.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,11 +24,11 @@ public class LocalManager {
     /**
      * Finds the localized version that the key is pointing at and sends it to the ICommandSender
      */
-    public static void send(ICommandSender sender, String localizationKey, Object... args) {
-        sender.addChatMessage(get(localizationKey, args));
+    public static void send(CommandSource sender, String localizationKey, Object... args) {
+        sender.sendMessage(get(localizationKey, args));
     }
 
-    public static ChatComponentFormatted get(String localizationKey, Object... args) {
+    public static Text get(String localizationKey, Object... args) {
         Local local = localizations.get(localizationKey.split("\\.")[0]);
         return local.getLocalization(localizationKey, args);
     }

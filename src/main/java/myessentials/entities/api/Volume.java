@@ -1,18 +1,14 @@
 package myessentials.entities.api;
 
 import com.google.gson.*;
-import myessentials.MyEssentialsCore;
-import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
-import net.minecraft.util.IChatComponent;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import java.lang.reflect.Type;
 
 /**
  * A rectangular shaped volume.
  */
-public class Volume implements IChatFormat {
+public class Volume {
 
     private final int minX, minY, minZ;
     private final int maxX, maxY, maxZ;
@@ -50,33 +46,6 @@ public class Volume implements IChatFormat {
         return maxZ;
     }
 
-    public Volume translate(ForgeDirection direction) {
-        Volume volume = this;
-        switch (direction) {
-            case DOWN:
-                volume = new Volume(volume.getMinX(), -volume.getMaxZ(), volume.getMinY(), volume.getMaxX(), volume.getMinZ(), volume.getMaxY());
-                break;
-            case UP:
-                volume = new Volume(volume.getMinX(), volume.getMinZ(), volume.getMinY(), volume.getMaxX(), volume.getMaxZ(), volume.getMaxY());
-                break;
-            case NORTH:
-                volume = new Volume(volume.getMinX(), volume.getMinY(), - volume.getMaxZ(), volume.getMaxX(), volume.getMaxY(), volume.getMinZ());
-                break;
-            case WEST:
-                volume = new Volume(- volume.getMaxZ(), volume.getMinY(), volume.getMinX(), volume.getMinZ(), volume.getMaxY(), volume.getMaxX());
-                break;
-            case EAST:
-                volume = new Volume(volume.getMinZ(), volume.getMinY(), volume.getMinX(), volume.getMaxZ(), volume.getMaxY(), volume.getMaxX());
-                break;
-            case SOUTH:
-                // The translation on South is already the correct one.
-                break;
-            case UNKNOWN:
-                break;
-        }
-        return volume;
-    }
-
     public Volume intersect(Volume other) {
         if (other.getMaxX() >= minX && other.getMinX() <= maxX &&
                 other.getMaxY() >= minY && other.getMinY() <= maxY &&
@@ -107,16 +76,6 @@ public class Volume implements IChatFormat {
             return other.minX == minX && other.minY == minY && other.minZ == minZ && other.maxX == maxX && other.maxY == maxY && other.maxZ == maxZ;
         }
         return super.equals(obj);
-    }
-
-    @Override
-    public String toString() {
-        return toChatMessage().getUnformattedText();
-    }
-
-    @Override
-    public IChatComponent toChatMessage() {
-        return MyEssentialsCore.instance.LOCAL.getLocalization("myessentials.format.volume", minX, minY, minZ, maxX, maxY, maxZ);
     }
 
     public static class Serializer extends SerializerTemplate<Volume> {

@@ -1,13 +1,13 @@
 package myessentials.datasource.api;
 
 import myessentials.MyEssentialsCore;
-import myessentials.config.api.ConfigProperty;
-import myessentials.config.api.ConfigTemplate;
 import myessentials.datasource.api.bridge.BridgeMySQL;
 import myessentials.datasource.api.bridge.BridgeSQL;
 import myessentials.datasource.api.bridge.BridgeSQLite;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -26,15 +26,17 @@ public abstract class DatasourceSQL {
     protected BridgeSQL bridge;
     protected Schema schema;
 
-    public ConfigProperty<String> databaseType = new ConfigProperty<String>(
+    public ConfigurationNode databaseTypeNode;
+    /*
+    public ConfigProperty<String> databaseTypeNode = new ConfigProperty<String>(
             "type", "datasource",
             "Specifies the database engine that is being used.",
-            "SQLite");
+            "SQLite");*/
 
-    public DatasourceSQL(Logger log, ConfigTemplate config, Schema schema) {
+    public DatasourceSQL(Logger log, CommentedConfigurationNode rootNode, Schema schema) {
         this.LOG = log;
         this.schema = schema;
-        loadConfig(config);
+        configure(rootNode);
         schema.initializeUpdates(bridge);
         try {
             doUpdates();
@@ -61,12 +63,18 @@ public abstract class DatasourceSQL {
         }
     }
 
-    private void loadConfig(ConfigTemplate config) {
-        config.addBinding(databaseType, true);
-        if (databaseType.get().equalsIgnoreCase("sqlite")) {
-            bridge = new BridgeSQLite(config);
-        } else if (databaseType.get().equalsIgnoreCase("mysql")) {
-            bridge = new BridgeMySQL(config);
+    private void configure(CommentedConfigurationNode rootNode) {
+        CommentedConfigurationNode databaseTypeNode = rootNode.getNode("datasource", "type");
+        if (databaseTypeNode.isVirtual()) {
+            databaseTypeNode.setValue("sqlite")
+                            .setComment("The database engine used for this mod");
+        }
+        String databaseType = databaseTypeNode.getString();
+
+        if (databaseType.equalsIgnoreCase("sqlite")) {
+            bridge = new BridgeSQLite(rootNode);
+        } else if (databaseType.equalsIgnoreCase("mysql")) {
+            bridge = new BridgeMySQL(rootNode);
         }
     }
 
@@ -86,7 +94,7 @@ public abstract class DatasourceSQL {
         try {
             return bridge.getConnection().prepareStatement(sql, returnGenerationKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
         } catch (SQLException e) {
-            LOG.fatal(sql);
+            LOG.error(sql);
             LOG.error(ExceptionUtils.getStackTrace(e));
         }
         return null;

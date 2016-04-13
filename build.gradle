@@ -1,21 +1,75 @@
-group 'myessentials'
-version '0.4.0b'
-
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+	maven {
+	    name = "sonatype"
+	    url = "https://oss.sonatype.org/content/repositories/snapshots/"	
+	}
+	maven {
+	    url = 'https://oss.sonatype.org/content/groups/public' 
+	}
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'java'
+apply plugin: 'eclipse'
 
-sourceCompatibility = 1.5
+ext.configFile = file "build.properties"
+
+ext.configFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    ext.config = new ConfigSlurper().parse prop
+}
+
+if (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty()) {
+    ext.config.build_number = System.env.TRAVIS_TAG.substring(0, System.env.TRAVIS_TAG.length()-1)
+    ext.config.build_type = System.env.TRAVIS_TAG.substring(System.env.TRAVIS_TAG.length()-1)
+} else {
+    ext.config.build_number = "0000"
+    ext.config.build_type = "r"
+}
+
+// Configure Everything
+
+version = "${config.minecraft_version}-${config.build_number}${config.build_type}"
+group = config.group
+archivesBaseName = config.archivesBaseName
+
+minecraft {
+    version = "${config.minecraft_version}-${config.forge_version}"
+    replace "@VERSION@", "${project.version}"
+    mappings = "stable_22"
+    runDir = "/home/afterwind/Development/MyTown2-Sponge/run"
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+version = '1.18r'
+group = "myessentials"
+archivesBaseName = "MyEssentials-Core"
 
 repositories {
     mavenCentral()
     maven {
-        name = 'sponge'
-        url = 'http://repo.spongepowered.org/maven'
+        name 'Sponge maven repo'
+        url 'http://repo.spongepowered.org/maven'
     }
 }
 
 dependencies {
-    testCompile 'junit:junit:4.11'
+	compile "org.spongepowered:spongeapi:4.0.3"
+}
 
-    compile 'org.spongepowered:spongeapi:4.0.3'
-    
+jar {
+        manifest {
+        attributes 'FMLAT': 'adminshop_at.cfg'
+    }
 }

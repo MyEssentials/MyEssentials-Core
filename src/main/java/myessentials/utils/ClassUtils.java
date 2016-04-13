@@ -1,7 +1,5 @@
 package myessentials.utils;
 
-import net.minecraft.server.MinecraftServer;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,10 +23,6 @@ public class ClassUtils {
             value = false;
         }
         return value;
-    }
-
-    public static boolean isBukkitLoaded() {
-        return MinecraftServer.getServer().getServerModName().contains("cauldron") || MinecraftServer.getServer().getServerModName().contains("mcpc");
     }
 
     public static List<Class<?>> getAllInterfaces(Class<?> cls) {

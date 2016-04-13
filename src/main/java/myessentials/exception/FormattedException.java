@@ -1,13 +1,12 @@
 package myessentials.exception;
 
-import myessentials.localization.api.LocalManager;
-import net.minecraft.util.IChatComponent;
+import org.spongepowered.api.text.Text;
 
 public abstract class FormattedException extends RuntimeException {
 
-    public final IChatComponent message;
+    public final Text message;
 
-    public FormattedException(String localizationKey, Object... args) {
-        message = LocalManager.get(localizationKey, args);
+    public FormattedException(Text messsage) {
+        this.message = messsage;
     }
 }

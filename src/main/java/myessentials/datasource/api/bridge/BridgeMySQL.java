@@ -1,9 +1,8 @@
 package myessentials.datasource.api.bridge;
 
-import com.mysql.jdbc.Driver;
 import myessentials.MyEssentialsCore;
-import myessentials.config.api.ConfigProperty;
-import myessentials.config.api.ConfigTemplate;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.sql.DriverManager;
@@ -11,34 +10,44 @@ import java.sql.SQLException;
 
 public class BridgeMySQL extends BridgeSQL {
 
-    public ConfigProperty<String> username = new ConfigProperty<String>(
-            "username", "datasource",
-            "Username to use when connecting",
-            "");
+    public String username;
+    public String password;
+    public String host;
+    public String database;
 
-    public ConfigProperty<String> password = new ConfigProperty<String>(
-            "password", "datasource",
-            "Password to use when connecting",
-            "");
-
-    public ConfigProperty<String> host = new ConfigProperty<String>(
-            "host", "datasource",
-            "Hostname (format: 'host:port') to use when connecting",
-            "localhost");
-
-    public ConfigProperty<String> database = new ConfigProperty<String>(
-            "database", "datasource",
-            "The database name",
-            "mytown");
-
-    public BridgeMySQL(ConfigTemplate config) {
-        config.addBinding(username);
-        config.addBinding(password);
-        config.addBinding(host);
-        config.addBinding(database, true);
+    public BridgeMySQL(CommentedConfigurationNode rootNode) {
+        configure(rootNode);
 
         initProperties();
         initConnection();
+    }
+
+    private void configure(CommentedConfigurationNode rootNode) {
+        CommentedConfigurationNode usernameNode = rootNode.getNode("datasource", "username");
+        CommentedConfigurationNode passwordNode = rootNode.getNode("datasource", "password");
+        CommentedConfigurationNode hostNode = rootNode.getNode("datasource", "host");
+        CommentedConfigurationNode databaseNode = rootNode.getNode("datasource", "database");
+
+        if (usernameNode.isVirtual()) {
+            usernameNode.setValue("")
+                        .setComment("Username used for logging into the MySQL database");
+        }
+        if (passwordNode.isVirtual()) {
+            passwordNode.setValue("")
+                        .setComment("Password used for logging into the MySQL database");
+        }
+        if (hostNode.isVirtual()) {
+            hostNode.setValue("127.0.0.1")
+                    .setComment("Hostname of the MySQL database");
+        }
+        if (databaseNode.isVirtual()) {
+            databaseNode.setValue("myessentials")
+                        .setComment("Name of the database used in this mod");
+        }
+        username = usernameNode.getString();
+        password = passwordNode.getString();
+        host = hostNode.getString();
+        database = databaseNode.getString();
     }
 
     @Override
@@ -46,21 +55,21 @@ public class BridgeMySQL extends BridgeSQL {
         autoIncrement = "AUTO_INCREMENT";
 
         properties.put("autoReconnect", "true");
-        properties.put("user", username.get());
-        properties.put("password", password.get());
+        properties.put("user", username);
+        properties.put("password", password);
         properties.put("relaxAutoCommit", "true");
     }
 
     @Override
     protected void initConnection() {
-        this.dsn = "jdbc:mysql://" + host.get() + "/" + database.get();
+        this.dsn = "jdbc:mysql://" + host + "/" + database;
 
-        try {
+        /*try {
             DriverManager.registerDriver(new Driver());
         } catch (SQLException ex) {
             MyEssentialsCore.instance.LOG.error("Failed to register driver for MySQL database.", ex);
             MyEssentialsCore.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
+        }*/
 
         try {
             if (conn != null && !conn.isClosed()) {
