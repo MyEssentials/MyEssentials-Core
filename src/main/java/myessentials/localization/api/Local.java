@@ -3,6 +3,8 @@ package myessentials.localization.api;
 import myessentials.MyEssentialsCore;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializer;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.*;
 import java.util.HashMap;
@@ -78,7 +80,7 @@ public class Local {
 
     public Text getLocalization(String key, Object... args) {
         String localized = localizations.get(key);
-        return Text.of(localized);
+        return TextSerializers.JSON.deserialize(localized);
     }
 
     public boolean hasLocalization(String key) {

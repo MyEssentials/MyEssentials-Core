@@ -5,4 +5,6 @@ myessentials.format.list.header={6|--------[[}{%s}{6|]]--------}
 
 myessentials.tool.name={9|TOOL: }{%s}
 myessentials.tool.mode={3|Changed '}{%s}{3|' to %s}
-myessentials.tool.gained={3|You have been given a tool}
+myessentials.tool.gained={color="blue", "text"="You have been given a tool"}
+
+myessentials.test={"bold"=true, "color"=blue, "text"="Hello Minecraft World!"}

@@ -31,9 +31,11 @@ public class MyEssentialsCore {
 //        LOCAL = new Local(Constants.CONFIG_FOLDER + "/localization/", Config.instance.localization.get(), "/myessentials/localization/", MyEssentialsCore.class);
         LocalManager.register(LOCAL, "myessentials");
 
+        Sponge.getEventManager().registerListeners(this, new PlayerTracker());
         // Register handlers/trackers
 //        Sponge.getEventManager().registerListeners(this, PlayerTracker.instance);
 //        Sponge.getEventManager().registerListeners(this, ToolManager.instance);
 //        Sponge.getEventManager().registerListeners(this, SignManager.instance);
+        LOG.info("I've been instantiated!");
     }
 }
