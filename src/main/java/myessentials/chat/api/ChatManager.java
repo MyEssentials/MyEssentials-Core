@@ -25,8 +25,16 @@ public class ChatManager {
             return;
         }
 
+        if (message == null) {
+            return;
+        }
+
         if (message instanceof ChatComponentList) {
             for (IChatComponent sibling : (List<IChatComponent>)message.getSiblings()) {
+                if (sibling == null) {
+                    continue;
+                }
+
                 sender.addChatMessage(sibling);
             }
         } else {
