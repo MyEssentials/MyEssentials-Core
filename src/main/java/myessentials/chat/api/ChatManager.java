@@ -3,6 +3,7 @@ package myessentials.chat.api;
 import myessentials.localization.api.LocalManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.util.List;
 
@@ -39,6 +40,14 @@ public class ChatManager {
             }
         } else {
             sender.addChatMessage(message);
+        }
+    }
+    
+    public static void addChatMessageFixed(ICommandSender sender, IChatComponent message) {
+        if (!(sender instanceof EntityPlayerMP)||((EntityPlayerMP)sender).playerNetServerHandler != null)
+            sender.addChatMessage(message);
+        } else {
+            //TODO Find a way to re-send the message.
         }
     }
 }
