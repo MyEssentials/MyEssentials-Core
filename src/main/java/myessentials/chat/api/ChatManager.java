@@ -46,8 +46,7 @@ public class ChatManager {
     public static void addChatMessageFixed(ICommandSender sender, IChatComponent message) {
         if (!(sender instanceof EntityPlayerMP)||((EntityPlayerMP)sender).playerNetServerHandler != null)
             sender.addChatMessage(message);
-        } else {
-            //TODO Find a way to re-send the message.
         }
+         //TODO Find a way to re-send the message.
     }
 }
