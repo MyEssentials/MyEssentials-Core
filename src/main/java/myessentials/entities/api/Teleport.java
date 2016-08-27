@@ -3,6 +3,9 @@ package myessentials.entities.api;
 import myessentials.utils.PlayerUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Retains the needed information for the action of teleporting a player to a certain position.
  */
