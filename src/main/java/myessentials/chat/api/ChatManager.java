@@ -25,7 +25,7 @@ public class ChatManager {
             return;
         }
 
-        if (message instanceof ChatComponentList) {
+        if (message instanceof TextComponentList) {
             for (IChatComponent sibling : (List<IChatComponent>)message.getSiblings()) {
                 sender.addChatMessage(sibling);
             }

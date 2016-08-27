@@ -11,7 +11,7 @@ buildscript {
 	}
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 
@@ -48,8 +48,8 @@ if (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty()) {
 }
 
 // Apply Plugins
-apply plugin: "curseforge"
-apply plugin: "forge"
+//apply plugin: "curseforge"
+apply plugin: "net.minecraftforge.gradle.forge"
 
 // Configure Everything
 version = "${config.minecraft_version}-${config.build_number}${config.build_type}"
@@ -60,6 +60,8 @@ minecraft {
     version = "${config.minecraft_version}-${config.forge_version}"
 
     replace "@VERSION@", "${project.version}"
+    mappings = "snapshot_20160827"
+    runDir = "run/"
 }
 
 // Setup Deps
@@ -117,9 +119,9 @@ jar {
 }
 
 // Setup Curse Upload task
-curse {
+/*curse {
     apiKey = System.env.CURSEFORGEKEY
     projectId = config.project_id
     changelog = "" // TODO Add changelog support
     releaseType = config.build_type.equals('a') ? "alpha" : (config.build_type.equals('b') ? "beta" : "release")
-}
+}*/

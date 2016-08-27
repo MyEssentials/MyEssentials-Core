@@ -3,10 +3,6 @@ package myessentials.chat.api;
 import myessentials.exception.FormatException;
 import myessentials.utils.ColorUtils;
 import net.minecraft.event.HoverEvent;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -36,15 +32,15 @@ import java.util.List;
  *      - sibling2     ; will be a list of the last component until the end
  */
 
-public class ChatComponentFormatted extends ChatComponentList {
+public class TextComponentFormatted extends TextComponentList {
 
-    private IChatComponent buffer = new ChatComponentList();
+    private IChatComponent buffer = new TextComponentList();
 
-    public ChatComponentFormatted(String format, Object... args) {
+    public TextComponentFormatted(String format, Object... args) {
         this(format, Arrays.asList(args).iterator());
     }
 
-    public ChatComponentFormatted(String format, Iterator args) {
+    public TextComponentFormatted(String format, Iterator args) {
         String[] components = StringUtils.split(format, "{}");
 
         for (String component : components) {
@@ -57,7 +53,7 @@ public class ChatComponentFormatted extends ChatComponentList {
         if (buffer.getSiblings().size() != 0) {
             this.appendSibling(buffer);
         }
-        buffer = new ChatComponentList();
+        buffer = new TextComponentList();
     }
 
     private IChatComponent createComponent(String[] parts, Iterator args) {
@@ -71,7 +67,7 @@ public class ChatComponentFormatted extends ChatComponentList {
         IChatComponent message = new ChatComponentText(actualText).setChatStyle(chatStyle);
 
         if (textWithHover.length == 2) {
-            IChatComponent hoverText = new ChatComponentFormatted("{" + textWithHover[1] + "}", args);
+            IChatComponent hoverText = new TextComponentFormatted("{" + textWithHover[1] + "}", args);
             chatStyle.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText));
         }
 
@@ -86,9 +82,9 @@ public class ChatComponentFormatted extends ChatComponentList {
             buffer.appendSibling(((IChatFormat) currArg).toChatMessage());
         } else if (currArg instanceof IChatComponent) {
             buffer.appendSibling((IChatComponent) currArg);
-        } else if (currArg instanceof ChatComponentContainer) {
+        } else if (currArg instanceof TextComponentContainer) {
             resetBuffer();
-            for (IChatComponent message : (ChatComponentContainer) currArg) {
+            for (IChatComponent message : (TextComponentContainer) currArg) {
                 this.appendSibling(message);
             }
         }
@@ -150,7 +146,7 @@ public class ChatComponentFormatted extends ChatComponentList {
      * Adds a ChatComponentText between all of the siblings
      * This can be used for easily displaying a onHoverText on multiple lines
      */
-    public ChatComponentFormatted applyDelimiter(String delimiter) {
+    public TextComponentFormatted applyDelimiter(String delimiter) {
         List<IChatComponent> newSiblings = new ArrayList<IChatComponent>();
         for (IChatComponent component : (List<IChatComponent>) siblings) {
             if (newSiblings.size() > 0) {

@@ -1,6 +1,6 @@
 package myessentials.localization.api;
 
-import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.TextComponentFormatted;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.IChatComponent;
 
@@ -29,7 +29,7 @@ public class LocalManager {
         sender.addChatMessage(get(localizationKey, args));
     }
 
-    public static ChatComponentFormatted get(String localizationKey, Object... args) {
+    public static TextComponentFormatted get(String localizationKey, Object... args) {
         Local local = localizations.get(localizationKey.split("\\.")[0]);
         return local.getLocalization(localizationKey, args);
     }
