@@ -2,10 +2,10 @@ package myessentials.test.chat;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import junit.framework.Assert;
+import org.junit.Assert;
 import myessentials.chat.api.JsonMessageBuilder;
 import myessentials.test.MECTest;
-import net.minecraft.util.TextFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.junit.Test;
 
 public class JsonMessageBuilderTest extends MECTest {

@@ -32,7 +32,7 @@ public class EconomyItemTest extends MECTest {
         } catch (NullPointerException ex) {}
 
         // REF: get item stack through economy instead of the PlayerUtils
-        ItemStack item = PlayerUtils.getItemStackFromPlayer(player, Items.diamond, "Diamond");
+        ItemStack item = PlayerUtils.getItemStackFromPlayer(player, Items.DIAMOND, "Diamond");
         Assert.assertNotNull("Player did not get any of the cost item!", item);
         Assert.assertEquals("Player did not get enough of the cost item!", item.stackSize, 20);
     }
@@ -48,7 +48,7 @@ public class EconomyItemTest extends MECTest {
             economy.takeMoneyFromPlayer(player, 20);
         } catch (NullPointerException ex) {}
 
-        ItemStack item = PlayerUtils.getItemStackFromPlayer(player, Items.diamond, "Diamond");
+        ItemStack item = PlayerUtils.getItemStackFromPlayer(player, Items.DIAMOND, "Diamond");
         Assert.assertNull("Economy system did not take all of the cost item!", item);
     }
 

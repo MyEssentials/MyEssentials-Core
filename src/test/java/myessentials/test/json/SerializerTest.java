@@ -3,7 +3,7 @@ package myessentials.test.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import junit.framework.Assert;
+import org.junit.Assert;
 import myessentials.test.MECTest;
 import org.junit.Test;
 

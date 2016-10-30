@@ -1,7 +1,7 @@
 package myessentials.test.utils;
 
 import com.mojang.authlib.GameProfile;
-import junit.framework.Assert;
+import org.junit.Assert;
 import myessentials.test.MECTest;
 import myessentials.utils.PlayerUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -26,7 +26,7 @@ public class PlayerUtilsTest extends MECTest {
     @Test
     public void shouldTakeItemsFromPlayer() {
 
-        player.inventory.setInventorySlotContents(10, new ItemStack(Items.gold_ingot, 64));
+        player.inventory.setInventorySlotContents(10, new ItemStack(Items.GOLD_INGOT, 64));
         // REF: Refactor the take item method to be easier to understand
         try {
             PlayerUtils.takeItemFromPlayer(player, "minecraft:gold_ingot", 50);
@@ -62,7 +62,7 @@ public class PlayerUtilsTest extends MECTest {
     public void shouldNotGiveItemsToPlayerThatHasAFullInventory() {
 
         for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-            player.inventory.setInventorySlotContents(i, new ItemStack(Items.stone_axe, 1));
+            player.inventory.setInventorySlotContents(i, new ItemStack(Items.STONE_AXE, 1));
         }
 
         try {
@@ -70,7 +70,7 @@ public class PlayerUtilsTest extends MECTest {
         } catch (NullPointerException ex) {}
 
         for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-            Assert.assertFalse("The give method should not have modified the inventory's contents. It should have thrown the items on the ground instead", player.inventory.getStackInSlot(i).getItem() == Items.gold_ingot);
+            Assert.assertFalse("The give method should not have modified the inventory's contents. It should have thrown the items on the ground instead", player.inventory.getStackInSlot(i).getItem() == Items.GOLD_INGOT);
         }
 
     }
@@ -79,7 +79,7 @@ public class PlayerUtilsTest extends MECTest {
     public void shouldGiveItemStackToPlayer() {
 
         try {
-            PlayerUtils.giveItemStackToPlayer(player, new ItemStack(Items.gold_ingot, 50));
+            PlayerUtils.giveItemStackToPlayer(player, new ItemStack(Items.GOLD_INGOT, 50));
         } catch (NullPointerException ex) {}
 
         ItemStack stack = player.inventory.getStackInSlot(0);
@@ -91,12 +91,12 @@ public class PlayerUtilsTest extends MECTest {
     @Test
     public void shouldGetItemStackFromPlayer() {
 
-        player.inventory.setInventorySlotContents(15, new ItemStack(Items.gold_ingot, 30));
-        player.inventory.setInventorySlotContents(14, new ItemStack(Items.stone_axe, 1));
+        player.inventory.setInventorySlotContents(15, new ItemStack(Items.GOLD_INGOT, 30));
+        player.inventory.setInventorySlotContents(14, new ItemStack(Items.STONE_AXE, 1));
 
-        ItemStack stack = PlayerUtils.getItemStackFromPlayer(player, Items.gold_ingot, "Gold Ingot");
+        ItemStack stack = PlayerUtils.getItemStackFromPlayer(player, Items.GOLD_INGOT, "Gold Ingot");
         Assert.assertNotNull("Method did not get any ItemStack", stack);
-        Assert.assertEquals("Method did not get the proper ItemStack", Items.gold_ingot, stack.getItem());
+        Assert.assertEquals("Method did not get the proper ItemStack", Items.GOLD_INGOT, stack.getItem());
         Assert.assertEquals("Method did not get the proper ItemStack", 30, stack.stackSize);
 
     }

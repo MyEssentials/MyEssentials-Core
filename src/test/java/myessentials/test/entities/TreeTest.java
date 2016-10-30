@@ -1,6 +1,6 @@
 package myessentials.test.entities;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import myessentials.entities.api.Tree;
 import myessentials.entities.api.TreeNode;
 import myessentials.test.MECTest;

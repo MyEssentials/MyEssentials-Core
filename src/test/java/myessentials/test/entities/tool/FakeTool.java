@@ -3,6 +3,7 @@ package myessentials.test.entities.tool;
 import myessentials.entities.api.Position;
 import myessentials.entities.api.tool.Tool;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
 
 public class FakeTool extends Tool {
 
@@ -14,7 +15,7 @@ public class FakeTool extends Tool {
 
     // REF: Change the name of method to something different since it can be confused with the onItemUse method in items
     @Override
-    public void onItemUse(Position bp, int face) {
+    public void onItemUse(Position bp, EnumFacing face) {
         amountOfClicks++;
     }
 

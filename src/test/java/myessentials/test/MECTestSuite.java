@@ -9,7 +9,6 @@ import myessentials.test.datasource.DatasourceTest;
 import myessentials.test.economy.EconomyForgeEssentialsTest;
 import myessentials.test.economy.EconomyItemTest;
 import myessentials.test.entities.*;
-import myessentials.test.entities.sign.SignTest;
 import myessentials.test.entities.tool.ToolTest;
 import myessentials.test.json.JsonConfigTest;
 import myessentials.test.json.SerializerTest;
@@ -24,11 +23,10 @@ import org.junit.runners.Suite;
         EconomyForgeEssentialsTest.class,
         DatasourceTest.class,
         ConfigTest.class,
-        SignTest.class,
+//        SignTest.class,
         ToolTest.class,
         PositionTest.class,
         ChunkPosTest.class,
-        EntityPosTest.class,
         TreeTest.class,
         VolumeTest.class,
         JsonMessageBuilderTest.class,

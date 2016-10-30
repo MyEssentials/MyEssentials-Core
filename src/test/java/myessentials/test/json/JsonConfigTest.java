@@ -1,7 +1,7 @@
 package myessentials.test.json;
 
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import myessentials.entities.api.Volume;
 import myessentials.test.MECTest;
 import org.junit.Before;
@@ -17,9 +17,9 @@ public class JsonConfigTest extends MECTest {
 
     @Before
     public void shouldInitBlockPosArray() {
-        volumes.add(new Volume(1, 1, 1, 5, 5, 5));
-        volumes.add(new Volume(-10, -1, -1, 10, 1, 1));
-        volumes.add(new Volume(-500, -500, -500, 1000, 1000, 0));
+        volumes.add(new Volume(1, 1, 1, 5, 5, 5, 0));
+        volumes.add(new Volume(-10, -1, -1, 10, 1, 1, 0));
+        volumes.add(new Volume(-500, -500, -500, 1000, 1000, 0, 0));
     }
 
     @Before

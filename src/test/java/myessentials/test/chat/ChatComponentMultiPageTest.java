@@ -1,9 +1,9 @@
 package myessentials.test.chat;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import myessentials.chat.api.TextComponentMultiPage;
 import myessentials.test.MECTest;
-import net.minecraft.util.TextComponentString;
+import net.minecraft.util.text.TextComponentString;
 import org.junit.Test;
 
 public class ChatComponentMultiPageTest extends MECTest {

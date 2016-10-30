@@ -1,6 +1,6 @@
 package myessentials.test.entities;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import myessentials.entities.api.Position;
 import myessentials.test.MECTest;
 import org.junit.Test;

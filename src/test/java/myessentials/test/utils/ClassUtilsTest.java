@@ -1,6 +1,6 @@
 package myessentials.test.utils;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import myessentials.test.MECTest;
 import myessentials.utils.ClassUtils;
 import org.junit.Test;

@@ -4,6 +4,7 @@ import myessentials.entities.api.ChunkPos;
 import myessentials.test.MECTest;
 import myessentials.utils.WorldUtils;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,8 +26,8 @@ public class WorldUtilsTest extends MECTest {
         List<ChunkPos> chunks = WorldUtils.getChunksInBox(0, 10, 10, 10, 64);
         Assert.assertEquals(expectedValues.size(), chunks.size());
         for(int i = 0; i < expectedValues.size(); i++) {
-            Assert.assertEquals(expectedValues.get(i).x(), chunks.get(i).x());
-            Assert.assertEquals(expectedValues.get(i).z(), chunks.get(i).z());
+            Assert.assertEquals(expectedValues.get(i).x, chunks.get(i).x);
+            Assert.assertEquals(expectedValues.get(i).z, chunks.get(i).z);
         }
     }
 
@@ -34,9 +35,9 @@ public class WorldUtilsTest extends MECTest {
     public void shouldGetMaxHeightWithSolid() {
 
         World world = server.worldServerForDimension(0);
-        world.setBlock(10, 240, 10, Blocks.stone);
+        world.setBlockState(new BlockPos(10, 240, 10), Blocks.STONE.getDefaultState());
         for (int i = 241; i < 256; i++) {
-            world.setBlock(10, i, 10, Blocks.air);
+            world.setBlockState(new BlockPos(10, i, 10), Blocks.AIR.getDefaultState());
         }
 
         int maxY = WorldUtils.getMaxHeightWithSolid(0, 10, 10);
