@@ -25,8 +25,8 @@ public class WorldUtilsTest extends MECTest {
         List<ChunkPos> chunks = WorldUtils.getChunksInBox(0, 10, 10, 10, 64);
         Assert.assertEquals(expectedValues.size(), chunks.size());
         for(int i = 0; i < expectedValues.size(); i++) {
-            Assert.assertEquals(expectedValues.get(i).getX(), chunks.get(i).getX());
-            Assert.assertEquals(expectedValues.get(i).getZ(), chunks.get(i).getZ());
+            Assert.assertEquals(expectedValues.get(i).x(), chunks.get(i).x());
+            Assert.assertEquals(expectedValues.get(i).z(), chunks.get(i).z());
         }
     }
 

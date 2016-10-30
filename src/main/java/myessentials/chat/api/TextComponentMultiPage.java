@@ -1,10 +1,9 @@
 package myessentials.chat.api;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.IChatComponent;
 
 /**
- * A multi-page IChatComponent container.
+ * A multi-page ITextComponent container.
  * Used for sending large amount of lines to a player.
  */
 public class TextComponentMultiPage extends TextComponentContainer {

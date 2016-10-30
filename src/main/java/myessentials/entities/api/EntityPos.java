@@ -2,7 +2,7 @@ package myessentials.entities.api;
 
 import myessentials.MyEssentialsCore;
 import myessentials.chat.api.IChatFormat;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 
 /**
  * Helper class for storing position of an entity
@@ -13,7 +13,7 @@ public class EntityPos implements IChatFormat {
     private final double y;
     private final double z;
 
-    public EntityPos(double x, double y, double z, int dim) {
+    private EntityPos(double x, double y, double z, int dim) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -42,7 +42,7 @@ public class EntityPos implements IChatFormat {
     }
 
     @Override
-    public IChatComponent toChatMessage() {
+    public ITextComponent toChatMessage() {
         return MyEssentialsCore.instance.LOCAL.getLocalization("myessentials.format.entitypos", x, y, z, dim);
     }
 
@@ -54,5 +54,9 @@ public class EntityPos implements IChatFormat {
         } else {
             return super.equals(obj);
         }
+    }
+
+    public net.minecraft.util.math.BlockPos fuckYouVanilla() {
+        return new net.minecraft.util.math.BlockPos(x, y, z);
     }
 }

@@ -1,8 +1,10 @@
 package myessentials.utils;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
  * All utilities that are exclusively for Items and ItemStacks go here.
@@ -17,8 +19,7 @@ public class ItemUtils {
      * Returns the item from a String that has this pattern: (modid):(unique_name)[:meta]
      */
     public static Item itemFromName(String itemName) {
-        String[] split = itemName.split(":");
-        return GameRegistry.findItem(split[0], split[1]);
+        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
     }
 
     /**
@@ -27,7 +28,7 @@ public class ItemUtils {
     public static ItemStack itemStackFromName(String itemName) {
         String[] split = itemName.split(":");
 
-        Item item = GameRegistry.findItem(split[0], split[1]);
+        Item item = Item.REGISTRY.getObject(new ResourceLocation(split[0] + ":" + split[1]));
         if (item == null) {
             return null;
         }
@@ -39,9 +40,10 @@ public class ItemUtils {
      * Returns the unique identifier of given ItemStack
      */
     public static String nameFromItemStack(ItemStack itemStack) {
-        String name = GameRegistry.findUniqueIdentifierFor(itemStack.getItem()).toString();
-        if(itemStack.getItemDamage() != 0)
+        String name = ForgeRegistries.ITEMS.getKey(itemStack.getItem()).toString();
+        if(itemStack.getItemDamage() != 0) {
             name += ":" + itemStack.getItemDamage();
+        }
         return name;
     }
 }

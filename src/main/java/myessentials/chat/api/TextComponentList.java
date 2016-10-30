@@ -12,7 +12,7 @@ public class TextComponentList extends TextComponentString {
     @Override
     public Style getStyle() {
         //if (this.getSiblings().size() == 1) {
-        //    return ((IChatComponent) this.getSiblings().get(0)).getChatStyle();
+        //    return ((ITextComponent) this.getSiblings().get(0)).getStyle();
         //} else {
             return super.getStyle();
         //}

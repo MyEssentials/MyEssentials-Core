@@ -26,7 +26,7 @@ import org.junit.runners.Suite;
         ConfigTest.class,
         SignTest.class,
         ToolTest.class,
-        BlockPosTest.class,
+        PositionTest.class,
         ChunkPosTest.class,
         EntityPosTest.class,
         TreeTest.class,

@@ -2,7 +2,11 @@ package myessentials.chat.api;
 
 import myessentials.exception.FormatException;
 import myessentials.utils.ColorUtils;
-import net.minecraft.event.HoverEvent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.HoverEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -11,15 +15,15 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * An IChatComponent that converts a format to a set of IChatComponents
+ * An ITextComponent that converts a format to a set of ITextComponents
  *
- * Each of the parenthesis pairs represent an IChatComponent with its
- * own ChatStyle (color, bold, underlined, etc.)
+ * Each of the parenthesis pairs represent an ITextComponent with its
+ * own Style (color, bold, underlined, etc.)
  *
  * Example: {2|Entity number }{%s}{2| is the }{7l| %s}{aN|Good bye!}
- * This format will create the following IChatComponents:
+ * This format will create the following ITextComponents:
  *  - "Entity number " ; with DARK_GREEN color
- *  - %s               ; one of the parameters sent by the caller (as IChatComponent or
+ *  - %s               ; one of the parameters sent by the caller (as ITextComponent or
  *                       IChatFormat, since it's missing the "|" style delimiter character
  *  - " is the "       ; with DARK_GREEN color
  *  - %s               ; one of the parameters sent by the caller (as String since it HAS "|" style delimiter character)
@@ -34,7 +38,7 @@ import java.util.List;
 
 public class TextComponentFormatted extends TextComponentList {
 
-    private IChatComponent buffer = new TextComponentList();
+    private ITextComponent buffer = new TextComponentList();
 
     public TextComponentFormatted(String format, Object... args) {
         this(format, Arrays.asList(args).iterator());
@@ -56,19 +60,19 @@ public class TextComponentFormatted extends TextComponentList {
         buffer = new TextComponentList();
     }
 
-    private IChatComponent createComponent(String[] parts, Iterator args) {
-        ChatStyle chatStyle = getStyle(parts[0]);
+    private ITextComponent createComponent(String[] parts, Iterator args) {
+        Style Style = getStyle(parts[0]);
         String[] textWithHover = parts[1].split(" << ");
         String actualText = textWithHover[0];
 
         while (actualText.contains("%s")) {
             actualText = actualText.replaceFirst("%s", args.next().toString());
         }
-        IChatComponent message = new ChatComponentText(actualText).setChatStyle(chatStyle);
+        ITextComponent message = new TextComponentString(actualText).setStyle(Style);
 
         if (textWithHover.length == 2) {
-            IChatComponent hoverText = new TextComponentFormatted("{" + textWithHover[1] + "}", args);
-            chatStyle.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText));
+            ITextComponent hoverText = new TextComponentFormatted("{" + textWithHover[1] + "}", args);
+            Style.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText));
         }
 
         return message;
@@ -80,11 +84,11 @@ public class TextComponentFormatted extends TextComponentList {
         Object currArg = args.next();
         if (currArg instanceof IChatFormat) {
             buffer.appendSibling(((IChatFormat) currArg).toChatMessage());
-        } else if (currArg instanceof IChatComponent) {
-            buffer.appendSibling((IChatComponent) currArg);
+        } else if (currArg instanceof ITextComponent) {
+            buffer.appendSibling((ITextComponent) currArg);
         } else if (currArg instanceof TextComponentContainer) {
             resetBuffer();
-            for (IChatComponent message : (TextComponentContainer) currArg) {
+            for (ITextComponent message : (TextComponentContainer) currArg) {
                 this.appendSibling(message);
             }
         }
@@ -107,50 +111,50 @@ public class TextComponentFormatted extends TextComponentList {
 
 
     /**
-     * Converts the modifiers String to a ChatStyle
+     * Converts the modifiers String to a Style
      * {modifiers|  some text}
      *  ^^^^^^^^    ^^^^^^^^^
      *  STYLE  for  THIS TEXT
      */
-    private ChatStyle getStyle(String modifiers) {
+    private Style getStyle(String modifiers) {
 
-        ChatStyle chatStyle = new ChatStyle();
+        Style Style = new Style();
 
         for (char c : modifiers.toCharArray()) {
-            applyModifier(chatStyle, c);
+            applyModifier(Style, c);
         }
 
-        return chatStyle;
+        return Style;
     }
 
     /**
      * Applies modifier to the style
      * Returns whether or not the modifier was valid
      */
-    private boolean applyModifier(ChatStyle chatStyle, char modifier) {
+    private boolean applyModifier(Style Style, char modifier) {
         if (modifier >= '0' && modifier <= '9' || modifier >= 'a' && modifier <= 'f') {
-            chatStyle.setColor(ColorUtils.colorMap.get(modifier));
+            Style.setColor(ColorUtils.colorMap.get(modifier));
             return true;
         }
         switch (modifier) {
-            case 'k': chatStyle.setObfuscated(true); return true;
-            case 'l': chatStyle.setBold(true); return true;
-            case 'm': chatStyle.setStrikethrough(true); return true;
-            case 'n': chatStyle.setUnderlined(true); return true;
-            case 'o': chatStyle.setItalic(true); return true;
+            case 'k': Style.setObfuscated(true); return true;
+            case 'l': Style.setBold(true); return true;
+            case 'm': Style.setStrikethrough(true); return true;
+            case 'n': Style.setUnderlined(true); return true;
+            case 'o': Style.setItalic(true); return true;
         }
         return false;
     }
 
     /**
-     * Adds a ChatComponentText between all of the siblings
+     * Adds a TextComponentString between all of the siblings
      * This can be used for easily displaying a onHoverText on multiple lines
      */
     public TextComponentFormatted applyDelimiter(String delimiter) {
-        List<IChatComponent> newSiblings = new ArrayList<IChatComponent>();
-        for (IChatComponent component : (List<IChatComponent>) siblings) {
+        List<ITextComponent> newSiblings = new ArrayList<ITextComponent>();
+        for (ITextComponent component : (List<ITextComponent>) siblings) {
             if (newSiblings.size() > 0) {
-                newSiblings.add(new ChatComponentText(delimiter));
+                newSiblings.add(new TextComponentString(delimiter));
             }
             newSiblings.add(component);
         }
@@ -160,11 +164,11 @@ public class TextComponentFormatted extends TextComponentList {
 
     /**
      * Cut down version of the client-side only method for getting formatting code
-     * from the ChatStyle class
+     * from the Style class
      *
      * Why is this client side?
      */
-    private String getFormattingCodeForStyle(ChatStyle style) {
+    private String getFormattingCodeForStyle(Style style) {
         StringBuilder stringbuilder = new StringBuilder();
 
         if (style.getColor() != null)
@@ -174,27 +178,27 @@ public class TextComponentFormatted extends TextComponentList {
 
         if (style.getBold())
         {
-            stringbuilder.append(EnumChatFormatting.BOLD);
+            stringbuilder.append(TextFormatting.BOLD);
         }
 
         if (style.getItalic())
         {
-            stringbuilder.append(EnumChatFormatting.ITALIC);
+            stringbuilder.append(TextFormatting.ITALIC);
         }
 
         if (style.getUnderlined())
         {
-            stringbuilder.append(EnumChatFormatting.UNDERLINE);
+            stringbuilder.append(TextFormatting.UNDERLINE);
         }
 
         if (style.getObfuscated())
         {
-            stringbuilder.append(EnumChatFormatting.OBFUSCATED);
+            stringbuilder.append(TextFormatting.OBFUSCATED);
         }
 
         if (style.getStrikethrough())
         {
-            stringbuilder.append(EnumChatFormatting.STRIKETHROUGH);
+            stringbuilder.append(TextFormatting.STRIKETHROUGH);
         }
 
         return stringbuilder.toString();
@@ -211,13 +215,13 @@ public class TextComponentFormatted extends TextComponentList {
         String[] result = new String[this.siblings.size()];
         int k = 0;
 
-        for (IChatComponent component : (List<IChatComponent>) this.getSiblings()) {
+        for (ITextComponent component : this.getSiblings()) {
 
             String actualText = "";
-            for (IChatComponent subComponent : (List<IChatComponent>) component.getSiblings()) {
-                actualText += getFormattingCodeForStyle(subComponent.getChatStyle());
+            for (ITextComponent subComponent : component.getSiblings()) {
+                actualText += getFormattingCodeForStyle(subComponent.getStyle());
                 actualText += subComponent.getUnformattedText();
-                actualText += EnumChatFormatting.RESET;
+                actualText += TextFormatting.RESET;
             }
 
             result[k++] = actualText;

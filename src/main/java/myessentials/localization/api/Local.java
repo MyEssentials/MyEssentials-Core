@@ -2,8 +2,6 @@ package myessentials.localization.api;
 
 import myessentials.MyEssentialsCore;
 import myessentials.chat.api.TextComponentFormatted;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.*;

@@ -1,13 +1,16 @@
 package myessentials.entities.api.tool;
 
-import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.Position;
 import myessentials.utils.PlayerUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 
 /**
  * A wrapper class for an instance of an itemstack which executes only on the server-side.
@@ -17,7 +20,7 @@ public abstract class Tool {
     /**
      * Every tool starts with this string. Allows easy checks for invalid tools.
      */
-    public static final String IDENTIFIER = EnumChatFormatting.BLUE.toString();
+    public static final String IDENTIFIER = TextFormatting.BLUE.toString();
 
     protected EntityPlayer owner;
 
@@ -31,19 +34,18 @@ public abstract class Tool {
         this.toolName = IDENTIFIER + toolName;
     }
 
-    public abstract void onItemUse(BlockPos bp, int face);
+    public abstract void onItemUse(Position pos, EnumFacing face);
 
     protected abstract String[] getDescription();
 
-    public void onShiftRightClick() {
-    }
+    public void onShiftRightClick() { }
 
     public ItemStack getItemStack() {
-        return PlayerUtils.getItemStackFromPlayer(owner, Items.wooden_hoe, toolName);
+        return PlayerUtils.getItemStackFromPlayer(owner, Items.WOODEN_HOE, toolName);
     }
 
     public void giveItemStack() {
-        ItemStack itemStack = new ItemStack(Items.wooden_hoe);
+        ItemStack itemStack = new ItemStack(Items.WOODEN_HOE);
         itemStack.setStackDisplayName(toolName);
         NBTTagList lore = new NBTTagList();
         for(String s : getDescription()) {

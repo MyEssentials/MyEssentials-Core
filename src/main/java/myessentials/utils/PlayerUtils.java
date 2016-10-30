@@ -1,30 +1,27 @@
 package myessentials.utils;
 
 import com.mojang.authlib.GameProfile;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
 import myessentials.MyEssentialsCore;
+import myessentials.entities.api.Position;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.S07PacketRespawn;
-import net.minecraft.network.play.server.S1DPacketEntityEffect;
-import net.minecraft.network.play.server.S2FPacketSetSlot;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketEntityEffect;
+import net.minecraft.network.play.server.SPacketRespawn;
+import net.minecraft.network.play.server.SPacketSetExperience;
+import net.minecraft.network.play.server.SPacketSetSlot;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.ServerConfigurationManager;
-import net.minecraft.server.management.UserList;
 import net.minecraft.server.management.UserListOps;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,9 +32,7 @@ import java.util.UUID;
  */
 public class PlayerUtils {
 
-    private PlayerUtils() {
-
-    }
+    private PlayerUtils() { }
 
     /**
      * Takes the amount of items specified.
@@ -45,7 +40,7 @@ public class PlayerUtils {
      */
     public static boolean takeItemFromPlayer(EntityPlayer player, String itemName, int amount) {
         String[] split = itemName.split(":");
-        return takeItemFromPlayer(player, GameRegistry.findItem(split[0], split[1]), amount, split.length == 3 ? Integer.parseInt(split[2]) : -1);
+        return takeItemFromPlayer(player, ItemUtils.itemFromName(split[0] + ":" + split[1]), amount, split.length == 3 ? Integer.parseInt(split[2]) : -1);
     }
 
     /**
@@ -81,14 +76,15 @@ public class PlayerUtils {
             if (player.inventory.mainInventory[i].stackSize >= amount) {
                 player.inventory.decrStackSize(i, amount);
                 Slot slot = player.openContainer.getSlotFromInventory(player.inventory, i);
-                ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, slot.slotNumber, player.inventory.mainInventory[i]));
+
+                ((EntityPlayerMP) player).connection.sendPacket(new SPacketSetSlot(player.openContainer.windowId, slot.slotNumber, player.inventory.mainInventory[i]));
                 return true;
             } else {
                 int stackSize = player.inventory.mainInventory[i].stackSize;
                 player.inventory.decrStackSize(i, stackSize);
                 amount -= stackSize;
                 Slot slot = player.openContainer.getSlotFromInventory(player.inventory, i);
-                ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, slot.slotNumber, player.inventory.mainInventory[i]));
+                ((EntityPlayerMP) player).connection.sendPacket(new SPacketSetSlot(player.openContainer.windowId, slot.slotNumber, player.inventory.mainInventory[i]));
             }
         }
         return true;
@@ -99,7 +95,7 @@ public class PlayerUtils {
      */
     public static void giveItemToPlayer(EntityPlayer player, String itemName, int amount) {
         String[] split = itemName.split(":");
-        giveItemToPlayer(player, GameRegistry.findItem(split[0], split[1]), amount, split.length > 2 ? Integer.parseInt(split[2]) : 0);
+        giveItemToPlayer(player, ItemUtils.itemFromName(split[0] + ":" + split[1]), amount, split.length > 2 ? Integer.parseInt(split[2]) : 0);
     }
 
     /**
@@ -162,7 +158,7 @@ public class PlayerUtils {
                 // get the actual inventory Slot:
                 Slot slot = player.openContainer.getSlotFromInventory(player.inventory, i);
                 // send S2FPacketSetSlot to the player with the new / changed stack (or null)
-                ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, slot.slotNumber, player.inventory.mainInventory[i]));
+                ((EntityPlayerMP) player).connection.sendPacket(new SPacketSetSlot(player.openContainer.windowId, slot.slotNumber, player.inventory.mainInventory[i]));
             }
         }
     }
@@ -183,7 +179,7 @@ public class PlayerUtils {
             // get the actual inventory Slot:
             Slot slot = player.openContainer.getSlotFromInventory(player.inventory, i);
             // send S2FPacketSetSlot to the player with the new / changed stack (or null)
-            ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, slot.slotNumber, player.inventory.mainInventory[i]));
+            ((EntityPlayerMP) player).connection.sendPacket(new SPacketSetSlot(player.openContainer.windowId, slot.slotNumber, player.inventory.mainInventory[i]));
         } else {
             WorldUtils.dropAsEntity(player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ, itemStack);
         }
@@ -202,6 +198,106 @@ public class PlayerUtils {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    public static void teleportEntity(Entity entity, Position pos) {
+        if (entity == null || entity.worldObj.isRemote || entity.isBeingRidden()) return;
+
+        World startWorld = entity.worldObj;
+        World destinationWorld = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(pos.dim());
+
+        Entity mount = entity.getRidingEntity();
+        if (mount != null && mount != entity) {
+            entity.dismountRidingEntity();
+            teleportEntity(mount, pos);
+        }
+
+        boolean interDimensional = startWorld.provider.getDimension() != destinationWorld.provider.getDimension();
+
+        startWorld.updateEntityWithOptionalForce(entity, false);//added
+
+        if ((entity instanceof EntityPlayerMP) && interDimensional) {
+            EntityPlayerMP player = (EntityPlayerMP) entity;
+            player.closeScreen();//added
+            player.dimension = pos.dim();
+            player.connection.sendPacket(new SPacketRespawn(player.dimension, player.worldObj.getDifficulty(), destinationWorld.getWorldInfo().getTerrainType(), player.interactionManager.getGameType()));
+            startWorld.removeEntityDangerously(player);
+
+            startWorld.playerEntities.remove(player);
+            startWorld.updateAllPlayersSleepingFlag();
+            int i = entity.chunkCoordX;
+            int j = entity.chunkCoordZ;
+            if ((entity.addedToChunk) && (startWorld.getChunkFromBlockCoords(new BlockPos(entity.posX, entity.posY, entity.posZ)).isPopulated())) //todo make sure this isnt broken			{
+            {
+                startWorld.getChunkFromChunkCoords(i, j).removeEntity(entity);
+                startWorld.getChunkFromChunkCoords(i, j).setModified(true);
+            }
+            startWorld.loadedEntityList.remove(entity);
+            startWorld.onEntityRemoved(entity);
+        }
+
+        entity.setLocationAndAngles(pos.x(), pos.y(), pos.z(), 0, 0);
+
+        ((WorldServer) destinationWorld).getChunkProvider().loadChunk(pos.xi() >> 4, pos.zi() >> 4);
+
+        destinationWorld.theProfiler.startSection("placing");
+        if (interDimensional) {
+            if (!(entity instanceof EntityPlayer)) {
+                NBTTagCompound entityNBT = new NBTTagCompound();
+                entity.isDead = false;
+                entityNBT.setString("id", EntityList.getEntityString(entity));
+                entity.writeToNBT(entityNBT);
+                entity.isDead = true;
+                entity = EntityList.createEntityFromNBT(entityNBT, destinationWorld);
+                if (entity == null) {
+                    MyEssentialsCore.instance.LOG.error("Failed to teleport entity to new location");
+                    return;
+                }
+                entity.dimension = destinationWorld.provider.getDimension();
+            }
+            destinationWorld.spawnEntityInWorld(entity);
+            entity.setWorld(destinationWorld);
+        }
+        entity.setLocationAndAngles(pos.x(), pos.y(), pos.z(), 0, 0);
+
+        destinationWorld.updateEntityWithOptionalForce(entity, false);
+        entity.setLocationAndAngles(pos.x(), pos.y(), pos.z(), 0, 0);
+
+        if ((entity instanceof EntityPlayerMP)) {
+            EntityPlayerMP player = (EntityPlayerMP) entity;
+            if (interDimensional) {
+                player.mcServer.getPlayerList().preparePlayer(player, (WorldServer) destinationWorld);
+            }
+            player.connection.setPlayerLocation(pos.x(), pos.y(), pos.z(), player.rotationYaw, player.rotationPitch);
+        }
+
+        destinationWorld.updateEntityWithOptionalForce(entity, false);
+
+        if (((entity instanceof EntityPlayerMP)) && interDimensional) {
+            EntityPlayerMP player = (EntityPlayerMP) entity;
+            player.interactionManager.setWorld((WorldServer) destinationWorld);
+            player.mcServer.getPlayerList().updateTimeAndWeatherForPlayer(player, (WorldServer) destinationWorld);
+            player.mcServer.getPlayerList().syncPlayerInventory(player);
+
+            for (PotionEffect potionEffect : player.getActivePotionEffects()) {
+                player.connection.sendPacket(new SPacketEntityEffect(player.getEntityId(), potionEffect));
+            }
+
+            player.connection.sendPacket(new SPacketSetExperience(player.experience, player.experienceTotal, player.experienceLevel));
+            FMLCommonHandler.instance().firePlayerChangedDimensionEvent(player, startWorld.provider.getDimension(), destinationWorld.provider.getDimension());
+        }
+        entity.setLocationAndAngles(pos.x(), pos.y(), pos.z(), 0, entity.rotationPitch);
+
+        if (mount != null) {
+
+            entity.startRiding(mount);
+            if ((entity instanceof EntityPlayerMP)) {
+                destinationWorld.updateEntityWithOptionalForce(entity, true);
+            }
+        }
+        destinationWorld.theProfiler.endSection();
+        entity.fallDistance = 0;
+    }
+
     /**
      * Teleports a player to (x, y, z) in dimension dim without creating any nether portals of sorts.
      * Also preserves motion and potion effects even on cross dimensional teleports.
@@ -210,32 +306,35 @@ public class PlayerUtils {
      * The base of the Teleport code came from CoFHLib teleport code:
      * https://github.com/CoFH/CoFHLib/blob/master/src/main/java/cofh/lib/util/helpers/EntityHelper.java
      */
-    public static void teleport(EntityPlayerMP player, int dim, double x, double y, double z) {
-        if (player.riddenByEntity != null) {
-            player.riddenByEntity.mountEntity(null);
-        }
-        if (player.ridingEntity != null) {
-            player.mountEntity(null);
+    /*public static void teleport(EntityPlayerMP player, int dim, double x, double y, double z) {
+        // if (player.isBeingRidden()) { }
+
+        if (player.isRiding()) {
+            player.dismountRidingEntity();
         }
         if (player.dimension != dim) {
             transferPlayerToDimension(player, dim);
         }
         player.setPositionAndUpdate(x, y, z);
     }
-
+*/
     /**
      * Transfers a player to a new dimension preserving potion effects and motion.
      */
-    public static void transferPlayerToDimension(EntityPlayerMP player, int dim) {
+  /*  public static void transferPlayerToDimension(EntityPlayerMP player, int dim) {
         ServerConfigurationManager configManager = player.mcServer.getConfigurationManager();
         int oldDimension = player.dimension;
 
-        WorldServer oldWorldServer = configManager.getServerInstance().worldServerForDimension(oldDimension);
-        WorldServer newWorldServer = configManager.getServerInstance().worldServerForDimension(dim);
+        WorldServer oldWorldServer = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(oldDimension);
+        WorldServer newWorldServer = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(dim);
 
+        player.closeScreen();
         player.dimension = dim;
-        player.playerNetServerHandler.sendPacket(new S07PacketRespawn(player.dimension, player.worldObj.difficultySetting, player.worldObj.getWorldInfo().getTerrainType(), player.theItemInWorldManager.getGameType()));
-        oldWorldServer.removePlayerEntityDangerously(player);
+        player.connection.sendPacket(new SPacketRespawn(player.dimension, player.worldObj.difficultySetting, player.worldObj.getWorldInfo().getTerrainType(), player.theItemInWorldManager.getGameType()));
+        oldWorldServer.removeEntityDangerously(player);
+        oldWorldServer.playerEntities.remove(player);
+        oldWorldServer.updateAllPlayersSleepingFlag();
+
         player.isDead = false;
 
         transferPlayerToWorld(player, oldWorldServer, newWorldServer);
@@ -244,16 +343,16 @@ public class PlayerUtils {
         player.theItemInWorldManager.setWorld(newWorldServer);
         configManager.updateTimeAndWeatherForPlayer(player, newWorldServer);
         configManager.syncPlayerInventory(player);
-        for (PotionEffect potioneffect : (Iterable<PotionEffect>) player.getActivePotionEffects()) {
+        for (PotionEffect potioneffect : player.getActivePotionEffects()) {
             player.playerNetServerHandler.sendPacket(new S1DPacketEntityEffect(player.getEntityId(), potioneffect));
         }
         FMLCommonHandler.instance().firePlayerChangedDimensionEvent(player, oldDimension, dim);
     }
-
+*/
     /**
      * Tranfers a player to a new world preserving motion.
      */
-    public static void transferPlayerToWorld(EntityPlayerMP player, WorldServer oldWorld, WorldServer newWorld) {
+  /*  public static void transferPlayerToWorld(EntityPlayerMP player, WorldServer oldWorld, WorldServer newWorld) {
         double moveFactor = oldWorld.provider.getMovementFactor() / newWorld.provider.getMovementFactor();
         double x = player.posX * moveFactor;
         double z = player.posZ * moveFactor;
@@ -265,29 +364,43 @@ public class PlayerUtils {
             newWorld.updateEntityWithOptionalForce(player, false);
         }
         player.setWorld(newWorld);
+    }*/
+
+    public static GameProfile getGameProfile(UUID uuid) {
+        for (GameProfile profile : FMLCommonHandler.instance().getMinecraftServerInstance().getGameProfiles()) {
+            if (profile.getId() == uuid) {
+                return profile;
+            }
+        }
+        return null;
     }
 
+    public static GameProfile getGameProfile(String username) {
+        for (GameProfile profile : FMLCommonHandler.instance().getMinecraftServerInstance().getGameProfiles()) {
+            if (profile.getName().equals(username)) {
+                return profile;
+            }
+        }
+        return null;
+    }
 
     public static boolean isOp(EntityPlayer player) {
-        if (player.getGameProfile() == null) {
-            return false;
-        }
-
         return isOp(player.getGameProfile());
     }
 
     public static boolean isOp(UUID uuid) {
-        GameProfile gameProfile = MinecraftServer.getServer().func_152358_ax().func_152652_a(uuid);
-        if(gameProfile == null) {
-            return false;
-        }
-
-        return isOp(gameProfile);
+        return isOp(getGameProfile(uuid));
     }
 
-    @SuppressWarnings("unchecked")
     public static boolean isOp(GameProfile gameProfile) {
-        UserListOps ops = MinecraftServer.getServer().getConfigurationManager().func_152603_m();
+        UserListOps ops = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayers();
+        for (String name : ops.getKeys()) {
+            if (gameProfile.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+        /*
         try {
             Class clazz = Class.forName("net.minecraft.server.management.UserList");
             Method method = clazz.getDeclaredMethod("func_152692_d", Object.class);
@@ -301,38 +414,13 @@ public class PlayerUtils {
         }
 
         return false;
-    }
-
-
-    /**
-     * Gets the position at which the player is looking
-     */
-    public static MovingObjectPosition getMovingObjectPositionFromPlayer(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_) {
-        float f = 1.0F;
-        float f1 = p_77621_2_.prevRotationPitch + (p_77621_2_.rotationPitch - p_77621_2_.prevRotationPitch) * f;
-        float f2 = p_77621_2_.prevRotationYaw + (p_77621_2_.rotationYaw - p_77621_2_.prevRotationYaw) * f;
-        double d0 = p_77621_2_.prevPosX + (p_77621_2_.posX - p_77621_2_.prevPosX) * (double) f;
-        double d1 = p_77621_2_.prevPosY + (p_77621_2_.posY - p_77621_2_.prevPosY) * (double) f + (double) (p_77621_1_.isRemote ? p_77621_2_.getEyeHeight() - p_77621_2_.getDefaultEyeHeight() : p_77621_2_.getEyeHeight()); // isRemote check to revert changes to ray trace position due to adding the eye height clientside and player yOffset differences
-        double d2 = p_77621_2_.prevPosZ + (p_77621_2_.posZ - p_77621_2_.prevPosZ) * (double) f;
-        Vec3 vec3 = Vec3.createVectorHelper(d0, d1, d2);
-        float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
-        float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
-        float f5 = -MathHelper.cos(-f1 * 0.017453292F);
-        float f6 = MathHelper.sin(-f1 * 0.017453292F);
-        float f7 = f4 * f5;
-        float f8 = f3 * f5;
-        double d3 = 5.0D;
-        if (p_77621_2_ instanceof EntityPlayerMP) {
-            d3 = ((EntityPlayerMP) p_77621_2_).theItemInWorldManager.getBlockReachDistance();
-        }
-        Vec3 vec31 = vec3.addVector((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
-        return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
+        */
     }
 
 
     @SuppressWarnings("unchecked")
-    public static EntityPlayer getPlayerFromUUID(UUID uuid) {
-        for(EntityPlayer player : (List<EntityPlayer>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+    public static EntityPlayer getPlayer(UUID uuid) {
+        for(EntityPlayer player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerList()) {
             if(player.getGameProfile().getId().equals(uuid)) {
                 return player;
             }
@@ -340,17 +428,17 @@ public class PlayerUtils {
         return null;
     }
 
-    public static UUID getUUIDFromUsername(String username) {
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
+    public static UUID getUUID(String username) {
+        GameProfile profile = getGameProfile(username);
         return profile == null ? null : profile.getId();
     }
 
-    public static String getUsernameFromUUID(UUID uuid) {
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152652_a(uuid);
+    public static String getUsername(UUID uuid) {
+        GameProfile profile = getGameProfile(uuid);
         return profile == null ? null : profile.getName();
     }
 
     public static List<String> getAllUsernames() {
-        return Arrays.asList(MinecraftServer.getServer().func_152358_ax().func_152654_a());
+        return Arrays.asList(FMLCommonHandler.instance().getMinecraftServerInstance().getAllUsernames());
     }
 }

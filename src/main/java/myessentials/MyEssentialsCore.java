@@ -1,26 +1,24 @@
 package myessentials;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import myessentials.entities.api.sign.SignManager;
 import myessentials.entities.api.tool.ToolManager;
 import myessentials.localization.api.Local;
 import myessentials.localization.api.LocalManager;
+import myessentials.utils.VisualsHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = "MyEssentials-Core", name = "MyEssentials-Core", version = "@VERSION@", dependencies = "required-after:Forge", acceptableRemoteVersions = "*")
 public class MyEssentialsCore {
-    @Instance("MyEssentials-Core")
+    @Mod.Instance("MyEssentials-Core")
     public static MyEssentialsCore instance;
 
     public Local LOCAL;
     public Logger LOG;
 
-    @EventHandler
+    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
 
         LOG = ev.getModLog();
@@ -33,13 +31,9 @@ public class MyEssentialsCore {
         LocalManager.register(LOCAL, "myessentials");
 
         // Register handlers/trackers
-        FMLCommonHandler.instance().bus().register(PlayerTracker.instance);
         MinecraftForge.EVENT_BUS.register(PlayerTracker.instance);
-
-        FMLCommonHandler.instance().bus().register(ToolManager.instance);
         MinecraftForge.EVENT_BUS.register(ToolManager.instance);
-
-        FMLCommonHandler.instance().bus().register(SignManager.instance);
-        MinecraftForge.EVENT_BUS.register(SignManager.instance);
+        MinecraftForge.EVENT_BUS.register(VisualsHandler.instance);
+//        MinecraftForge.EVENT_BUS.register(SignManager.instance);
     }
 }

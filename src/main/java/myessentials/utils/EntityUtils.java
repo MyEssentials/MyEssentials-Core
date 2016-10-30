@@ -1,11 +1,9 @@
 package myessentials.utils;
 
-import myessentials.utils.ClassUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.IProjectile;
-import net.minecraft.entity.boss.IBossDisplayData;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.monster.EntityGolem;
@@ -22,15 +20,11 @@ public class EntityUtils {
     private static ConcurrentMap<Class<?>, String> typeCache = new ConcurrentHashMap<Class<?>, String>();
 
     public static String getEntityPermission(Entity e) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getEntityType(e).toLowerCase());
-        builder.append(".");
-        builder.append(getEntityName(e));
-        return builder.toString();
+        return getEntityType(e).toLowerCase() + "." + getEntityName(e);
     }
 
     public static String getEntityName(Entity e) {
-        String n = e.getCommandSenderName();
+        String n = e.getCommandSenderEntity().getName();
         if (n.startsWith("entity.") && n.endsWith(".name")) {
             return EntityList.getEntityString(e);
         } else {
@@ -53,8 +47,6 @@ public class EntityUtils {
     private static String getEntityTypeNonCache(Entity e) {
     	if (e instanceof EntityGolem) {
             return "Golem";
-        } else if (e instanceof IBossDisplayData) {
-        	return "Boss";
         } else if (e instanceof IAnimals) {
         	return "Animal";
         } else if (e instanceof IMob) {

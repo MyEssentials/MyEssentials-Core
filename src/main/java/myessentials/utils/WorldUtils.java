@@ -4,7 +4,10 @@ import myessentials.entities.api.ChunkPos;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +53,26 @@ public class WorldUtils {
      * Returns the first block from top to bottom that is considered not opaque
      */
     public static int getMaxHeightWithSolid(int dim, int x, int z) {
-        World world = MinecraftServer.getServer().worldServerForDimension(dim);
+        World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(dim);
         int y = world.getActualHeight();
-        while(!world.getBlock(x, y, z).getMaterial().isOpaque() && y > 0)
-            y--;
+        BlockPos bp = new BlockPos(x, y, z);
+        while(!world.getBlockState(bp).getMaterial().isOpaque() && y > 0) {
+            bp.add(0, -1, 0);
+        }
         return y;
+    }
+
+    /**
+     * General method for getting Minecraft Server instance
+     */
+    public static MinecraftServer getServer() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance();
+    }
+
+    /**
+     * Return the WorldServer with the given id
+     */
+    public static WorldServer getWorld(int id) {
+        return getServer().worldServerForDimension(id);
     }
 }

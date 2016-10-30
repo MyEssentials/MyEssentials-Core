@@ -1,15 +1,14 @@
 package myessentials.entities.api.tool;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
-import myessentials.entities.api.BlockPos;
-import myessentials.utils.ChatUtils;
+import myessentials.entities.api.Position;
 import myessentials.utils.PlayerUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,7 +26,7 @@ public class ToolManager {
     public boolean register(Tool tool) {
         for(Tool t : tools) {
             if(t.owner == tool.owner && t.getItemStack() != null) {
-                t.owner.addChatMessage(new ChatComponentText("You already have a tool!"));
+                t.owner.addChatMessage(new TextComponentString("You already have a tool!"));
                 return false;
             }
         }
@@ -52,12 +51,8 @@ public class ToolManager {
     }
 
     @SubscribeEvent
-    public void onPlayerInteract(PlayerInteractEvent ev) {
-        if(!(ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)) {
-            return;
-        }
-
-        ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
+    public void onPlayerRightClickBlock(PlayerInteractEvent.RightClickBlock ev) {
+        ItemStack currentStack = ev.getEntityPlayer().inventory.getCurrentItem();
         if(currentStack == null) {
             return;
         }
@@ -69,12 +64,30 @@ public class ToolManager {
                 continue;
             }
 
-            if(ev.entityPlayer == tool.owner && tool.getItemStack() == currentStack) {
-                if (ev.entityPlayer.isSneaking() && ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
+            if(ev.getEntityPlayer() == tool.owner && tool.getItemStack() == currentStack) {
+                tool.onItemUse(new Position(ev.getPos(), ev.getWorld().provider.getDimension()), ev.getFace());
+                return;
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerRightClickItem(PlayerInteractEvent.RightClickItem ev) {
+        ItemStack currentStack = ev.getEntityPlayer().inventory.getCurrentItem();
+        if(currentStack == null) {
+            return;
+        }
+
+        for(Iterator<Tool> it = tools.iterator(); it.hasNext(); ) {
+            Tool tool = it.next();
+            if(tool.owner == null) {
+                it.remove();
+                continue;
+            }
+
+            if(ev.getEntityPlayer() == tool.owner && tool.getItemStack() == currentStack) {
+                if (ev.getEntityPlayer().isSneaking()) {
                     tool.onShiftRightClick();
-                    return;
-                } else if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-                    tool.onItemUse(new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.face);
                     return;
                 }
             }
@@ -84,7 +97,7 @@ public class ToolManager {
     @SubscribeEvent
     public void onUseHoe(UseHoeEvent ev) {
         for(Tool tool : tools) {
-            if (ev.current == tool.getItemStack()) {
+            if (ev.getCurrent().equals(tool.getItemStack())) {
                 ev.setCanceled(true);
                 return;
             }

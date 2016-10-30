@@ -1,6 +1,6 @@
 package myessentials.test.entities.tool;
 
-import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.Position;
 import myessentials.entities.api.tool.Tool;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -14,7 +14,7 @@ public class FakeTool extends Tool {
 
     // REF: Change the name of method to something different since it can be confused with the onItemUse method in items
     @Override
-    public void onItemUse(BlockPos bp, int face) {
+    public void onItemUse(Position bp, int face) {
         amountOfClicks++;
     }
 

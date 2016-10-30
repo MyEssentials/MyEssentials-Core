@@ -2,9 +2,7 @@ package myessentials.chat.api;
 
 import myessentials.localization.api.LocalManager;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.IChatComponent;
-
-import java.util.List;
+import net.minecraft.util.text.ITextComponent;
 
 public class ChatManager {
 
@@ -20,13 +18,13 @@ public class ChatManager {
      * If the message sent is a ChatComponentList then only its siblings are sent, omitting the root component
      */
     @SuppressWarnings("unchecked")
-    public static void send(ICommandSender sender, IChatComponent message) {
+    public static void send(ICommandSender sender, ITextComponent message) {
         if (sender == null) {
             return;
         }
 
         if (message instanceof TextComponentList) {
-            for (IChatComponent sibling : (List<IChatComponent>)message.getSiblings()) {
+            for (ITextComponent sibling : message.getSiblings()) {
                 sender.addChatMessage(sibling);
             }
         } else {

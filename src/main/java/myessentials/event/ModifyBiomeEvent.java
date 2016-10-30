@@ -1,17 +1,16 @@
 package myessentials.event;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
-import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * Fired when a biome is about to be modified.
  * If the event is canceled the biome is not modified.
  */
 @Cancelable
-public class ModifyBiomeEvent extends Event 
+public class ModifyBiomeEvent extends Event
 {
     public final int x;
     public final int z;

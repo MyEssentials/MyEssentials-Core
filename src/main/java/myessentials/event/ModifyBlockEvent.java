@@ -1,50 +1,48 @@
 package myessentials.event;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * Fired when a block is about to be modified.
  * If the event is canceled the block is not modified.
  */
 @Cancelable
-public class ModifyBlockEvent extends Event 
+public class ModifyBlockEvent extends Event
 {
-    public final int x;
-    public final int y;
-    public final int z;
+    public final BlockPos bp;
     public final World world;
 
-    public ModifyBlockEvent(World world, int x, int y, int z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public ModifyBlockEvent(World world, BlockPos bp) {
+        this.bp = bp;
         this.world = world;
     }
 
     @SuppressWarnings("unused")
-    public static boolean checkAndSetBlockToAir(World world, int x, int y, int z) {
-        if (!MinecraftForge.EVENT_BUS.post(new ModifyBlockEvent(world, x, y, z))) {
-            return world.setBlockToAir(x, y, z);
+    public static boolean checkAndSetBlockToAir(World world, BlockPos bp) {
+        if (!MinecraftForge.EVENT_BUS.post(new ModifyBlockEvent(world, bp))) {
+            return world.setBlockToAir(bp);
         }
         return false;
     }
 
     @SuppressWarnings("unused")
-    public static boolean checkAndSetBlock(World world, int x, int y, int z, Block block, int meta, int flags) {
-        if (!MinecraftForge.EVENT_BUS.post(new ModifyBlockEvent(world, x, y, z))) {
-            return world.setBlock(x, y, z, block, meta, flags);
+    public static boolean checkAndSetBlock(World world, BlockPos bp, IBlockState state, int flags) {
+        if (!MinecraftForge.EVENT_BUS.post(new ModifyBlockEvent(world, bp))) {
+            return world.setBlockState(bp, state, flags);
         }
         return false;
     }
 
     @SuppressWarnings("unused")
-    public static boolean checkFlagAndBlock(boolean isCanceled, World world, int x, int y, int z) {
+    public static boolean checkFlagAndBlock(boolean isCanceled, World world, BlockPos bp) {
         if (!isCanceled) {
-            isCanceled = MinecraftForge.EVENT_BUS.post(new ModifyBlockEvent(world, x, y, z));
+            isCanceled = MinecraftForge.EVENT_BUS.post(new ModifyBlockEvent(world, bp));
         }
         return isCanceled;
     }

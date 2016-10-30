@@ -1,6 +1,6 @@
 package myessentials.deploader;
 
-import cpw.mods.fml.common.versioning.ComparableVersion;
+import net.minecraftforge.fml.common.versioning.ComparableVersion;
 
 public class Dependency {
     private String url;

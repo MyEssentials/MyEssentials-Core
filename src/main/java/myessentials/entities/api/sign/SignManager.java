@@ -1,13 +1,13 @@
 package myessentials.entities.api.sign;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import myessentials.classtransformers.SignClassTransformer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,8 +21,8 @@ public class SignManager {
 
     public final Map<String, SignType> signTypes = new HashMap<String, SignType>(1);
 
-    public Sign loadSign(World world, int x, int y, int z) {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
+    public Sign loadSign(World world, BlockPos bp) {
+        TileEntity tileEntity = world.getTileEntity(bp);
         if(!(tileEntity instanceof TileEntitySign))
             return null;
 
@@ -38,26 +38,21 @@ public class SignManager {
     }
 
     @SubscribeEvent
-    public void onPlayerInteract(PlayerInteractEvent ev) {
-        if(!(ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)) {
-            return;
-        }
-
-        Sign sign = loadSign(ev.world, ev.x, ev.y, ev.z);
+    public void onPlayerInteract(PlayerInteractEvent.RightClickBlock ev) {
+        Sign sign = loadSign(ev.getWorld(), ev.getPos());
         if(sign == null)
             return;
 
-        if(ev.entityPlayer.isSneaking()) {
-            sign.onShiftRightClick(ev.entityPlayer);
+        if(ev.getEntityPlayer().isSneaking()) {
+            sign.onShiftRightClick(ev.getEntityPlayer());
         } else {
-            sign.onRightClick(ev.entityPlayer);
+            sign.onRightClick(ev.getEntityPlayer());
         }
     }
 
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
-        Sign sign = loadSign(ev.world, ev.x, ev.y, ev.z);
-
+        Sign sign = loadSign(ev.getWorld(), ev.getPos());
         if(sign != null) {
             sign.onShiftRightClick(ev.getPlayer());
             ev.setCanceled(true);

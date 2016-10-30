@@ -2,10 +2,10 @@ package myessentials.utils;
 
 import myessentials.MyEssentialsCore;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,21 +14,20 @@ import java.util.Map;
  */
 public class ChatUtils {
 
-    private ChatUtils() {
-
-    }
+    private ChatUtils() { }
 
     /**
      * Maps chat formatting by it's code
      */
-    private static final Map<Character, EnumChatFormatting> formattingMap = new HashMap<Character, EnumChatFormatting>(22);
+    private static final Map<Character, TextFormatting> formattingMap = new HashMap<Character, TextFormatting>(22);
     static {
-        for(EnumChatFormatting formatting: EnumChatFormatting.values()) {
-            formattingMap.put(formatting.getFormattingCode(), formatting);
+        for(TextFormatting formatting: TextFormatting.values()) {
+            formattingMap.put(formatting.toString().charAt(1), formatting);
         }
+
     }
 
-    public static void sendChat(ICommandSender sender, IChatComponent message) {
+    public static void sendChat(ICommandSender sender, ITextComponent message) {
 
         sender.addChatMessage(message);
 
@@ -64,36 +63,36 @@ public class ChatUtils {
      * @param message A formatted legacy text
      * @return The parsed text
      */
-    public static ChatComponentText chatComponentFromLegacyText(String message) {
-        ChatComponentText base;
+    public static TextComponentString chatComponentFromLegacyText(String message) {
+        TextComponentString base;
         String[] parts = message.split(Character.toString('\u00A7'));
         if(parts.length == 1)
-            return new ChatComponentText(message);
+            return new TextComponentString(message);
 
-        base = new ChatComponentText(parts[0]);
+        base = new TextComponentString(parts[0]);
 
-        ChatStyle chatStyle = new ChatStyle();
+        Style Style = new Style();
         for(int i = 1; i < parts.length; i++) {
             String current = parts[i];
             char code = current.charAt(0);
             String text = current.substring(1);
 
             if(code >= '0' && code <= '9' || code >= 'a' && code <= 'f' || code == 'r') {
-                chatStyle = new ChatStyle();
-                chatStyle.setColor(formattingMap.get(code));
+                Style = new Style();
+                Style.setColor(formattingMap.get(code));
             }
             else {
-                chatStyle = chatStyle.createDeepCopy();
+                Style = Style.createDeepCopy();
                 switch (code) {
-                    case 'k': chatStyle.setObfuscated(true); break;
-                    case 'l': chatStyle.setBold(true); break;
-                    case 'm': chatStyle.setStrikethrough(true); break;
-                    case 'n': chatStyle.setUnderlined(true); break;
-                    case 'o': chatStyle.setItalic(true); break;
+                    case 'k': Style.setObfuscated(true); break;
+                    case 'l': Style.setBold(true); break;
+                    case 'm': Style.setStrikethrough(true); break;
+                    case 'n': Style.setUnderlined(true); break;
+                    case 'o': Style.setItalic(true); break;
                 }
             }
 
-            base.appendSibling(new ChatComponentText(text).setChatStyle(chatStyle));
+            base.appendSibling(new TextComponentString(text).setStyle(Style));
         }
 
         return base;

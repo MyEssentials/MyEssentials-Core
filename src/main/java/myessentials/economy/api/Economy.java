@@ -1,6 +1,5 @@
 package myessentials.economy.api;
 
-import cpw.mods.fml.common.Loader;
 import myessentials.MyEssentialsCore;
 import myessentials.exception.EconomyException;
 import myessentials.utils.ClassUtils;
@@ -9,6 +8,7 @@ import myessentials.utils.PlayerUtils;
 import myessentials.economy.core.vault.BukkitCompat;
 import myessentials.economy.core.forgeessentials.ForgeessentialsEconomy;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.Loader;
 
 import java.util.UUID;
 

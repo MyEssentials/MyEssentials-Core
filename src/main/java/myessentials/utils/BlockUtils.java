@@ -1,10 +1,10 @@
 package myessentials.utils;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class BlockUtils {
     public static String getBlockName(Block block) {
-        return GameRegistry.findUniqueIdentifierFor(block).toString().replace(":", ".");
+        return GameRegistry.findRegistry(Block.class).getKey(block).toString().replace(":", ".");
     }
 }

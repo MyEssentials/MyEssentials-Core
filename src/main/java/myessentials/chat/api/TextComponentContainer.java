@@ -6,7 +6,7 @@ import net.minecraft.util.text.ITextComponent;
 import java.util.ArrayList;
 
 /**
- * A set of IChatComponents that can be sent as a whole
+ * A set of ITextComponents that can be sent as a whole
  */
 public class TextComponentContainer extends ArrayList<ITextComponent> {
     /**

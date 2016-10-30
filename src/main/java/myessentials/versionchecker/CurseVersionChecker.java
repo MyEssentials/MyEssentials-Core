@@ -1,9 +1,9 @@
 package myessentials.versionchecker;
 
-import cpw.mods.fml.common.Loader;
 import myessentials.curse.Curse;
 import myessentials.curse.CurseModInfo;
 import myessentials.curse.VersionInfo;
+import net.minecraftforge.fml.common.Loader;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

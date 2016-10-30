@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import junit.framework.Assert;
 import myessentials.chat.api.JsonMessageBuilder;
 import myessentials.test.MECTest;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextFormatting;
 import org.junit.Test;
 
 public class JsonMessageBuilderTest extends MECTest {
@@ -24,8 +24,8 @@ public class JsonMessageBuilderTest extends MECTest {
         builder.setBold(true);
         Assert.assertTrue("Failed to set text format to bold", builder.getRootObj().get("bold").getAsBoolean());
 
-        builder.setColor(EnumChatFormatting.BLUE);
-        Assert.assertEquals("Failed to set text to color blue", EnumChatFormatting.BLUE.getFriendlyName(), builder.getRootObj().get("color").getAsString());
+        builder.setColor(TextFormatting.BLUE);
+        Assert.assertEquals("Failed to set text to color blue", TextFormatting.BLUE.getFriendlyName(), builder.getRootObj().get("color").getAsString());
 
         builder.setUnderlined(true);
         Assert.assertTrue("Failed to set text format to underlined", builder.getRootObj().get("underlined").getAsBoolean());

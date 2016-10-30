@@ -2,7 +2,7 @@ package myessentials.test.entities.sign;
 
 import junit.framework.Assert;
 import metest.api.TestPlayer;
-import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.Position;
 import myessentials.test.MECTest;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -24,7 +24,7 @@ public class SignTest extends MECTest {
     @Test
     public void shouldCreateSign() {
         FakeSign sign = new FakeSign(0);
-        sign.createSignBlock(player, new BlockPos(20, 200, 20, 0), 0);
+        sign.createSignBlock(player, new Position(20, 200, 20, 0), 0);
         Assert.assertTrue("Sign Block did not get created or did not have proper orientation", server.worldServerForDimension(0).getBlock(20, 200, 20) == Blocks.standing_sign);
         Assert.assertNotNull("Sign TileEntity did not get created", sign.getTileEntity());
         sign.deleteSignBlock();
@@ -33,7 +33,7 @@ public class SignTest extends MECTest {
     @Test
     public void shouldHandleRightClicks() {
         FakeSign sign = new FakeSign(0);
-        sign.createSignBlock(player, new BlockPos(20, 200, 20, 0), 0);
+        sign.createSignBlock(player, new Position(20, 200, 20, 0), 0);
 
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, 20, 200, 20, 1, server.worldServerForDimension(0)));
         Assert.assertEquals("Right click event did not get handled properly", sign.amountOfClicks, 1);
@@ -46,7 +46,7 @@ public class SignTest extends MECTest {
     @Test
     public void shouldHandleShiftRightClicks() {
         FakeSign sign = new FakeSign(0);
-        sign.createSignBlock(player, new BlockPos(20, 200, 20, 0), 0);
+        sign.createSignBlock(player, new Position(20, 200, 20, 0), 0);
 
         player.setSneaking(true);
 

@@ -3,11 +3,11 @@ package myessentials.chat.api;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 
 /**
- * Helper to build JSON IChatComponents
+ * Helper to build JSON ITextComponents
  */
 public class JsonMessageBuilder {
     private JsonMessageBuilder parentBuilder = null;
@@ -47,7 +47,7 @@ public class JsonMessageBuilder {
     /**
      * Sets the color of the text
      */
-    public JsonMessageBuilder setColor(EnumChatFormatting color) {
+    public JsonMessageBuilder setColor(TextFormatting color) {
         rootObj.addProperty("color", color.getFriendlyName());
         return this;
     }
@@ -233,11 +233,11 @@ public class JsonMessageBuilder {
     }
 
     /**
-     * Returns the IChatComponent from this builder
+     * Returns the ITextComponent from this builder
      */
-    public IChatComponent build() {
+    public ITextComponent build() {
         if (parentBuilder == null) {
-            return IChatComponent.Serializer.func_150699_a(rootObj.toString());
+            return ITextComponent.Serializer.jsonToComponent(rootObj.toString());
         } else {
             return parentBuilder.build();
         }

@@ -5,9 +5,9 @@ import myessentials.chat.api.TextComponentFormatted;
 import org.junit.Assert;
 import myessentials.exception.FormatException;
 import myessentials.test.MECTest;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.TextComponentString;
+import net.minecraft.util.TextFormatting;
+import net.minecraft.util.ITextComponent;
 import org.junit.Test;
 
 public class ChatComponentFormattedTest extends MECTest {
@@ -20,8 +20,8 @@ public class ChatComponentFormattedTest extends MECTest {
         }
 
         @Override
-        public IChatComponent toChatMessage() {
-            return new ChatComponentText(x + "");
+        public ITextComponent toChatMessage() {
+            return new TextComponentString(x + "");
         }
     }
 
@@ -54,9 +54,9 @@ public class ChatComponentFormattedTest extends MECTest {
 
         TextComponentFormatted message = new TextComponentFormatted("{1|%s}{2l|%s}", 5 + "", 20 + "");
         Assert.assertEquals("Message did not get created properly", "520", message.getUnformattedText());
-        Assert.assertEquals("Color was not the correct one for the first argument", EnumChatFormatting.DARK_BLUE, ((IChatComponent) message.getSiblings().get(0)).getChatStyle().getColor());
-        Assert.assertEquals("Color was not the correct one for the second argument", EnumChatFormatting.DARK_GREEN, ((IChatComponent) message.getSiblings().get(1)).getChatStyle().getColor());
-        Assert.assertTrue("Second argument was not formatted bold", ((IChatComponent) message.getSiblings().get(1)).getChatStyle().getBold());
+        Assert.assertEquals("Color was not the correct one for the first argument", TextFormatting.DARK_BLUE, ((ITextComponent) message.getSiblings().get(0)).getStyle().getColor());
+        Assert.assertEquals("Color was not the correct one for the second argument", TextFormatting.DARK_GREEN, ((ITextComponent) message.getSiblings().get(1)).getStyle().getColor());
+        Assert.assertTrue("Second argument was not formatted bold", ((ITextComponent) message.getSiblings().get(1)).getStyle().getBold());
 
     }
 
@@ -71,7 +71,7 @@ public class ChatComponentFormattedTest extends MECTest {
     @Test
     public void shouldCreateMessageWithComponentArguments() {
 
-        TextComponentFormatted message = new TextComponentFormatted("{%s}{%s}", new MockArgument(120), new ChatComponentText("420"));
+        TextComponentFormatted message = new TextComponentFormatted("{%s}{%s}", new MockArgument(120), new TextComponentString("420"));
         Assert.assertEquals("Message did not get created properly", "120420", message.getUnformattedText());
 
     }

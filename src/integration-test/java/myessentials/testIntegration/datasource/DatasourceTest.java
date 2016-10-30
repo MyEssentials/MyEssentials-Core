@@ -10,6 +10,6 @@ public class DatasourceTest {
 
     @Test
     public void shouldFail() {
-        assert MinecraftServer.getServer() != null;
+        assert WorldUtils.getServer() != null;
     }
 }

@@ -1,7 +1,10 @@
 package myessentials.entities.api.sign;
 
 import myessentials.classtransformers.SignClassTransformer;
-import myessentials.entities.api.BlockPos;
+import net.minecraft.block.BlockStandingSign;
+import net.minecraft.block.BlockWallSign;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTBase;
@@ -9,10 +12,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.world.WorldServerMulti;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +30,7 @@ import java.util.Iterator;
  */
 public abstract class Sign {
 
-    public static final String IDENTIFIER = EnumChatFormatting.DARK_BLUE.toString();
+    public static final String IDENTIFIER = TextFormatting.DARK_BLUE.toString();
 
     public final SignType signType;
 
@@ -42,37 +49,42 @@ public abstract class Sign {
     public void onShiftRightClick(EntityPlayer player) {
     }
 
-    public TileEntitySign createSignBlock(EntityPlayer player, BlockPos bp, int face) {
-        World world = MinecraftServer.getServer().worldServerForDimension(bp.getDim());
-        ForgeDirection direction = ForgeDirection.getOrientation(face);
-        if(direction == ForgeDirection.DOWN || face == 1) {
+    public TileEntitySign createSignBlock(EntityPlayer player, BlockPos bp, EnumFacing face) {
+
+        World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(bp.getDim());
+        if(face == EnumFacing.DOWN || face == EnumFacing.UP) {
             int i1 = MathHelper.floor_double((double) ((player.rotationYaw + 180.0F) * 16.0F / 360.0F) + 0.5D) & 15;
-            world.setBlock(bp.getX(), bp.getY(), bp.getZ(), Blocks.standing_sign, i1, 3);
+            IBlockState state = Blocks.STANDING_SIGN.getDefaultState();
+            state.withProperty(BlockStandingSign.ROTATION, i1);
+            world.setBlockState(bp, state, 3);
         } else {
-            world.setBlock(bp.getX(), bp.getY(), bp.getZ(), Blocks.wall_sign, face, 3);
+            IBlockState state = Blocks.WALL_SIGN.getDefaultState();
+            state.withProperty(BlockWallSign.FACING, face);
+            world.setBlockState(bp, state, 3);
         }
 
-        TileEntitySign te = (TileEntitySign) world.getTileEntity(bp.getX(), bp.getY(), bp.getZ());
+        TileEntitySign te = (TileEntitySign) world.getTileEntity(bp);
         String[] text = Arrays.copyOf(getText(), 4);
         text[0] = IDENTIFIER + text[0];
         normalizeText(text);
 
         for(int i = 0; i < 4; i++) {
-            te.signText[i] = text[i] == null ? "" : text[i];
+            te.signText[i] = text[i] == null ? new TextComponentString("") : new TextComponentString(text[i]);
         }
 
         NBTTagCompound rootTag = new NBTTagCompound();
         rootTag.setString("Type", signType.getTypeID());
-        if(data != null)
+        if(data != null) {
             rootTag.setTag("Value", data);
+        }
         SignClassTransformer.setMyEssentialsDataValue(te, rootTag);
 
         return te;
     }
 
     public TileEntitySign getTileEntity() {
-        World world = MinecraftServer.getServer().worldServerForDimension(bp.getDim());
-        TileEntity te = world.getTileEntity(bp.getX(), bp.getY(), bp.getZ());;
+        World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension();
+        TileEntity te = world.getTileEntity(bp);
         return te instanceof TileEntitySign ? (TileEntitySign) te : null;
     }
 
@@ -86,8 +98,8 @@ public abstract class Sign {
 
     public void deleteSignBlock() {
         World world = MinecraftServer.getServer().worldServerForDimension(bp.getDim());
-        world.removeTileEntity(bp.getX(), bp.getY(), bp.getZ());
-        world.setBlock(bp.getX(), bp.getY(), bp.getZ(), Blocks.air);
+        world.removeTileEntity(bp);
+        world.setBlockToAir(bp);
     }
 
     public static class Container extends ArrayList<Sign> {

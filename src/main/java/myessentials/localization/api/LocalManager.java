@@ -2,7 +2,6 @@ package myessentials.localization.api;
 
 import myessentials.chat.api.TextComponentFormatted;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.IChatComponent;
 
 import java.util.HashMap;
 import java.util.Map;
