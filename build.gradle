@@ -1,14 +1,14 @@
 buildscript {
     repositories {
-	mavenCentral()
+        mavenCentral()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
-	maven {
-	    name = "sonatype"
-	    url = "https://oss.sonatype.org/content/repositories/snapshots/"
-	}
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
@@ -16,10 +16,10 @@ buildscript {
 }
 
 repositories {
-    maven {
-        name = "bukkit-repo"
-        url = "http://repo.bukkit.org/content/groups/public/"
-    }
+//    maven {
+//        name = "bukkit-repo"
+//        url = "http://repo.bukkit.org/content/groups/public/"
+//    }
     maven {
         name = "SpongePowered"
         url = "https://repo.spongepowered.org/maven"
@@ -57,7 +57,7 @@ group = config.group
 archivesBaseName = config.archivesBaseName
 
 minecraft {
-    version = "${config.minecraft_version}-${config.forge_version}"
+    version = "${config.minecraft_version}-${config.forge_version}-${config.minecraft_version}"
 
     replace "@VERSION@", "${project.version}"
 }
@@ -65,14 +65,14 @@ minecraft {
 // Setup Deps
 dependencies {
     testCompile "junit:junit:4.11"
-    testCompile project(":MyEssentials-TestSuite")    
+    testCompile project(":MyEssentials-TestSuite")
 
     // Database engines
     compile "org.xerial:sqlite-jdbc:3.8.5-pre1"
     compile "mysql:mysql-connector-java:5.1.32"
 
     // Minecraft related deps
-    compile "com.forgeessentials:forgeessentials:1.4.1-SNAPSHOT:dev"
+    compile "com.forgeessentials:forgeessentials:1.4.5-SNAPSHOT:dev"
     compile files("libs/bukkit-1.7.9-R0.2.jar")
     compile "org.spongepowered:mixin:0.4.4-SNAPSHOT"
     compile "com.sk89q.worldedit:worldedit-forge-mc1.7.10:6.0.2-SNAPSHOT:dev"
@@ -88,7 +88,7 @@ processResources {
     inputs.property "mod_version", project.version
     inputs.property "minecraft_version", project.minecraft.version
     inputs.property "reflectasm_version", config.reflectasm_version
-    
+
     from(sourceSets.main.resources.srcDirs) {
         include '*.info'
         expand 'mod_version': project.version, 'minecraft_version': project.minecraft.version, 'reflectasm_version': config.reflectasm_version
@@ -110,8 +110,8 @@ jar {
     classifier = 'universal'
     manifest {
         attributes (
-            'FMLCorePlugin': 'myessentials.DepLoader',
-            'FMLCorePluginContainsFMLMod': 'true'
+                'FMLCorePlugin': 'myessentials.DepLoader',
+                'FMLCorePluginContainsFMLMod': 'true'
         )
     }
 }
