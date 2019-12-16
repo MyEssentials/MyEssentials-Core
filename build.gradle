@@ -51,6 +51,7 @@ if (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty()) {
 // Apply Plugins
 //apply plugin: "curseforge"
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'idea'
 
 // Configure Everything
 version = "${config.minecraft_version}-${config.build_number}${config.build_type}"
@@ -129,10 +130,10 @@ dependencies {
     compile "mysql:mysql-connector-java:5.1.32"
 
     // Minecraft related deps
-    compile "com.forgeessentials:forgeessentials:1.4.5-SNAPSHOT:dev"
-    compile files("libs/bukkit-1.7.9-R0.2.jar")
-    compile "org.spongepowered:mixin:0.4.4-SNAPSHOT"
-    compile "com.sk89q.worldedit:worldedit-forge-mc1.7.10:6.0.2-SNAPSHOT:dev"
+//    compile "com.forgeessentials:forgeessentials:1.4.5-SNAPSHOT:dev"
+//    compile files("libs/bukkit-1.7.9-R0.2.jar")
+//    compile "org.spongepowered:mixin:0.4.4-SNAPSHOT"
+//    compile "com.sk89q.worldedit:worldedit-forge-mc1.7.10:6.0.2-SNAPSHOT:dev"
     //compile "info.servertools.permission:ServerTools-PERMISSION:1.7.10-2.2.1.14:deobf"
 
     // Other deps
